@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script>
+    // 🌟 1단계에서 얻은 구글 앱스 스크립트 배포 URL을 아래 큰따옴표 안에 넣어주세요!
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyk6eVjYxVBPc_2RdcFTVkYZ--1_ngYJh1Oz-iQVdd1ohMR4vFW15ccgS6gl__89h0z/exec";
+  </script>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>업무분장 희망원 작성 시스템</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; background: #f5f6fa; color: #222; }
+    .top-nav { display: flex; justify-content: flex-end; max-width: 980px; margin: 0 auto 10px; }
+    .btn-admin-toggle { background: #fff; border: 1px solid #ccc; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; color: #444; font-weight: bold; }
+    .btn-admin-toggle:hover { background: #f0f0f0; }
+    .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: #fff; padding: 25px; border-radius: 10px; width: 320px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .modal-content h3 { margin-top: 0; text-align: center; color: #1a73e8; }
+    .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
+    .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    .btn-close { background: #eee; color: #333; }
+    #dashboardArea, #landingArea, #inputFormArea { display: none; max-width: 980px; margin: 0 auto; background: #fff; padding: 28px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+    #dashboardArea h2 { text-align: center; color: #1a73e8; margin-top:0; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .admin-field { margin-bottom: 15px; }
+    .admin-field label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+    .admin-field input, .admin-field textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    .admin-field textarea { height: 100px; resize: vertical; }
+    .file-upload-box { background: #f8f9fa; border: 1px dashed #1a73e8; padding: 10px; border-radius: 6px; margin-bottom: 8px; text-align: center; }
+    .file-upload-box input { display: none; }
+    .btn-file-select { background: #1a73e8; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; display: inline-block; font-weight: bold; }
+    .roster-summary { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 10px 15px; font-weight: bold; margin-bottom: 10px; text-align: center; color: #1a73e8; }
+    .roster-table-wrap { max-height: 380px; overflow-y: auto; border: 1px solid #ccc; border-radius: 6px; }
+    .roster-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+    .roster-table th { background: #e9edf5; position: sticky; top: 0; padding: 8px; border-bottom: 1px solid #ccc; }
+    .roster-table td { padding: 8px; border-bottom: 1px solid #eee; }
+    .badge-done { background: #e6f4ea; color: #137333; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
+    .badge-yet { background: #fce8e6; color: #c5221f; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
+    .landing-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin: 30px 0 10px; }
+    .landing-card { padding: 22px; border-radius: 12px; }
+    .card-teacher { background: #f8f9fa; border: 1px solid #e9ecef; }
+    .card-admin { background: #eef2fa; border: 1px solid #d3e3fd; }
+    .landing-card h3 { margin-top: 0; font-size: 17px; margin-bottom: 12px; }
+    .landing-card p { font-size: 14px; color: #555; line-height: 1.6; margin: 0; }
+    h1 { margin: 0; text-align: center; font-size: 28px; }
+    .subtitle { margin-top: 8px; text-align: center; color: #555; font-size: 13px; font-weight: bold; }
+    .warning-text { color: #d00; font-size: 16px; font-weight: bold; text-align: center; margin-top: 15px; }
+    .section { margin-top: 28px; border: 1px solid #d8deea; border-radius: 10px; overflow: hidden; }
+    .section-title { padding: 12px 16px; background: #d9e2f3; font-weight: 700; font-size: 17px; border-bottom: 1px solid #c7d2e7; }
+    .section-body { padding: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-12 { grid-column: span 12; }
+    label { font-size: 14px; font-weight: 600; }
+    .required::after { content: " *"; color: #d93025; }
+    input[type="text"], input[type="date"], input[type="tel"], select, textarea { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid #ccd3df; border-radius: 7px; font-size: 14px; }
+    textarea { resize: vertical; line-height: 1.5; }
+    input:readonly { background-color: #f1f3f4; font-weight: bold; color: #1a73e8; }
+    .radio-row { display: flex; gap: 24px; margin-top: 12px; align-items: center; }
+    .radio-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .signature-pad { width: 360px; max-width: 100%; height: 150px; border: 2px solid #333; border-radius: 8px; touch-action: none; background: #fff;}
+    .button-row { display: flex; gap: 10px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+    button { border: none; border-radius: 8px; padding: 12px 20px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .btn-primary { background: #1a73e8; color: white; } .btn-secondary { background: #e9edf5; color: #222; }
+    .btn-outline { background: #fff; border: 1px solid #ccc; }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .msg-box { display: none; margin-top: 24px; padding: 16px; border-radius: 8px; text-align: center; }
+    .success { background: #e6f4ea; border: 1px solid #81c995; color: #137333; }
+    .conditional { display: none; } .flex-row { display: flex; gap: 10px; }
+    @media (max-width: 720px) { .admin-grid, .landing-card-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(1, 1fr); } .col-3,.col-4,.col-6,.col-12 { grid-column: span 1; } }
+    #printArea { display: none; } 
+    @page { size: A4 portrait; margin: 0; }
+    @media print {
+      body { background: #fff; padding: 15mm 20mm; margin: 0; color: #000; font-family: "Malgun Gothic", sans-serif; }
+      .top-nav, #inputFormArea, #dashboardArea, #landingArea { display: none !important; }
+      #printArea { display: flex !important; flex-direction: column; height: 98vh; justify-content: space-between; }
+      .p-header-wrap { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
+      .p-header-wrap h1 { margin: 0; font-size: 26px; letter-spacing: -1px; white-space: nowrap; } 
+      .p-info-table { border-collapse: collapse; font-size: 13px; }
+      .p-info-table td { border: 1px solid #000; padding: 5px 10px; text-align: center; }
+      .p-info-table .bg { background: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
+      .tables-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; letter-spacing: -0.5px; word-break: keep-all; margin-bottom: 2px; }
+      .p-table th, .p-table td { border: 1px solid #000; padding: 9px 5px; text-align: center; vertical-align: middle; }
+      .p-table th { background-color: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: 600; }
+      .text-left { text-align: left !important; padding-left: 10px !important; }
+      .text-red { color: #d00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; font-size: 14px; text-align: center; margin: 10px 0;}
+      .sign-area { display: flex; justify-content: center; align-items: center; gap: 20px; font-size: 16px; font-weight: bold; margin-top: 15px; }
+      .sign-box { border-bottom: 1px solid #000; width: 100px; text-align: center; font-weight: normal; }
+      .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 25px 0; letter-spacing: 3px; }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="top-nav" id="topNav">
+    <button class="btn-admin-toggle" onclick="document.getElementById('loginModal').style.display='flex'">⚙️ 학교 관리자 설정</button>
+  </div>
+
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+      <h3>학교 관리자 접속</h3>
+      <input type="text" id="l_id" placeholder="관리자 ID">
+      <input type="password" id="l_pw" placeholder="비밀번호">
+      <div class="modal-btns">
+        <button class="btn-close" onclick="document.getElementById('loginModal').style.display='none'">취소</button>
+        <button class="btn-primary" id="modalLoginBtn" onclick="loginAdmin()">접속</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- [1. 랜딩 메인 안내 화면] -->
+  <div id="landingArea" style="text-align:center; padding: 20px 10px;">
+    <div style="font-size: 48px; margin-bottom: 10px;">📋</div>
+    <h2 style="color: #1a73e8; font-size: 26px; margin-bottom: 8px;">교원 업무분장 희망원 작성 시스템</h2>
+    <p style="color: #666; font-size: 15px; margin-bottom: 25px;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
+
+    <div class="landing-card-grid">
+      <div class="landing-card card-teacher">
+        <h3 style="color: #137333;">👩‍🏫 희망원을 작성하시는 선생님</h3>
+        <p>
+          현재 접속하신 주소는 <b>시스템 대표 주소</b>입니다.<br><br>
+          희망원을 작성하시려면 학교 담당자로부터 안내받으신 <b>[우리 학교 전용 접속 링크]</b>로 접속하셔야 작성 양식이 표시됩니다.
+        </p>
+      </div>
+
+      <div class="landing-card card-admin">
+        <h3 style="color: #1a73e8;">⚙️ 학교 관리자(담당자) 안내</h3>
+        <p>
+          우측 상단 <b>[⚙️ 학교 관리자 설정]</b> 버튼을 클릭하여 로그인하세요.<br><br>
+          로그인 후 <b>교원 명단 등록</b> 및 <b>우리 학교 전용 단축 주소</b>를 복사하여 선생님들께 배부하실 수 있습니다.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- [2. 관리자 대시보드] -->
+  <div id="dashboardArea">
+    <h2>우리 학교 시스템 설정 및 제출 현황</h2>
+    
+    <div style="background:#e6f4ea; padding:15px; border-radius:8px; margin-bottom:20px; font-size:14px; border:1px solid #81c995;">
+      <b>교사 배부용 단축 주소:</b><br>
+      <span id="shareUrl" style="word-break:break-all; font-weight:bold; color:#137333; font-size:16px; margin-top:5px; display:inline-block;">생성 중...</span><br>
+      <button style="background:#34a853; color:#fff; padding:6px 12px; font-size:13px; margin-top:8px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;" onclick="copyUrl()">주소 복사하기</button>
+    </div>
+
+    <div class="admin-grid">
+      <div>
+        <div class="admin-field"><label>학교명</label><input type="text" id="d_school" readonly style="background:#eee;"></div>
+        <div class="admin-field"><label>적용 학년도</label><input type="text" id="d_year"></div>
+        <div class="admin-field"><label>비밀번호 변경</label><input type="text" id="d_adminPw"></div>
+        <div class="admin-field"><label>부장 보직 목록 (엔터 구분)</label><textarea id="d_chiefs"></textarea></div>
+        <div class="admin-field"><label>업무 부서 목록 (엔터 구분)</label><textarea id="d_depts"></textarea></div>
+        
+        <div class="admin-field">
+          <label>전체 교원 명단 등록</label>
+          <div class="file-upload-box">
+            <span style="font-size:12px; color:#555; display:block; margin-bottom:5px;">엑셀(.xlsx, .csv) 또는 텍스트(.txt) 파일 업로드</span>
+            <label for="rosterFileInput" class="btn-file-select">📁 교원명단 파일 선택</label>
+            <input type="file" id="rosterFileInput" accept=".xlsx, .xls, .csv, .txt" onchange="handleRosterFileUpload(event)">
+          </div>
+          <textarea id="d_rosterText" placeholder="파일을 선택하시거나, 직접 엑셀 이름을 복사해 붙여넣으세요."></textarea>
+        </div>
+      </div>
+
+      <div>
+        <label style="font-weight:bold; font-size:14px; display:block; margin-bottom:5px;">📋 실시간 제출 현황</label>
+        <div class="roster-summary" id="rosterSummary">총 0명 (제출 0명 / 미제출 0명)</div>
+        <div class="roster-table-wrap">
+          <table class="roster-table">
+            <thead>
+              <tr><th>성명</th><th>제출여부</th><th>제출일시</th></tr>
+            </thead>
+            <tbody id="rosterTbody">
+              <tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <div class="button-row">
+      <button class="btn-secondary" onclick="logoutAdmin()">화면 닫기</button>
+      <button class="btn-primary" id="saveConfigBtn" onclick="saveConfig()">설정 및 명단 저장</button>
+    </div>
+    <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
+  </div>
+
+  <!-- [3. 교사용 입력 폼] -->
+  <div id="inputFormArea">
+    <h1 id="uiTitle">업무분장 희망원</h1>
+    <div class="subtitle" id="uiSchoolName">학교명</div>
+    <div class="warning-text">업무분장 희망원은 학교 상황에 따라 본인이 원하는 대로 되지 않을 수 있음을 양해 바랍니다.</div>
+    <form id="hopeForm" onsubmit="return false;">
+      <div class="section"><div class="section-title">1. 기본 인적사항</div><div class="section-body"><div class="grid">
+        <div class="field col-4"><label for="name" class="required">성명</label><input type="text" id="name"></div>
+        <div class="field col-4"><label for="subject" class="required">과목</label><input type="text" id="subject"></div>
+        <div class="field col-4"><label for="birth" class="required">생년월일</label><input type="date" id="birth"></div>
+        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address"></div>
+        <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000"></div>
+        <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
+        <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone"></div>
+      </div></div></div>
+      
+      <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
+        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex:1"></div></div>
+        <div class="field col-6"><label for="transferDate" class="required" id="lblTransferDate">전입일</label><input type="date" id="transferDate"></div>
+        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex:1"></div></div>
+        <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" placeholder="없으면 '없음' 입력"></div>
+        <div class="field col-4"><label for="middleYears" class="required">중학교 교육경력</label><select id="middleYears"></select></div>
+        <div class="field col-4"><label for="highYears" class="required">고등학교 교육경력</label><select id="highYears"></select></div>
+        <div class="field col-4"><label>교육경력 총경력 (자동합산)</label><input type="text" id="totalYears" readonly placeholder="자동 계산됨"></div>
+      </div></div></div>
+
+      <div class="section"><div class="section-title">3. 세부 업무 및 담임 경력</div><div class="section-body"><div class="grid">
+        <div class="field col-4"><label for="career2026" class="required" id="lblYear1">작년 업무</label><input type="text" id="career2026" placeholder="없으면 '없음' 입력"></div>
+        <div class="field col-4"><label for="career2025" class="required" id="lblYear2">재작년 업무</label><input type="text" id="career2025" placeholder="없으면 '없음' 입력"></div>
+        <div class="field col-4"><label for="career2024" class="required" id="lblYear3">3년전 업무</label><input type="text" id="career2024" placeholder="없으면 '없음' 입력"></div>
+        <div class="field col-12"><label for="chiefCareerYears" class="required">부장교사 총경력</label><select id="chiefCareerYears"></select></div>
+        <div class="field col-4"><label for="middleHomeroomCareer" class="required">중학교 담임 경력</label><select id="middleHomeroomCareer"></select></div>
+        <div class="field col-4"><label for="highHomeroomCareer" class="required">고등학교 담임 경력</label><select id="highHomeroomCareer"></select></div>
+        <div class="field col-4"><label>담임교사 총경력 (자동합산)</label><input type="text" id="totalHomeroomYears" readonly placeholder="자동 계산됨"></div>
+      </div></div></div>
+
+      <div class="section"><div class="section-title">4. 희망 업무 분장</div><div class="section-body"><div class="grid">
+        <div class="field col-3"><label for="chiefHopeYn" class="required">부장교사 희망</label><select id="chiefHopeYn"></select></div>
+        <div class="field col-3"><label for="chiefHope1" class="required">부장 1순위</label><select id="chiefHope1"></select></div>
+        <div class="field col-3"><label for="chiefHope2" class="required">부장 2순위</label><select id="chiefHope2"></select></div>
+        <div class="field col-3"><label for="chiefHope3" class="required">부장 3순위</label><select id="chiefHope3"></select></div>
+        <div class="field col-4"><label for="homeroomGrade1" class="required">담임 희망 1순위</label><select id="homeroomGrade1"></select></div>
+        <div class="field col-4"><label for="homeroomGrade2" class="required">담임 희망 2순위</label><select id="homeroomGrade2"></select></div>
+        <div class="field col-4"><label for="homeroomGrade3" class="required">담임 희망 3순위</label><select id="homeroomGrade3"></select></div>
+        <div class="field col-4"><label for="workDept1">업무부서 1순위 (비담임)</label><select id="workDept1"></select></div>
+        <div class="field col-4"><label for="workDept2">업무부서 2순위</label><select id="workDept2"></select></div>
+        <div class="field col-4"><label for="workDept3">업무부서 3순위</label><select id="workDept3"></select></div>
+      </div></div></div>
+
+      <div class="section"><div class="section-title">5. 기타사항</div><div class="section-body"><div class="grid">
+        <div class="field col-6"><label for="leave2027" id="lblLeave1">내년 휴직 예정 여부</label><select id="leave2027"></select></div>
+        <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" placeholder="종류(예: 육아)"><input type="text" id="leave2027Period" placeholder="기간(예: 03~02)"></div></div>
+        <div class="field col-6"><label for="leave2026" id="lblLeave2">올해 휴직 여부</label><select id="leave2026"></select></div>
+        <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" placeholder="종류"><input type="text" id="leave2026Period" placeholder="기간"></div></div>
+        <div class="field col-12"><label for="memo">고려사항 및 사유</label><textarea id="memo" rows="4" placeholder="출산, 휴직, 개인 신상 및 담임 불희망 사유 기재"></textarea></div>
+      </div></div></div>
+
+      <div class="section"><div class="section-title">6. 개인정보 수집·이용 동의</div><div class="section-body">
+        <div class="hint">수집항목: 희망원 내 기재 항목 전체 / 목적: 업무분장 기초자료 / 보유기간: 1년</div>
+        <div class="radio-row">
+          <label><input type="radio" name="privacyAgree" value="yes"> 예, 동의합니다.</label>
+          <label><input type="radio" name="privacyAgree" value="no"> 아니요</label>
+        </div>
+      </div></div>
+
+      <div class="section"><div class="section-title">7. 서명</div><div class="section-body">
+        <canvas id="signaturePad" class="signature-pad"></canvas>
+        <div style="margin-top:10px;"><button type="button" class="btn-secondary" onclick="clearSignature()">서명 지우기</button></div>
+      </div></div>
+
+      <div class="button-row">
+        <button type="button" class="btn-primary" id="submitBtn" onclick="submitForm()">제출하기</button>
+        <button type="button" class="btn-secondary" id="saveBtn" onclick="saveData()">임시저장</button>
+        <button type="button" class="btn-secondary" id="loadBtn" onclick="fetchSavedData()">불러오기</button>
+        <button type="button" class="btn-secondary" onclick="preparePrint()">작성 내용 인쇄</button>
+        <button type="button" class="btn-outline" onclick="printEmptyForm()">빈양식출력(전입교사용)</button>
+      </div>
+      <div class="msg-box success" id="resultBox"></div>
+    </form>
+  </div>
+
+  <div id="printArea">
+    <div class="p-header-wrap">
+      <h1 id="p_title">업무분장 희망원</h1>
+      <table class="p-info-table">
+        <tr><td class="bg">학교명</td><td id="p_school" style="width:120px;"></td></tr>
+        <tr><td class="bg">기준일</td><td id="p_baseDate"></td></tr>
+      </table>
+    </div>
+    
+    <div class="tables-container">
+      <table class="p-table">
+        <colgroup><col width="12%"><col width="21%"><col width="12%"><col width="21%"><col width="12%"><col width="22%"></colgroup>
+        <tr><th>성명</th><td id="p_name"></td><th>과목</th><td id="p_subject"></td><th>생년월일</th><td id="p_birth"></td></tr>
+        <tr><th>주소</th><td colspan="5" class="text-left" id="p_address"></td></tr>
+        <tr><th>휴대전화</th><td colspan="2" id="p_phone"></td><th>비상연락처</th><td id="p_emRel"></td><td id="p_emPhone"></td></tr>
+      </table>
+      <table class="p-table">
+        <colgroup><col width="15%"><col width="35%"><col width="15%"><col width="35%"></colgroup>
+        <tr><th>교원자격(전공)</th><td id="p_certMaj"></td><th id="p_lblTr">전입일</th><td id="p_transfer"></td></tr>
+        <tr><th>교원자격(부전공)</th><td id="p_certMin"></td><th id="p_lblPrev">이전 근무학교</th><td id="p_prevSch"></td></tr>
+      </table>
+      <table class="p-table">
+        <colgroup><col width="20%"><col width="15%"><col width="25%"><col width="15%"><col width="25%"></colgroup>
+        <tr><th>교육경력<br><span style="font-size:10px;">(총 <span id="p_totalYrs"></span>)</span></th><th>중학교</th><td id="p_midYrs"></td><th>고등학교</th><td id="p_highYrs"></td></tr>
+      </table>
+      <table class="p-table">
+        <colgroup><col width="16%"><col width="28%"><col width="28%"><col width="28%"></colgroup>
+        <tr><th rowspan="2">연도별 세부업무<br>(최근 3년)</th><th id="p_lblY1"></th><th id="p_lblY2"></th><th id="p_lblY3"></th></tr>
+        <tr><td id="p_c1"></td><td id="p_c2"></td><td id="p_c3"></td></tr>
+      </table>
+      <table class="p-table">
+        <colgroup><col width="16%"><col width="34%"><col width="16%"><col width="34%"></colgroup>
+        <tr><th>부장교사 총경력</th><td id="p_chiefYrs"></td><th>담임교사 총경력</th><td id="p_totalHmrm"></td></tr>
+        <tr><th>중학교 담임경력</th><td id="p_midHmrm"></td><th>고등학교 담임경력</th><td id="p_highHmrm"></td></tr>
+      </table>
+      <table class="p-table">
+        <colgroup><col width="16%"><col width="14%"><col width="23%"><col width="24%"><col width="23%"></colgroup>
+        <tr><th colspan="2" id="p_hopeTitle">희망 업무 분장</th><th>1순위</th><th>2순위</th><th>3순위</th></tr>
+        <tr><th>부장교사 희망</th><td id="p_chiefHope"></td><td id="p_ch1"></td><td id="p_ch2"></td><td id="p_ch3"></td></tr>
+        <tr><th colspan="2">담임교사 희망</th><td id="p_hm1"></td><td id="p_hm2"></td><td id="p_hm3"></td></tr>
+        <tr><th colspan="2">업무희망(비담임)</th><td id="p_w1"></td><td id="p_w2"></td><td id="p_w3"></td></tr>
+      </table>
+      <table class="p-table">
+        <colgroup><col width="16%"><col width="14%"><col width="35%"><col width="14%"><col width="21%"></colgroup>
+        <tr><th>기타사항</th><th id="p_lblL1"></th><td id="p_l27"></td><th id="p_lblL2"></th><td id="p_l26"></td></tr>
+        <tr><th>고려사항 및 사유</th><td colspan="4" class="text-left" id="p_memo" style="height:80px; vertical-align:top;"></td></tr>
+      </table>
+    </div>
+    
+    <div class="text-red">업무분장 희망원은 학교 상황에 따라 본인이 원하는 대로 되지 않을 수 있음을 양해 바랍니다.</div>
+    <div class="sign-area">
+      <div id="p_date"></div><span>성명</span><div class="sign-box" id="p_signName"></div><span>(서명)</span>
+      <div style="position:relative; width:90px; height:35px; border-bottom:1px solid #000;">
+        <img id="p_signImg" style="width:100%; height:100%; object-fit:contain; display:none;" src="">
+      </div>
+    </div>
+    <div class="principal" id="p_principal">학교장 귀하</div>
+    
+    <div style="font-weight:bold; font-size:13px; margin-bottom:5px;">□ 개인정보 수집·이용 동의</div>
+    <table class="p-table" style="margin-bottom:5px;">
+      <tr><th>항목</th><th>수집목적</th><th>보유기간</th></tr>
+      <tr><td>성명, 과목, 주소, 연락처 등 기재 항목 전체</td><td>업무분장 기초자료</td><td>1년</td></tr>
+    </table>
+    <div style="text-align:center; font-weight:bold; font-size:14px; margin-top:10px;">
+      개인정보 수집·이용 동의 &nbsp;&nbsp; [<span id="p_aYes" style="display:inline-block;width:15px;text-align:center;"></span>] 예 &nbsp;&nbsp; [<span id="p_aNo" style="display:inline-block;width:15px;text-align:center;"></span>] 아니요
+    </div>
+  </div>
+
+  <script>
+    let sysConfig = {};
+    const canvas = document.getElementById('signaturePad');
+    const ctx = canvas.getContext('2d');
+    let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
+
+    // API 통신 공통 함수
+    async function apiCall(action, payload = {}) {
+      try {
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: action, ...payload })
+        });
+        return await response.json();
+      } catch (err) {
+        return { error: '통신 오류가 발생했습니다: ' + err.message };
+      }
+    }
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param) || '';
+    }
+
+    window.onload = async () => {
+      initDropdowns(); resizeCanvas(); bindEvents();
+      
+      const schoolParam = getQueryParam('school');
+
+      if(schoolParam) {
+        const res = await apiCall('getInitialData', { school: schoolParam });
+        if(res.error) {
+          document.getElementById('landingArea').style.display = 'block';
+          document.getElementById('inputFormArea').style.display = 'none';
+        } else {
+          applyInitialData(res);
+          document.getElementById('landingArea').style.display = 'none';
+          document.getElementById('inputFormArea').style.display = 'block';
+        }
+      } else {
+        document.getElementById('landingArea').style.display = 'block';
+        document.getElementById('inputFormArea').style.display = 'none';
+      }
+    };
+
+    async function loginAdmin() {
+      const id = document.getElementById('l_id').value;
+      const pw = document.getElementById('l_pw').value;
+      if(!id || !pw) return alert('아이디와 비밀번호를 입력하세요.');
+      
+      const btn = document.getElementById('modalLoginBtn');
+      btn.disabled = true; btn.textContent = '확인 중...';
+      
+      const res = await apiCall('verifyAdmin', { id: id, pw: pw });
+      btn.disabled = false; btn.textContent = '접속';
+      
+      if(res.success) {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('inputFormArea').style.display = 'none';
+        document.getElementById('landingArea').style.display = 'none';
+        document.getElementById('topNav').style.display = 'none';
+        document.getElementById('dashboardArea').style.display = 'block';
+        loadAdminConfig(res.schoolName);
+      } else {
+        alert(res.message);
+      }
+    }
+
+    function logoutAdmin() { location.reload(); }
+
+    async function loadAdminConfig(schoolName) {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const data = await apiCall('getAdminConfigData', { schoolName: schoolName, githubBaseUrl: baseUrl });
+      
+      document.getElementById('d_school').value = data.schoolName;
+      document.getElementById('d_year').value = data.year;
+      document.getElementById('d_adminPw').value = data.adminPw;
+      document.getElementById('d_chiefs').value = data.chiefs;
+      document.getElementById('d_depts').value = data.depts;
+      document.getElementById('d_rosterText').value = data.rosterText;
+      document.getElementById('shareUrl').textContent = data.shareUrl;
+      
+      renderRosterTable(data.rosterList);
+    }
+
+    function handleRosterFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      const filename = file.name.toLowerCase();
+
+      if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, {type: 'array'});
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+          
+          const names = [];
+          json.forEach(row => {
+            if (row && row.length > 0) {
+              row.forEach(cell => {
+                if (cell && typeof cell === 'string' && cell.trim() && !['성명','이름','교사명','교사 성명'].includes(cell.trim())) {
+                  names.push(cell.trim());
+                }
+              });
+            }
+          });
+          document.getElementById('d_rosterText').value = [...new Set(names)].join('\n');
+          alert('엑셀 파일에서 ' + names.length + '명의 이름 추출 완료!');
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.onload = function(evt) {
+          const text = evt.target.result;
+          const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+          document.getElementById('d_rosterText').value = lines.join('\n');
+          alert('파일에서 ' + lines.length + '명의 이름 불러오기 완료!');
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function renderRosterTable(rosterList) {
+      const tbody = document.getElementById('rosterTbody');
+      tbody.innerHTML = '';
+      
+      if(!rosterList || rosterList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>';
+        document.getElementById('rosterSummary').textContent = '총 0명 (제출 0명 / 미제출 0명)';
+        return;
+      }
+
+      let doneCount = 0;
+      rosterList.forEach(item => {
+        const tr = document.createElement('tr');
+        const isDone = item.status === '제출완료';
+        if(isDone) doneCount++;
+        
+        tr.innerHTML = `
+          <td><b>${item.name}</b></td>
+          <td><span class="${isDone ? 'badge-done' : 'badge-yet'}">${item.status}</span></td>
+          <td style="font-size:11px; color:#666;">${item.date || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const total = rosterList.length;
+      document.getElementById('rosterSummary').textContent = `총 ${total}명 (제출 ${doneCount}명 / 미제출 ${total - doneCount}명)`;
+    }
+
+    async function saveConfig() {
+      const data = {
+        schoolName: document.getElementById('d_school').value, year: document.getElementById('d_year').value,
+        adminPw: document.getElementById('d_adminPw').value,
+        chiefs: document.getElementById('d_chiefs').value, depts: document.getElementById('d_depts').value,
+        rosterText: document.getElementById('d_rosterText').value
+      };
+      const btn = document.getElementById('saveConfigBtn');
+      btn.disabled = true; btn.textContent = '저장 중...';
+      const baseUrl = window.location.origin + window.location.pathname;
+      
+      const res = await apiCall('saveAdminDashboardData', { config: data, githubBaseUrl: baseUrl });
+      btn.disabled = false; btn.textContent = '설정 및 명단 저장';
+      document.getElementById('shareUrl').textContent = res.shareUrl;
+      loadAdminConfig(data.schoolName);
+      const box = document.getElementById('configResultBox');
+      box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
+    }
+
+    function copyUrl() {
+      const text = document.getElementById('shareUrl').textContent;
+      navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
+    }
+
+    function initDropdowns() {
+      fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears'); fillYears('middleHomeroomCareer'); fillYears('highHomeroomCareer');
+      fillSelect('chiefHopeYn', ['희망','비희망','무관']);
+      fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
+      fillSelect('leave2027', ['예','아니요']); fillSelect('leave2026', ['예','아니요']);
+    }
+    
+    function fillSelect(id, arr) { const el=document.getElementById(id); el.innerHTML='<option value="">선택</option>'; arr.forEach(v=>{if(v)el.appendChild(new Option(v,v));}); }
+    function fillYears(id) { const arr=[]; for(let i=0; i<=40; i++) arr.push(i+'년'); fillSelect(id, arr); }
+
+    function bindEvents() {
+      ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
+      ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
+      document.getElementById('leave2027').addEventListener('change', ()=>document.getElementById('leave2027Wrap').style.display = getValue('leave2027')==='예'?'flex':'none');
+      document.getElementById('leave2026').addEventListener('change', ()=>document.getElementById('leave2026Wrap').style.display = getValue('leave2026')==='예'?'flex':'none');
+      window.addEventListener('resize', resizeCanvas);
+      const evt = { start: startDraw, move: draw, end: endDraw };
+      canvas.addEventListener('mousedown', evt.start); canvas.addEventListener('mousemove', evt.move); window.addEventListener('mouseup', evt.end);
+      canvas.addEventListener('touchstart', evt.start, {passive:false}); canvas.addEventListener('touchmove', evt.move, {passive:false}); window.addEventListener('touchend', evt.end);
+    }
+    
+    function calcTotalExp() { let m = parseInt(getValue('middleYears'))||0; let h = parseInt(getValue('highYears'))||0; document.getElementById('totalYears').value = (m+h===0 && !getValue('middleYears') && !getValue('highYears')) ? '' : (m+h)+'년'; }
+    function calcTotalHomeroom() { let m = parseInt(getValue('middleHomeroomCareer'))||0; let h = parseInt(getValue('highHomeroomCareer'))||0; document.getElementById('totalHomeroomYears').value = (m+h===0 && !getValue('middleHomeroomCareer') && !getValue('highHomeroomCareer')) ? '' : (m+h)+'년'; }
+
+    function applyInitialData(data) {
+      sysConfig = data.config; const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
+      document.getElementById('uiTitle').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('uiSchoolName').textContent = sc;
+      document.getElementById('lblTransferDate').textContent = sc + ' 전입일'; document.getElementById('lblPrevSchool').textContent = sc + ' 이전 근무학교';
+      document.getElementById('lblYear1').textContent = (yr-1) + '년 업무'; document.getElementById('lblYear2').textContent = (yr-2) + '년 업무'; document.getElementById('lblYear3').textContent = (yr-3) + '년 업무';
+      document.getElementById('lblLeave1').textContent = yr + '년 휴직 예정'; document.getElementById('lblLeave2').textContent = (yr-1) + '년 휴직 여부';
+      fillSelect('chiefHope1', data.options.chiefPositions); fillSelect('chiefHope2', data.options.chiefPositions); fillSelect('chiefHope3', data.options.chiefPositions);
+      fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
+    }
+    
+    async function fetchSavedData() {
+      const name = getValue('name');
+      const phone = getValue('phone');
+      if (!name) return alert('성명을 먼저 입력한 후 불러오기를 눌러주세요.');
+
+      const btn = document.getElementById('loadBtn'); btn.disabled = true; btn.textContent = '불러오는 중...';
+      const res = await apiCall('loadSavedData', { schoolName: sysConfig.SCHOOL_NAME, name: name, phone: phone });
+      btn.disabled = false; btn.textContent = '불러오기';
+      if(res.success) { loadData(res.data); alert('데이터를 성공적으로 불러왔습니다.'); } else { alert(res.message); }
+    }
+
+    function loadData(d) { Object.keys(d).forEach(k => { const el = document.getElementById(k); if(el) { el.value = d[k]; el.dispatchEvent(new Event('change')); } }); if(d.privacyAgree === 'yes') document.querySelector('input[name="privacyAgree"][value="yes"]').checked = true; }
+    function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+    
+    function collectData() {
+      const ids = ['name','subject','birth','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','transferDate','certificateMinorGrade','certificateMinor','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','totalHomeroomYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
+      const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
+      d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
+    }
+
+    function preparePrint() {
+      const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
+      document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
+      const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
+      document.getElementById('p_lblTr').textContent = sc + '\n전입일'; document.getElementById('p_lblPrev').textContent = '이전\n근무학교';
+      document.getElementById('p_lblY1').textContent = (yr-1) + '년'; document.getElementById('p_lblY2').textContent = (yr-2) + '년'; document.getElementById('p_lblY3').textContent = (yr-3) + '년';
+      document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무';
+      document.getElementById('p_lblL1').textContent = yr.toString().slice(-2) + '휴직'; document.getElementById('p_lblL2').textContent = (yr-1).toString().slice(-2) + '휴직';
+      document.getElementById('p_principal').textContent = sc + '장 귀하';
+      document.getElementById('p_name').textContent = d.name; document.getElementById('p_subject').textContent = d.subject; document.getElementById('p_birth').textContent = d.birth;
+      document.getElementById('p_address').textContent = d.address; document.getElementById('p_phone').textContent = d.phone; document.getElementById('p_emRel').textContent = d.emergencyRelation; document.getElementById('p_emPhone').textContent = d.emergencyPhone;
+      document.getElementById('p_certMaj').textContent = (d.certificateMajorGrade?`[${d.certificateMajorGrade}] `:'') + d.certificateMajor; document.getElementById('p_transfer').textContent = d.transferDate;
+      document.getElementById('p_certMin').textContent = (d.certificateMinorGrade?`[${d.certificateMinorGrade}] `:'') + d.certificateMinor; document.getElementById('p_prevSch').textContent = d.previousSchool;
+      document.getElementById('p_totalYrs').textContent = d.totalYears; document.getElementById('p_midYrs').textContent = d.middleYears; document.getElementById('p_highYrs').textContent = d.highYears;
+      document.getElementById('p_c1').textContent = d.career2026; document.getElementById('p_c2').textContent = d.career2025; document.getElementById('p_c3').textContent = d.career2024;
+      document.getElementById('p_chiefYrs').textContent = d.chiefCareerYears; document.getElementById('p_totalHmrm').textContent = d.totalHomeroomYears; document.getElementById('p_midHmrm').textContent = d.middleHomeroomCareer; document.getElementById('p_highHmrm').textContent = d.highHomeroomCareer;
+      document.getElementById('p_chiefHope').textContent = d.chiefHopeYn; document.getElementById('p_ch1').textContent = d.chiefHope1; document.getElementById('p_ch2').textContent = d.chiefHope2; document.getElementById('p_ch3').textContent = d.chiefHope3;
+      document.getElementById('p_hm1').textContent = d.homeroomGrade1; document.getElementById('p_hm2').textContent = d.homeroomGrade2; document.getElementById('p_hm3').textContent = d.homeroomGrade3;
+      document.getElementById('p_w1').textContent = d.workDept1; document.getElementById('p_w2').textContent = d.workDept2; document.getElementById('p_w3').textContent = d.workDept3;
+      const l27 = [d.leave2027Type, d.leave2027Period].filter(Boolean).join(', '); document.getElementById('p_l27').textContent = (d.leave2027 === '예' && l27) ? `예 (${l27})` : d.leave2027;
+      const l26 = [d.leave2026Type, d.leave2026Period].filter(Boolean).join(', '); document.getElementById('p_l26').textContent = (d.leave2026 === '예' && l26) ? `예 (${l26})` : d.leave2026;
+      document.getElementById('p_memo').innerHTML = d.memo.replace(/\n/g, '<br>');
+      const t = new Date(); document.getElementById('p_date').innerHTML = `${t.getFullYear()} 년 &nbsp;&nbsp; ${t.getMonth()+1} 월 &nbsp;&nbsp; ${t.getDate()} 일`;
+      document.getElementById('p_signName').textContent = d.name;
+      const sImg = document.getElementById('p_signImg');
+      if (d.signatureBlank) { sImg.style.display = 'none'; } else { sImg.style.display = 'block'; sImg.src = d.signature; }
+      document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
+      window.print();
+    }
+
+    function printEmptyForm() {
+      const ids = ['p_name','p_subject','p_birth','p_address','p_phone','p_emRel','p_emPhone','p_certMaj','p_transfer','p_certMin','p_prevSch','p_totalYrs','p_midYrs','p_highYrs','p_c1','p_c2','p_c3','p_chiefYrs','p_totalHmrm','p_midHmrm','p_highHmrm','p_chiefHope','p_ch1','p_ch2','p_ch3','p_hm1','p_hm2','p_hm3','p_w1','p_w2','p_w3','p_l27','p_l26','p_signName','p_aYes','p_aNo'];
+      ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
+      document.getElementById('p_memo').innerHTML = ''; document.getElementById('p_signImg').style.display = 'none';
+      const yr = sysConfig.DOCUMENT_YEAR || ''; const sc = sysConfig.SCHOOL_NAME || '';
+      document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
+      const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
+      document.getElementById('p_lblTr').textContent = sc + '\n전입일'; document.getElementById('p_lblPrev').textContent = '이전\n근무학교';
+      document.getElementById('p_lblY1').textContent = (yr-1) + '년'; document.getElementById('p_lblY2').textContent = (yr-2) + '년'; document.getElementById('p_lblY3').textContent = (yr-3) + '년';
+      document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무';
+      document.getElementById('p_lblL1').textContent = yr.toString().slice(-2) + '휴직'; document.getElementById('p_lblL2').textContent = (yr-1).toString().slice(-2) + '휴직';
+      document.getElementById('p_principal').textContent = sc + '장 귀하';
+      document.getElementById('p_date').innerHTML = `${yr} 년 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 일`;
+      window.print();
+    }
+
+    async function saveData() {
+      const d = collectData();
+      if(!d.name) return alert('성명을 입력한 후 임시저장을 눌러주세요.');
+
+      const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.textContent = '저장중...';
+      const res = await apiCall('tempSave', { data: d, schoolName: sysConfig.SCHOOL_NAME });
+      btn.disabled = false; btn.textContent = '임시저장';
+      if(res.success) {
+        alert('임시저장이 완료되었습니다. 나중에 접속해서 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.');
+      } else {
+        alert('저장 실패: ' + res.error);
+      }
+    }
+
+    async function submitForm() {
+      const d = collectData();
+      if (!d.name) return alert('성명을 입력해주세요.');
+      if (d.privacyAgree === 'no') return alert('개인정보 수집·이용에 동의하지 않으시면 제출할 수 없습니다.');
+      if (d.privacyAgree === '') return alert('개인정보 수집·이용 동의 여부를 선택해주세요.');
+      if (signatureBlank) return alert('서명을 입력해주세요.');
+      
+      const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
+      const res = await apiCall('submitForm', { data: d, schoolName: sysConfig.SCHOOL_NAME });
+      
+      if(res.success) {
+        btn.textContent = '제출완료';
+        const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b><br><a href="'+res.pdfUrl+'" target="_blank" style="color:#137333;">생성된 PDF 확인하기</a>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'});
+      } else {
+        btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + res.error);
+      }
+    }
+
+    function resizeCanvas() { const r = canvas.getBoundingClientRect(), rto = window.devicePixelRatio || 1; const cur = signatureBlank ? null : canvas.toDataURL(); canvas.width = r.width * rto; canvas.height = r.height * rto; ctx.setTransform(rto,0,0,rto,0,0); ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#000'; if(cur){ const img = new Image(); img.onload = ()=>ctx.drawImage(img,0,0,r.width,r.height); img.src = cur; } }
+    function getPos(e) { const r = canvas.getBoundingClientRect(); return e.touches ? {x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top} : {x: e.clientX - r.left, y: e.clientY - r.top}; }
+    function startDraw(e) { e.preventDefault(); const p = getPos(e); drawing = true; lastX = p.x; lastY = p.y; }
+    function draw(e) { if(!drawing) return; e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; }
+    function endDraw(e) { drawing = false; }
+    function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); signatureBlank = true; }
+  </script>
+</body>
+</html>
