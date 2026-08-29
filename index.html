@@ -41,11 +41,11 @@
     .badge-done { background: #e6f4ea; color: #137333; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
     .badge-yet { background: #fce8e6; color: #c5221f; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
     .landing-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin: 30px 0 10px; }
-    .landing-card { padding: 24px; border-radius: 12px; }
+    .landing-card { padding: 22px 20px; border-radius: 12px; }
     .card-teacher { background: #f8f9fa; border: 1px solid #e9ecef; }
     .card-admin { background: #eef2fa; border: 1px solid #d3e3fd; }
-    .landing-card h3 { margin-top: 0; font-size: 20px; margin-bottom: 14px; font-weight: 800; }
-    .landing-card p { font-size: 15px; color: #333; line-height: 1.8; margin: 0; }
+    .landing-card h3 { margin-top: 0; font-size: 19px; margin-bottom: 14px; font-weight: 800; }
+    .landing-card p { font-size: 14.5px; color: #333; line-height: 1.8; margin: 0; letter-spacing: -0.5px; word-break: keep-all; }
     h1 { margin: 0; text-align: center; font-size: 28px; }
     .subtitle { margin-top: 8px; text-align: center; color: #555; font-size: 13px; font-weight: bold; }
     .warning-text { color: #d00; font-size: 15px; font-weight: bold; text-align: center; margin-top: 15px; }
@@ -215,7 +215,7 @@
 
   <!-- [1. 랜딩 메인 안내 화면] -->
   <div id="landingArea" style="text-align:center; padding: 35px 15px;">
-    <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 950;">교원 업무분장 희망원 작성 시스템</h2>
+    <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 800;">교원 업무분장 희망원 작성 시스템</h2>
     <p style="color: #444; font-size: 17px; margin-bottom: 30px; line-height: 1.6;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
     <div class="landing-card-grid">
       <div class="landing-card card-teacher">
@@ -405,7 +405,6 @@
     </div>
 
     <div class="tables-container">
-      <!-- 1. 기본 인적사항 -->
       <table class="p-table">
         <colgroup><col width="12%"><col width="21%"><col width="12%"><col width="21%"><col width="12%"><col width="22%"></colgroup>
         <tr><th>성명</th><td id="p_name"></td><th>과목</th><td id="p_subject"></td><th>생년월일</th><td id="p_birth"></td></tr>
@@ -413,14 +412,12 @@
         <tr><th>휴대전화</th><td colspan="2" id="p_phone"></td><th>비상연락처</th><td id="p_emRel"></td><td id="p_emPhone"></td></tr>
       </table>
 
-      <!-- 2. 교원 자격 및 전입 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="34%"><col width="18%"><col width="32%"></colgroup>
         <tr><th>교원자격(전공)</th><td id="p_certMaj"></td><th id="p_lblTr">전입일</th><td id="p_transfer"></td></tr>
         <tr><th>교원자격(부전공)</th><td id="p_certMin"></td><th id="p_lblPrev">이전 근무학교</th><td id="p_prevSch"></td></tr>
       </table>
 
-      <!-- 3. 교육경력 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="17%"><col width="16%"><col width="17%"><col width="16%"><col width="18%"></colgroup>
         <tr>
@@ -430,21 +427,18 @@
         </tr>
       </table>
 
-      <!-- 4. 연도별 세부업무 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="28%"><col width="28%"><col width="28%"></colgroup>
         <tr><th rowspan="2">연도별 세부업무<br><span style="font-size:10px; font-weight:normal;">(최근 3년)</span></th><th id="p_lblY1"></th><th id="p_lblY2"></th><th id="p_lblY3"></th></tr>
         <tr><td id="p_c1" class="c-row-duty"></td><td id="p_c2" class="c-row-duty"></td><td id="p_c3" class="c-row-duty"></td></tr>
       </table>
 
-      <!-- 5. 담임 및 부장 경력 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="34%"><col width="16%"><col width="34%"></colgroup>
         <tr><th>부장교사 총경력</th><td id="p_chiefYrs"></td><th>담임교사 총경력</th><td id="p_totalHmrm"></td></tr>
         <tr><th>중학교 담임경력</th><td id="p_midHmrm"></td><th>고등학교 담임경력</th><td id="p_highHmrm"></td></tr>
       </table>
 
-      <!-- 6. 희망 업무 분장 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="14%"><col width="23%"><col width="24%"><col width="23%"></colgroup>
         <tr><th colspan="2" id="p_hopeTitle">희망 업무 분장</th><th>1희망</th><th>2희망</th><th>3희망</th></tr>
@@ -453,7 +447,6 @@
         <tr><th colspan="2">업무희망(비담임)</th><td id="p_w1"></td><td id="p_w2"></td><td id="p_w3"></td></tr>
       </table>
 
-      <!-- 7. 기타사항 및 고려사항 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="15%"><col width="34%"><col width="15%"><col width="20%"></colgroup>
         <tr><th>기타사항</th><th id="p_lblL1"></th><td id="p_l27"></td><th id="p_lblL2"></th><td id="p_l26"></td></tr>
