@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <script>
-    // 🌟 1단계에서 얻은 구글 앱스 스크립트 배포 URL을 아래 큰따옴표 안에 넣어주세요!
+    // 🌟 본인의 구글 앱스 스크립트 웹 앱 URL을 입력하세요.
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyk6eVjYxVBPc_2RdcFTVkYZ--1_ngYJh1Oz-iQVdd1ohMR4vFW15ccgS6gl__89h0z/exec";
   </script>
   <base target="_top">
@@ -48,50 +48,141 @@
     .landing-card p { font-size: 14px; color: #555; line-height: 1.6; margin: 0; }
     h1 { margin: 0; text-align: center; font-size: 28px; }
     .subtitle { margin-top: 8px; text-align: center; color: #555; font-size: 13px; font-weight: bold; }
-    .warning-text { color: #d00; font-size: 16px; font-weight: bold; text-align: center; margin-top: 15px; }
-    .section { margin-top: 28px; border: 1px solid #d8deea; border-radius: 10px; overflow: hidden; }
-    .section-title { padding: 12px 16px; background: #d9e2f3; font-weight: 700; font-size: 17px; border-bottom: 1px solid #c7d2e7; }
-    .section-body { padding: 18px; }
-    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+    .warning-text { color: #d00; font-size: 15px; font-weight: bold; text-align: center; margin-top: 15px; }
+    .section { margin-top: 24px; border: 1px solid #d8deea; border-radius: 10px; overflow: hidden; }
+    .section-title { padding: 10px 16px; background: #d9e2f3; font-weight: 700; font-size: 16px; border-bottom: 1px solid #c7d2e7; }
+    .section-body { padding: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
     .field { display: flex; flex-direction: column; gap: 6px; }
     .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-12 { grid-column: span 12; }
-    label { font-size: 14px; font-weight: 600; }
+    label { font-size: 13px; font-weight: 600; }
     .required::after { content: " *"; color: #d93025; }
-    input[type="text"], input[type="date"], input[type="tel"], select, textarea { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid #ccd3df; border-radius: 7px; font-size: 14px; }
-    textarea { resize: vertical; line-height: 1.5; }
+    input[type="text"], input[type="date"], input[type="tel"], select, textarea { width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; }
+    textarea { resize: vertical; line-height: 1.4; }
     input:readonly { background-color: #f1f3f4; font-weight: bold; color: #1a73e8; }
-    .radio-row { display: flex; gap: 24px; margin-top: 12px; align-items: center; }
+    .radio-row { display: flex; gap: 24px; margin-top: 8px; align-items: center; }
     .radio-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .signature-pad { width: 360px; max-width: 100%; height: 150px; border: 2px solid #333; border-radius: 8px; touch-action: none; background: #fff;}
-    .button-row { display: flex; gap: 10px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
-    button { border: none; border-radius: 8px; padding: 12px 20px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .signature-pad { width: 360px; max-width: 100%; height: 140px; border: 2px solid #333; border-radius: 8px; touch-action: none; background: #fff;}
+    .button-row { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    button { border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 700; cursor: pointer; }
     .btn-primary { background: #1a73e8; color: white; } .btn-secondary { background: #e9edf5; color: #222; }
     .btn-outline { background: #fff; border: 1px solid #ccc; }
     button:disabled { opacity: 0.55; cursor: not-allowed; }
-    .msg-box { display: none; margin-top: 24px; padding: 16px; border-radius: 8px; text-align: center; }
+    .msg-box { display: none; margin-top: 20px; padding: 14px; border-radius: 8px; text-align: center; }
     .success { background: #e6f4ea; border: 1px solid #81c995; color: #137333; }
     .conditional { display: none; } .flex-row { display: flex; gap: 10px; }
     @media (max-width: 720px) { .admin-grid, .landing-card-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(1, 1fr); } .col-3,.col-4,.col-6,.col-12 { grid-column: span 1; } }
+    
+    /* 🖨️ A4 1페이지 출력 전용 스타일 (완벽 피팅) */
     #printArea { display: none; } 
     @page { size: A4 portrait; margin: 0; }
     @media print {
-      body { background: #fff; padding: 15mm 20mm; margin: 0; color: #000; font-family: "Malgun Gothic", sans-serif; }
+      html, body {
+        width: 210mm;
+        height: 297mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #fff;
+        font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
+        color: #000;
+      }
       .top-nav, #inputFormArea, #dashboardArea, #landingArea { display: none !important; }
-      #printArea { display: flex !important; flex-direction: column; height: 98vh; justify-content: space-between; }
-      .p-header-wrap { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
-      .p-header-wrap h1 { margin: 0; font-size: 26px; letter-spacing: -1px; white-space: nowrap; } 
-      .p-info-table { border-collapse: collapse; font-size: 13px; }
-      .p-info-table td { border: 1px solid #000; padding: 5px 10px; text-align: center; }
+      
+      #printArea {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 210mm;
+        height: 297mm;
+        padding: 12mm 15mm 12mm 15mm;
+        box-sizing: border-box;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+      
+      /* 상단 헤더 및 제목 중앙 정렬 */
+      .p-header-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+      }
+      .p-header-title-box {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .p-main-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: bold;
+        letter-spacing: -0.5px;
+        text-align: center;
+      } 
+      .p-info-table { border-collapse: collapse; font-size: 11px; }
+      .p-info-table td { border: 1px solid #000; padding: 4px 8px; text-align: center; }
       .p-info-table .bg { background: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
-      .tables-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; letter-spacing: -0.5px; word-break: keep-all; margin-bottom: 2px; }
-      .p-table th, .p-table td { border: 1px solid #000; padding: 9px 5px; text-align: center; vertical-align: middle; }
-      .p-table th { background-color: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: 600; }
-      .text-left { text-align: left !important; padding-left: 10px !important; }
-      .text-red { color: #d00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; font-size: 14px; text-align: center; margin: 10px 0;}
-      .sign-area { display: flex; justify-content: center; align-items: center; gap: 20px; font-size: 16px; font-weight: bold; margin-top: 15px; }
-      .sign-box { border-bottom: 1px solid #000; width: 100px; text-align: center; font-weight: normal; }
-      .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 25px 0; letter-spacing: 3px; }
+      
+      .tables-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 4px 0;
+      }
+      
+      .p-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 11.5px;
+        letter-spacing: -0.3px;
+        word-break: keep-all;
+      }
+      .p-table th, .p-table td {
+        border: 1px solid #000;
+        padding: 5px 3px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .p-table th {
+        background-color: #d9e2f3 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-weight: bold;
+      }
+      .text-left { text-align: left !important; padding-left: 8px !important; }
+      .text-red {
+        color: #d00 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-weight: bold;
+        font-size: 12px;
+        text-align: center;
+        margin: 6px 0;
+      }
+      
+      .sign-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 6px;
+      }
+      .sign-box { border-bottom: 1px solid #000; width: 90px; text-align: center; font-weight: normal; }
+      .principal { text-align: center; font-size: 20px; font-weight: bold; margin: 12px 0 8px 0; letter-spacing: 2px; }
+      
+      .privacy-box {
+        border-top: 1px solid #000;
+        padding-top: 6px;
+      }
     }
   </style>
 </head>
@@ -213,7 +304,7 @@
         <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" placeholder="없으면 '없음' 입력"></div>
         <div class="field col-4"><label for="middleYears" class="required">중학교 교육경력</label><select id="middleYears"></select></div>
         <div class="field col-4"><label for="highYears" class="required">고등학교 교육경력</label><select id="highYears"></select></div>
-        <div class="field col-4"><label>교육경력 총경력 (자동합산)</label><input type="text" id="totalYears" readonly placeholder="자동 계산됨"></div>
+        <div class="field col-4"><label>교육 총경력 (자동합산)</label><input type="text" id="totalYears" readonly placeholder="자동 계산됨"></div>
       </div></div></div>
 
       <div class="section"><div class="section-title">3. 세부 업무 및 담임 경력</div><div class="section-body"><div class="grid">
@@ -240,9 +331,9 @@
       </div></div></div>
 
       <div class="section"><div class="section-title">5. 기타사항</div><div class="section-body"><div class="grid">
-        <div class="field col-6"><label for="leave2027" id="lblLeave1">내년 휴직 예정 여부</label><select id="leave2027"></select></div>
+        <div class="field col-6"><label for="leave2027" id="lblLeave1">2027년 휴직</label><select id="leave2027"></select></div>
         <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" placeholder="종류(예: 육아)"><input type="text" id="leave2027Period" placeholder="기간(예: 03~02)"></div></div>
-        <div class="field col-6"><label for="leave2026" id="lblLeave2">올해 휴직 여부</label><select id="leave2026"></select></div>
+        <div class="field col-6"><label for="leave2026" id="lblLeave2">2026년 휴직</label><select id="leave2026"></select></div>
         <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" placeholder="종류"><input type="text" id="leave2026Period" placeholder="기간"></div></div>
         <div class="field col-12"><label for="memo">고려사항 및 사유</label><textarea id="memo" rows="4" placeholder="출산, 휴직, 개인 신상 및 담임 불희망 사유 기재"></textarea></div>
       </div></div></div>
@@ -271,41 +362,60 @@
     </form>
   </div>
 
+  <!-- [4. 인쇄 전용 출력 영역 (A4 1페이지 완벽 피팅)] -->
   <div id="printArea">
     <div class="p-header-wrap">
-      <h1 id="p_title">업무분장 희망원</h1>
+      <div style="width: 130px;"></div> <!-- 완벽 중앙 정렬용 여백 -->
+      <div class="p-header-title-box">
+        <h1 id="p_title" class="p-main-title">업무분장 희망원</h1>
+      </div>
       <table class="p-info-table">
-        <tr><td class="bg">학교명</td><td id="p_school" style="width:120px;"></td></tr>
+        <tr><td class="bg">학교명</td><td id="p_school" style="width:100px;"></td></tr>
         <tr><td class="bg">기준일</td><td id="p_baseDate"></td></tr>
       </table>
     </div>
     
     <div class="tables-container">
+      <!-- 1. 기본 인적사항 -->
       <table class="p-table">
         <colgroup><col width="12%"><col width="21%"><col width="12%"><col width="21%"><col width="12%"><col width="22%"></colgroup>
         <tr><th>성명</th><td id="p_name"></td><th>과목</th><td id="p_subject"></td><th>생년월일</th><td id="p_birth"></td></tr>
         <tr><th>주소</th><td colspan="5" class="text-left" id="p_address"></td></tr>
         <tr><th>휴대전화</th><td colspan="2" id="p_phone"></td><th>비상연락처</th><td id="p_emRel"></td><td id="p_emPhone"></td></tr>
       </table>
+
+      <!-- 2. 교원 자격 및 전입 -->
       <table class="p-table">
-        <colgroup><col width="15%"><col width="35%"><col width="15%"><col width="35%"></colgroup>
+        <colgroup><col width="16%"><col width="34%"><col width="18%"><col width="32%"></colgroup>
         <tr><th>교원자격(전공)</th><td id="p_certMaj"></td><th id="p_lblTr">전입일</th><td id="p_transfer"></td></tr>
         <tr><th>교원자격(부전공)</th><td id="p_certMin"></td><th id="p_lblPrev">이전 근무학교</th><td id="p_prevSch"></td></tr>
       </table>
+
+      <!-- 3. 교육경력 (총경력 / 중학교 / 고등학교 독립 분리) -->
       <table class="p-table">
-        <colgroup><col width="20%"><col width="15%"><col width="25%"><col width="15%"><col width="25%"></colgroup>
-        <tr><th>교육경력<br><span style="font-size:10px;">(총 <span id="p_totalYrs"></span>)</span></th><th>중학교</th><td id="p_midYrs"></td><th>고등학교</th><td id="p_highYrs"></td></tr>
+        <colgroup><col width="16%"><col width="17%"><col width="16%"><col width="17%"><col width="16%"><col width="18%"></colgroup>
+        <tr>
+          <th>교육 총경력</th><td id="p_totalYrs" style="font-weight:bold;"></td>
+          <th>중학교 경력</th><td id="p_midYrs"></td>
+          <th>고등학교 경력</th><td id="p_highYrs"></td>
+        </tr>
       </table>
+
+      <!-- 4. 연도별 세부업무 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="28%"><col width="28%"><col width="28%"></colgroup>
-        <tr><th rowspan="2">연도별 세부업무<br>(최근 3년)</th><th id="p_lblY1"></th><th id="p_lblY2"></th><th id="p_lblY3"></th></tr>
+        <tr><th rowspan="2">연도별 세부업무<br><span style="font-size:10px; font-weight:normal;">(최근 3년)</span></th><th id="p_lblY1"></th><th id="p_lblY2"></th><th id="p_lblY3"></th></tr>
         <tr><td id="p_c1"></td><td id="p_c2"></td><td id="p_c3"></td></tr>
       </table>
+
+      <!-- 5. 담임 및 부장 경력 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="34%"><col width="16%"><col width="34%"></colgroup>
         <tr><th>부장교사 총경력</th><td id="p_chiefYrs"></td><th>담임교사 총경력</th><td id="p_totalHmrm"></td></tr>
         <tr><th>중학교 담임경력</th><td id="p_midHmrm"></td><th>고등학교 담임경력</th><td id="p_highHmrm"></td></tr>
       </table>
+
+      <!-- 6. 희망 업무 분장 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="14%"><col width="23%"><col width="24%"><col width="23%"></colgroup>
         <tr><th colspan="2" id="p_hopeTitle">희망 업무 분장</th><th>1순위</th><th>2순위</th><th>3순위</th></tr>
@@ -313,29 +423,36 @@
         <tr><th colspan="2">담임교사 희망</th><td id="p_hm1"></td><td id="p_hm2"></td><td id="p_hm3"></td></tr>
         <tr><th colspan="2">업무희망(비담임)</th><td id="p_w1"></td><td id="p_w2"></td><td id="p_w3"></td></tr>
       </table>
+
+      <!-- 7. 기타사항 및 고려사항 -->
       <table class="p-table">
-        <colgroup><col width="16%"><col width="14%"><col width="35%"><col width="14%"><col width="21%"></colgroup>
+        <colgroup><col width="16%"><col width="15%"><col width="34%"><col width="15%"><col width="20%"></colgroup>
         <tr><th>기타사항</th><th id="p_lblL1"></th><td id="p_l27"></td><th id="p_lblL2"></th><td id="p_l26"></td></tr>
-        <tr><th>고려사항 및 사유</th><td colspan="4" class="text-left" id="p_memo" style="height:80px; vertical-align:top;"></td></tr>
+        <tr><th>고려사항 및 사유</th><td colspan="4" class="text-left" id="p_memo" style="height:65px; vertical-align:top;"></td></tr>
       </table>
     </div>
     
     <div class="text-red">업무분장 희망원은 학교 상황에 따라 본인이 원하는 대로 되지 않을 수 있음을 양해 바랍니다.</div>
+    
     <div class="sign-area">
       <div id="p_date"></div><span>성명</span><div class="sign-box" id="p_signName"></div><span>(서명)</span>
-      <div style="position:relative; width:90px; height:35px; border-bottom:1px solid #000;">
+      <div style="position:relative; width:80px; height:30px; border-bottom:1px solid #000;">
         <img id="p_signImg" style="width:100%; height:100%; object-fit:contain; display:none;" src="">
       </div>
     </div>
+    
     <div class="principal" id="p_principal">학교장 귀하</div>
     
-    <div style="font-weight:bold; font-size:13px; margin-bottom:5px;">□ 개인정보 수집·이용 동의</div>
-    <table class="p-table" style="margin-bottom:5px;">
-      <tr><th>항목</th><th>수집목적</th><th>보유기간</th></tr>
-      <tr><td>성명, 과목, 주소, 연락처 등 기재 항목 전체</td><td>업무분장 기초자료</td><td>1년</td></tr>
-    </table>
-    <div style="text-align:center; font-weight:bold; font-size:14px; margin-top:10px;">
-      개인정보 수집·이용 동의 &nbsp;&nbsp; [<span id="p_aYes" style="display:inline-block;width:15px;text-align:center;"></span>] 예 &nbsp;&nbsp; [<span id="p_aNo" style="display:inline-block;width:15px;text-align:center;"></span>] 아니요
+    <!-- 개인정보 수집 동의 하단 배치 -->
+    <div class="privacy-box">
+      <div style="font-weight:bold; font-size:11.5px; margin-bottom:3px;">□ 개인정보 수집·이용 동의</div>
+      <table class="p-table">
+        <tr><th>항목</th><th>수집목적</th><th>보유기간</th></tr>
+        <tr><td>성명, 과목, 주소, 연락처 등 기재 항목 전체</td><td>업무분장 기초자료</td><td>1년</td></tr>
+      </table>
+      <div style="text-align:center; font-weight:bold; font-size:12px; margin-top:5px;">
+        개인정보 수집·이용 동의 &nbsp;&nbsp;&nbsp;&nbsp; [<span id="p_aYes" style="display:inline-block;width:15px;text-align:center;"></span>] 예 &nbsp;&nbsp;&nbsp;&nbsp; [<span id="p_aNo" style="display:inline-block;width:15px;text-align:center;"></span>] 아니요
+      </div>
     </div>
   </div>
 
@@ -345,7 +462,6 @@
     const ctx = canvas.getContext('2d');
     let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
 
-    // API 통신 공통 함수
     async function apiCall(action, payload = {}) {
       try {
         const response = await fetch(GAS_API_URL, {
@@ -366,7 +482,6 @@
 
     window.onload = async () => {
       initDropdowns(); resizeCanvas(); bindEvents();
-      
       const schoolParam = getQueryParam('school');
 
       if(schoolParam) {
@@ -543,9 +658,10 @@
     function applyInitialData(data) {
       sysConfig = data.config; const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('uiTitle').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('uiSchoolName').textContent = sc;
-      document.getElementById('lblTransferDate').textContent = sc + ' 전입일'; document.getElementById('lblPrevSchool').textContent = sc + ' 이전 근무학교';
+      document.getElementById('lblTransferDate').textContent = sc + ' 전입일'; 
+      document.getElementById('lblPrevSchool').textContent = sc + ' 이전 근무학교';
       document.getElementById('lblYear1').textContent = (yr-1) + '년 업무'; document.getElementById('lblYear2').textContent = (yr-2) + '년 업무'; document.getElementById('lblYear3').textContent = (yr-3) + '년 업무';
-      document.getElementById('lblLeave1').textContent = yr + '년 휴직 예정'; document.getElementById('lblLeave2').textContent = (yr-1) + '년 휴직 여부';
+      document.getElementById('lblLeave1').textContent = yr + '년 휴직'; document.getElementById('lblLeave2').textContent = (yr-1) + '년 휴직';
       fillSelect('chiefHope1', data.options.chiefPositions); fillSelect('chiefHope2', data.options.chiefPositions); fillSelect('chiefHope3', data.options.chiefPositions);
       fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
     }
@@ -570,33 +686,43 @@
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
     }
 
+    /* 🖨️ 인쇄용 데이터 연결 */
     function preparePrint() {
       const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
-      document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
+      document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; 
+      document.getElementById('p_school').textContent = sc;
       const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
-      document.getElementById('p_lblTr').textContent = sc + '\n전입일'; document.getElementById('p_lblPrev').textContent = '이전\n근무학교';
+      
+      document.getElementById('p_lblTr').textContent = sc + ' 전입일'; 
+      document.getElementById('p_lblPrev').textContent = sc + ' 이전 근무학교';
       document.getElementById('p_lblY1').textContent = (yr-1) + '년'; document.getElementById('p_lblY2').textContent = (yr-2) + '년'; document.getElementById('p_lblY3').textContent = (yr-3) + '년';
       document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무';
-      document.getElementById('p_lblL1').textContent = yr.toString().slice(-2) + '휴직'; document.getElementById('p_lblL2').textContent = (yr-1).toString().slice(-2) + '휴직';
+      document.getElementById('p_lblL1').textContent = yr + '년 휴직'; 
+      document.getElementById('p_lblL2').textContent = (yr-1) + '년 휴직';
       document.getElementById('p_principal').textContent = sc + '장 귀하';
+      
       document.getElementById('p_name').textContent = d.name; document.getElementById('p_subject').textContent = d.subject; document.getElementById('p_birth').textContent = d.birth;
       document.getElementById('p_address').textContent = d.address; document.getElementById('p_phone').textContent = d.phone; document.getElementById('p_emRel').textContent = d.emergencyRelation; document.getElementById('p_emPhone').textContent = d.emergencyPhone;
       document.getElementById('p_certMaj').textContent = (d.certificateMajorGrade?`[${d.certificateMajorGrade}] `:'') + d.certificateMajor; document.getElementById('p_transfer').textContent = d.transferDate;
       document.getElementById('p_certMin').textContent = (d.certificateMinorGrade?`[${d.certificateMinorGrade}] `:'') + d.certificateMinor; document.getElementById('p_prevSch').textContent = d.previousSchool;
+      
       document.getElementById('p_totalYrs').textContent = d.totalYears; document.getElementById('p_midYrs').textContent = d.middleYears; document.getElementById('p_highYrs').textContent = d.highYears;
       document.getElementById('p_c1').textContent = d.career2026; document.getElementById('p_c2').textContent = d.career2025; document.getElementById('p_c3').textContent = d.career2024;
       document.getElementById('p_chiefYrs').textContent = d.chiefCareerYears; document.getElementById('p_totalHmrm').textContent = d.totalHomeroomYears; document.getElementById('p_midHmrm').textContent = d.middleHomeroomCareer; document.getElementById('p_highHmrm').textContent = d.highHomeroomCareer;
       document.getElementById('p_chiefHope').textContent = d.chiefHopeYn; document.getElementById('p_ch1').textContent = d.chiefHope1; document.getElementById('p_ch2').textContent = d.chiefHope2; document.getElementById('p_ch3').textContent = d.chiefHope3;
       document.getElementById('p_hm1').textContent = d.homeroomGrade1; document.getElementById('p_hm2').textContent = d.homeroomGrade2; document.getElementById('p_hm3').textContent = d.homeroomGrade3;
       document.getElementById('p_w1').textContent = d.workDept1; document.getElementById('p_w2').textContent = d.workDept2; document.getElementById('p_w3').textContent = d.workDept3;
+      
       const l27 = [d.leave2027Type, d.leave2027Period].filter(Boolean).join(', '); document.getElementById('p_l27').textContent = (d.leave2027 === '예' && l27) ? `예 (${l27})` : d.leave2027;
       const l26 = [d.leave2026Type, d.leave2026Period].filter(Boolean).join(', '); document.getElementById('p_l26').textContent = (d.leave2026 === '예' && l26) ? `예 (${l26})` : d.leave2026;
       document.getElementById('p_memo').innerHTML = d.memo.replace(/\n/g, '<br>');
-      const t = new Date(); document.getElementById('p_date').innerHTML = `${t.getFullYear()} 년 &nbsp;&nbsp; ${t.getMonth()+1} 월 &nbsp;&nbsp; ${t.getDate()} 일`;
+      
+      const t = new Date(); document.getElementById('p_date').innerHTML = `${t.getFullYear()}년 &nbsp; ${t.getMonth()+1}월 &nbsp; ${t.getDate()}일`;
       document.getElementById('p_signName').textContent = d.name;
       const sImg = document.getElementById('p_signImg');
       if (d.signatureBlank) { sImg.style.display = 'none'; } else { sImg.style.display = 'block'; sImg.src = d.signature; }
       document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
+      
       window.print();
     }
 
@@ -607,12 +733,16 @@
       const yr = sysConfig.DOCUMENT_YEAR || ''; const sc = sysConfig.SCHOOL_NAME || '';
       document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
       const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
-      document.getElementById('p_lblTr').textContent = sc + '\n전입일'; document.getElementById('p_lblPrev').textContent = '이전\n근무학교';
+      
+      document.getElementById('p_lblTr').textContent = sc + ' 전입일'; 
+      document.getElementById('p_lblPrev').textContent = sc + ' 이전 근무학교';
       document.getElementById('p_lblY1').textContent = (yr-1) + '년'; document.getElementById('p_lblY2').textContent = (yr-2) + '년'; document.getElementById('p_lblY3').textContent = (yr-3) + '년';
       document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무';
-      document.getElementById('p_lblL1').textContent = yr.toString().slice(-2) + '휴직'; document.getElementById('p_lblL2').textContent = (yr-1).toString().slice(-2) + '휴직';
+      document.getElementById('p_lblL1').textContent = yr + '년 휴직'; 
+      document.getElementById('p_lblL2').textContent = (yr-1) + '년 휴직';
       document.getElementById('p_principal').textContent = sc + '장 귀하';
-      document.getElementById('p_date').innerHTML = `${yr} 년 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 일`;
+      document.getElementById('p_date').innerHTML = `${yr}년 &nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp; 일`;
+      
       window.print();
     }
 
