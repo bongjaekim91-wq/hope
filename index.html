@@ -41,11 +41,11 @@
     .badge-done { background: #e6f4ea; color: #137333; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
     .badge-yet { background: #fce8e6; color: #c5221f; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
     .landing-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin: 30px 0 10px; }
-    .landing-card { padding: 22px; border-radius: 12px; }
+    .landing-card { padding: 24px; border-radius: 12px; }
     .card-teacher { background: #f8f9fa; border: 1px solid #e9ecef; }
     .card-admin { background: #eef2fa; border: 1px solid #d3e3fd; }
-    .landing-card h3 { margin-top: 0; font-size: 18px; margin-bottom: 12px; }
-    .landing-card p { font-size: 15px; color: #444; line-height: 1.7; margin: 0; }
+    .landing-card h3 { margin-top: 0; font-size: 20px; margin-bottom: 14px; font-weight: 800; }
+    .landing-card p { font-size: 15px; color: #333; line-height: 1.8; margin: 0; }
     h1 { margin: 0; text-align: center; font-size: 28px; }
     .subtitle { margin-top: 8px; text-align: center; color: #555; font-size: 13px; font-weight: bold; }
     .warning-text { color: #d00; font-size: 15px; font-weight: bold; text-align: center; margin-top: 15px; }
@@ -165,7 +165,6 @@
         print-color-adjust: exact;
         font-weight: bold;
       }
-      /* 세부업무 등 칸 높이 확대 */
       .c-row-duty {
         height: 28px;
       }
@@ -214,23 +213,25 @@
     </div>
   </div>
 
-  <!-- [1. 랜딩 메인 안내 화면 (글자 크기 확대 & 그림 삭제)] -->
+  <!-- [1. 랜딩 메인 안내 화면] -->
   <div id="landingArea" style="text-align:center; padding: 35px 15px;">
     <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 800;">교원 업무분장 희망원 작성 시스템</h2>
     <p style="color: #444; font-size: 17px; margin-bottom: 30px; line-height: 1.6;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
     <div class="landing-card-grid">
       <div class="landing-card card-teacher">
-        <h3 style="color: #137333; font-size: 20px;">👩‍🏫 희망원을 작성하시는 선생님</h3>
+        <h3 style="color: #137333;">업무희망원을 작성하시는 선생님</h3>
         <p>
           현재 접속하신 주소는 <b>시스템 대표 주소</b>입니다.<br><br>
-          희망원을 작성하시려면 학교 담당자로부터 안내받으신 <b>[우리 학교 전용 접속 링크]</b>로 접속하셔야 작성 양식이 표시됩니다.
+          희망원을 작성하시려면 학교 담당자로부터 안내받으신<br>
+          <b>[우리학교 전용 접속 링크]</b>로 접속하셔야 작성 양식이 표시됩니다.
         </p>
       </div>
       <div class="landing-card card-admin">
-        <h3 style="color: #1a73e8; font-size: 20px;">⚙️ 학교 관리자(담당자) 안내</h3>
+        <h3 style="color: #1a73e8;">학교 관리자(담당자) 안내</h3>
         <p>
-          우측 상단 <b>[⚙️ 학교 관리자 설정]</b> 버튼을 클릭하여 로그인하세요.<br><br>
-          로그인 후 <b>교원 명단 등록</b> 및 <b>우리 학교 전용 단축 주소</b>를 복사하여 선생님들께 배부하실 수 있습니다.
+          우측상단 <b>[학교관리자 설정]</b> 버튼을 클릭하여 로그인 하세요.<br><br>
+          로그인 후 교원 명단 등록 및 우리학교 전용 단축 주소를<br>
+          복사하여 선생님들께 배부하실 수 있습니다.
         </p>
       </div>
     </div>
@@ -390,7 +391,7 @@
     </form>
   </div>
 
-  <!-- [4. 인쇄 전용 출력 영역 (A4 1페이지 완벽 피팅 & 양식 수정 반영)] -->
+  <!-- [4. 인쇄 전용 출력 영역 (A4 1페이지 완벽 피팅)] -->
   <div id="printArea">
     <div class="p-header-wrap">
       <div style="width: 130px;"></div>
@@ -429,7 +430,7 @@
         </tr>
       </table>
 
-      <!-- 4. 연도별 세부업무 (높이 균형 확대) -->
+      <!-- 4. 연도별 세부업무 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="28%"><col width="28%"><col width="28%"></colgroup>
         <tr><th rowspan="2">연도별 세부업무<br><span style="font-size:10px; font-weight:normal;">(최근 3년)</span></th><th id="p_lblY1"></th><th id="p_lblY2"></th><th id="p_lblY3"></th></tr>
@@ -443,7 +444,7 @@
         <tr><th>중학교 담임경력</th><td id="p_midHmrm"></td><th>고등학교 담임경력</th><td id="p_highHmrm"></td></tr>
       </table>
 
-      <!-- 6. 희망 업무 분장 (1희망, 2희망, 3희망으로 변경) -->
+      <!-- 6. 희망 업무 분장 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="14%"><col width="23%"><col width="24%"><col width="23%"></colgroup>
         <tr><th colspan="2" id="p_hopeTitle">희망 업무 분장</th><th>1희망</th><th>2희망</th><th>3희망</th></tr>
@@ -452,7 +453,7 @@
         <tr><th colspan="2">업무희망(비담임)</th><td id="p_w1"></td><td id="p_w2"></td><td id="p_w3"></td></tr>
       </table>
 
-      <!-- 7. 기타사항 및 고려사항 (휴직 예정/경험 적용) -->
+      <!-- 7. 기타사항 및 고려사항 -->
       <table class="p-table">
         <colgroup><col width="16%"><col width="15%"><col width="34%"><col width="15%"><col width="20%"></colgroup>
         <tr><th>기타사항</th><th id="p_lblL1"></th><td id="p_l27"></td><th id="p_lblL2"></th><td id="p_l26"></td></tr>
