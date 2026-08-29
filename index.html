@@ -60,33 +60,28 @@
     input[type="text"], input[type="date"], input[type="tel"], select, textarea { width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; }
     textarea { resize: vertical; line-height: 1.4; }
     input:readonly { background-color: #f1f3f4; font-weight: bold; color: #1a73e8; }
-    
     .input-error {
       border: 2px solid #d93025 !important;
       background-color: #fce8e6 !important;
       outline: none;
     }
-
     .date-input-group { display: flex; align-items: center; gap: 4px; }
     .date-input-group input.date-y { flex: 1.5; text-align: center; }
     .date-input-group input.date-m, .date-input-group input.date-d { flex: 1; text-align: center; }
     .date-input-group span { font-weight: bold; color: #777; }
-
     .radio-row { display: flex; gap: 24px; margin-top: 8px; align-items: center; padding: 6px; border-radius: 6px; }
     .radio-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    
     /* ✍️ 서명 영역 터치 동작 개선 */
-    .signature-pad { 
-      width: 360px; 
-      max-width: 100%; 
-      height: 140px; 
-      border: 2px solid #333; 
-      border-radius: 8px; 
-      touch-action: none; 
+    .signature-pad {
+      width: 360px;
+      max-width: 100%;
+      height: 140px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      touch-action: none;
       background: #fff;
       cursor: crosshair;
     }
-
     .button-row { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
     button { border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 700; cursor: pointer; }
     .btn-primary { background: #1a73e8; color: white; } .btn-secondary { background: #e9edf5; color: #222; }
@@ -161,7 +156,7 @@
         table-layout: fixed;
         font-size: 11.5px;
         letter-spacing: -0.3px;
-        word-break: keep-all;
+        word-break: break-all;
       }
       .p-table th, .p-table td {
         border: 1px solid #000;
@@ -207,17 +202,18 @@
   </style>
 </head>
 <body>
+
   <div class="top-nav" id="topNav">
-    <button class="btn-admin-toggle" onclick="document.getElementById('loginModal').style.display='flex'">⚙️ 학교 관리자 설정</button>
+    <button class="btn-admin-toggle" onclick="openLoginModal()">⚙️ 학교 관리자 설정</button>
   </div>
-  
+
   <div class="modal-overlay" id="loginModal">
     <div class="modal-content">
       <h3>학교 관리자 접속</h3>
       <input type="text" id="l_id" placeholder="관리자 ID">
       <input type="password" id="l_pw" placeholder="비밀번호">
       <div class="modal-btns">
-        <button class="btn-close" onclick="document.getElementById('loginModal').style.display='none'">취소</button>
+        <button class="btn-close" onclick="closeLoginModal()">취소</button>
         <button class="btn-primary" id="modalLoginBtn" onclick="loginAdmin()">접속</button>
       </div>
     </div>
@@ -303,7 +299,6 @@
       <div class="section"><div class="section-title">1. 기본 인적사항</div><div class="section-body"><div class="grid">
         <div class="field col-4"><label for="name" class="required">성명</label><input type="text" id="name"></div>
         <div class="field col-4"><label for="subject" class="required">과목</label><input type="text" id="subject"></div>
-        
         <div class="field col-4">
           <label class="required">생년월일</label>
           <div class="date-input-group" data-target="birth">
@@ -315,7 +310,6 @@
             <input type="hidden" id="birth">
           </div>
         </div>
-
         <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address"></div>
         <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000" maxlength="13"></div>
         <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
@@ -324,7 +318,6 @@
 
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex:1"></div></div>
-        
         <div class="field col-6">
           <label class="required" id="lblTransferDate">전입일</label>
           <div class="date-input-group" data-target="transferDate">
@@ -336,7 +329,6 @@
             <input type="hidden" id="transferDate">
           </div>
         </div>
-
         <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex:1"></div></div>
         <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" placeholder="없으면 '없음' 입력"></div>
         <div class="field col-4"><label for="middleYears" class="required">중학교 교육경력</label><select id="middleYears"></select></div>
@@ -376,7 +368,7 @@
       </div></div></div>
 
       <div class="section"><div class="section-title">6. 개인정보 수집·이용 동의</div><div class="section-body">
-        <div class="hint">수집항목: 희망원 내 기재 항목 전체 / 목적: 업무분장 기초자료 / 보유기간: 1년</div>
+        <div style="font-size:12px; color:#666; margin-bottom:8px;">수집항목: 희망원 내 기재 항목 전체 / 목적: 업무분장 기초자료 / 보유기간: 1년</div>
         <div class="radio-row" id="privacyAgreeRow">
           <label><input type="radio" name="privacyAgree" value="yes"> 예, 동의합니다.</label>
           <label><input type="radio" name="privacyAgree" value="no"> 아니요</label>
@@ -411,7 +403,6 @@
         <tr><td class="bg">기준일</td><td id="p_baseDate"></td></tr>
       </table>
     </div>
-
     <div class="tables-container">
       <table class="p-table">
         <colgroup><col width="12%"><col width="21%"><col width="12%"><col width="21%"><col width="12%"><col width="22%"></colgroup>
@@ -419,13 +410,11 @@
         <tr><th>주소</th><td colspan="5" class="text-left" id="p_address"></td></tr>
         <tr><th>휴대전화</th><td colspan="2" id="p_phone"></td><th>비상연락처</th><td id="p_emRel"></td><td id="p_emPhone"></td></tr>
       </table>
-
       <table class="p-table">
         <colgroup><col width="16%"><col width="34%"><col width="18%"><col width="32%"></colgroup>
         <tr><th>교원자격(전공)</th><td id="p_certMaj"></td><th id="p_lblTr">전입일</th><td id="p_transfer"></td></tr>
         <tr><th>교원자격(부전공)</th><td id="p_certMin"></td><th id="p_lblPrev">이전 근무학교</th><td id="p_prevSch"></td></tr>
       </table>
-
       <table class="p-table">
         <colgroup><col width="16%"><col width="17%"><col width="16%"><col width="17%"><col width="16%"><col width="18%"></colgroup>
         <tr>
@@ -434,19 +423,16 @@
           <th>고등학교 경력</th><td id="p_highYrs"></td>
         </tr>
       </table>
-
       <table class="p-table">
         <colgroup><col width="16%"><col width="28%"><col width="28%"><col width="28%"></colgroup>
         <tr><th rowspan="2">연도별 세부업무<br><span style="font-size:10px; font-weight:normal;">(최근 3년)</span></th><th id="p_lblY1"></th><th id="p_lblY2"></th><th id="p_lblY3"></th></tr>
         <tr><td id="p_c1" class="c-row-duty"></td><td id="p_c2" class="c-row-duty"></td><td id="p_c3" class="c-row-duty"></td></tr>
       </table>
-
       <table class="p-table">
         <colgroup><col width="16%"><col width="34%"><col width="16%"><col width="34%"></colgroup>
         <tr><th>부장교사 총경력</th><td id="p_chiefYrs"></td><th>담임교사 총경력</th><td id="p_totalHmrm"></td></tr>
         <tr><th>중학교 담임경력</th><td id="p_midHmrm"></td><th>고등학교 담임경력</th><td id="p_highHmrm"></td></tr>
       </table>
-
       <table class="p-table">
         <colgroup><col width="16%"><col width="14%"><col width="23%"><col width="24%"><col width="23%"></colgroup>
         <tr><th colspan="2" id="p_hopeTitle">희망 업무 분장</th><th>1희망</th><th>2희망</th><th>3희망</th></tr>
@@ -454,25 +440,20 @@
         <tr><th colspan="2">담임교사 희망</th><td id="p_hm1"></td><td id="p_hm2"></td><td id="p_hm3"></td></tr>
         <tr><th colspan="2">업무희망(비담임)</th><td id="p_w1"></td><td id="p_w2"></td><td id="p_w3"></td></tr>
       </table>
-
       <table class="p-table">
         <colgroup><col width="16%"><col width="15%"><col width="34%"><col width="15%"><col width="20%"></colgroup>
         <tr><th>기타사항</th><th id="p_lblL1"></th><td id="p_l27"></td><th id="p_lblL2"></th><td id="p_l26"></td></tr>
         <tr><th>고려사항 및 사유</th><td colspan="4" class="text-left" id="p_memo" style="height:60px; vertical-align:top;"></td></tr>
       </table>
     </div>
-
     <div class="text-red">업무분장 희망원은 학교 상황에 따라 본인이 원하는 대로 되지 않을 수 있음을 양해 바랍니다.</div>
-
     <div class="sign-area">
       <div id="p_date"></div><span>성명</span><div class="sign-box" id="p_signName"></div><span>(서명)</span>
       <div style="position:relative; width:80px; height:30px; border-bottom:1px solid #000;">
         <img id="p_signImg" style="width:100%; height:100%; object-fit:contain; display:none;" src="">
       </div>
     </div>
-
     <div class="principal" id="p_principal">학교장 귀하</div>
-
     <div class="privacy-box">
       <div style="font-weight:bold; font-size:11.5px; margin-bottom:3px;">□ 개인정보 수집·이용 동의</div>
       <table class="p-table">
@@ -510,7 +491,7 @@
     }
 
     window.onload = async () => {
-      initDropdowns(); initDateInputs(); resizeCanvas(); bindEvents();
+      initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
       if(schoolParam) {
         const res = await apiCall('getInitialData', { school: schoolParam });
@@ -521,7 +502,7 @@
           applyInitialData(res);
           document.getElementById('landingArea').style.display = 'none';
           document.getElementById('inputFormArea').style.display = 'block';
-          setTimeout(resizeCanvas, 300); // 폼 영역이 노출된 후 canvas 크기 재설정
+          setTimeout(resizeCanvas, 300); // 폼 영역 노출 후 canvas 크기 재설정
         }
       } else {
         document.getElementById('landingArea').style.display = 'block';
@@ -551,11 +532,11 @@
         const m = group.querySelector('.date-m');
         const d = group.querySelector('.date-d');
         const hidden = group.querySelector('input[type="hidden"]');
-
+        
         function updateHidden() {
           const yV = y.value.trim();
-          const mV = m.value.trim().padStart(m.value.trim()?2:0, '0');
-          const dV = d.value.trim().padStart(d.value.trim()?2:0, '0');
+          const mV = m.value.trim().padStart(m.value.trim() ? 2 : 0, '0');
+          const dV = d.value.trim().padStart(d.value.trim() ? 2 : 0, '0');
           hidden.value = (yV && mV && dV) ? `${yV}-${mV}-${dV}` : '';
         }
 
@@ -564,7 +545,6 @@
           if (y.value.length === 4) { m.focus(); m.select(); }
           updateHidden();
         });
-
         m.addEventListener('input', () => {
           m.value = m.value.replace(/[^0-9]/g, '');
           let num = parseInt(m.value, 10);
@@ -576,15 +556,21 @@
           }
           updateHidden();
         });
-
         d.addEventListener('input', () => {
           d.value = d.value.replace(/[^0-9]/g, '');
           updateHidden();
         });
-
         m.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && m.value === '') y.focus(); });
         d.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && d.value === '') m.focus(); });
       });
+    }
+
+    function openLoginModal() {
+      document.getElementById('loginModal').style.display = 'flex';
+      document.getElementById('l_id').focus();
+    }
+    function closeLoginModal() {
+      document.getElementById('loginModal').style.display = 'none';
     }
 
     async function loginAdmin() {
@@ -596,7 +582,7 @@
       const res = await apiCall('verifyAdmin', { id: id, pw: pw });
       btn.disabled = false; btn.textContent = '접속';
       if(res.success) {
-        document.getElementById('loginModal').style.display = 'none';
+        closeLoginModal();
         document.getElementById('inputFormArea').style.display = 'none';
         document.getElementById('landingArea').style.display = 'none';
         document.getElementById('topNav').style.display = 'none';
@@ -606,7 +592,6 @@
         alert(res.message);
       }
     }
-
     function logoutAdmin() { location.reload(); }
 
     async function loadAdminConfig(schoolName) {
@@ -684,9 +669,11 @@
 
     async function saveConfig() {
       const data = {
-        schoolName: document.getElementById('d_school').value, year: document.getElementById('d_year').value,
+        schoolName: document.getElementById('d_school').value,
+        year: document.getElementById('d_year').value,
         adminPw: document.getElementById('d_adminPw').value,
-        chiefs: document.getElementById('d_chiefs').value, depts: document.getElementById('d_depts').value,
+        chiefs: document.getElementById('d_chiefs').value,
+        depts: document.getElementById('d_depts').value,
         rosterText: document.getElementById('d_rosterText').value
       };
       const btn = document.getElementById('saveConfigBtn');
@@ -711,14 +698,12 @@
       fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
       fillSelect('leave2027', ['예','아니요']); fillSelect('leave2026', ['예','아니요']);
     }
-
     function fillSelect(id, arr) { const el=document.getElementById(id); el.innerHTML='<option value="">선택</option>'; arr.forEach(v=>{if(v)el.appendChild(new Option(v,v));}); }
     function fillYears(id) { const arr=[]; for(let i=0; i<=40; i++) arr.push(i+'년'); fillSelect(id, arr); }
 
     function bindEvents() {
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
-      
       ['phone', 'emergencyPhone'].forEach(id => {
         const el = document.getElementById(id);
         if(el) {
@@ -727,23 +712,31 @@
           });
         }
       });
-
       const form = document.getElementById('hopeForm');
       form.addEventListener('input', (e) => { e.target.classList.remove('input-error'); });
       form.addEventListener('change', (e) => { e.target.classList.remove('input-error'); });
-
+      
       document.getElementById('leave2027').addEventListener('change', ()=>document.getElementById('leave2027Wrap').style.display = getValue('leave2027')==='예'?'flex':'none');
       document.getElementById('leave2026').addEventListener('change', ()=>document.getElementById('leave2026Wrap').style.display = getValue('leave2026')==='예'?'flex':'none');
+      
+      // 모달 로그인 Enter키 이벤트
+      document.getElementById('l_pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); });
+      document.getElementById('l_id').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); });
+
+      // 개인정보 동의 라디오 선택 시 에러 클래스 제거
+      document.querySelectorAll('input[name="privacyAgree"]').forEach(r => {
+        r.addEventListener('change', () => document.getElementById('privacyAgreeRow').classList.remove('input-error'));
+      });
+
       window.addEventListener('resize', resizeCanvas);
 
       // ✍️ 서명 그리기 이벤트 바인딩 (PC/모바일 공통)
       const evt = { start: startDraw, move: draw, end: endDraw };
-      canvas.addEventListener('mousedown', evt.start); 
-      canvas.addEventListener('mousemove', evt.move); 
+      canvas.addEventListener('mousedown', evt.start);
+      canvas.addEventListener('mousemove', evt.move);
       window.addEventListener('mouseup', evt.end);
-      
-      canvas.addEventListener('touchstart', evt.start, {passive:false}); 
-      canvas.addEventListener('touchmove', evt.move, {passive:false}); 
+      canvas.addEventListener('touchstart', evt.start, {passive:false});
+      canvas.addEventListener('touchmove', evt.move, {passive:false});
       window.addEventListener('touchend', evt.end);
     }
 
@@ -788,7 +781,10 @@
           el.dispatchEvent(new Event('change'));
         }
       });
-      if(d.privacyAgree === 'yes') document.querySelector('input[name="privacyAgree"][value="yes"]').checked = true;
+      if(d.privacyAgree === 'yes') {
+        const yesRadio = document.querySelector('input[name="privacyAgree"][value="yes"]');
+        if(yesRadio) yesRadio.checked = true;
+      }
     }
 
     function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
@@ -859,14 +855,13 @@
       if(res.success) {
         alert('임시저장이 완료되었습니다. 나중에 접속해서 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.');
       } else {
-        alert('저장 실패: ' + res.error);
+        alert('저장 실패: ' + (res.error || '알 수 없는 오류'));
       }
     }
 
     async function submitForm() {
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
       const invalidList = [];
-
       function validate(id) {
         const el = document.getElementById(id);
         if (el && !el.value.trim()) {
@@ -925,66 +920,68 @@
       const d = collectData();
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
       const res = await apiCall('submitForm', { data: d, schoolName: sysConfig.SCHOOL_NAME });
-      
       if(res.success) {
         btn.textContent = '제출완료';
-        const b = document.getElementById('resultBox'); 
-        b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; 
-        b.style.display = 'block'; 
+        const b = document.getElementById('resultBox');
+        b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>';
+        b.style.display = 'block';
         b.scrollIntoView({behavior:'smooth'});
       } else {
         btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
       }
     }
 
-    function resizeCanvas() { 
-      const r = canvas.getBoundingClientRect(); 
+    // Bug Fix: resizeCanvas 시 scale 행렬 초기화 추가
+    function resizeCanvas() {
+      const r = canvas.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) return;
+      const rto = window.devicePixelRatio || 1;
+      const cur = signatureBlank ? null : canvas.toDataURL();
       
-      const rto = window.devicePixelRatio || 1; 
-      const cur = signatureBlank ? null : canvas.toDataURL(); 
-      canvas.width = r.width * rto; 
-      canvas.height = r.height * rto; 
-      ctx.scale(rto, rto); 
-      ctx.lineWidth = 2.5; 
-      ctx.lineCap = 'round'; 
-      ctx.strokeStyle = '#000'; 
+      canvas.width = r.width * rto;
+      canvas.height = r.height * rto;
       
-      if (cur) { 
-        const img = new Image(); 
-        img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height); 
-        img.src = cur; 
-      } 
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // 행렬 초기화
+      ctx.scale(rto, rto);
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      
+      if (cur) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height);
+        img.src = cur;
+      }
     }
 
-    function getPos(e) { 
-      const r = canvas.getBoundingClientRect(); 
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
       if (e.touches && e.touches.length > 0) {
         return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
       }
-      return { x: e.clientX - r.left, y: e.clientY - r.top }; 
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
     }
 
-    function startDraw(e) { 
-      if (e.type === 'touchstart') e.preventDefault(); 
-      const p = getPos(e); 
-      drawing = true; 
-      lastX = p.x; 
-      lastY = p.y; 
+    function startDraw(e) {
+      if (e.type === 'touchstart') e.preventDefault();
+      const p = getPos(e);
+      drawing = true;
+      lastX = p.x;
+      lastY = p.y;
     }
 
-    function draw(e) { 
-      if (!drawing) return; 
-      if (e.type === 'touchmove') e.preventDefault(); 
-      const p = getPos(e); 
-      ctx.beginPath(); 
-      ctx.moveTo(lastX, lastY); 
-      ctx.lineTo(p.x, p.y); 
-      ctx.stroke(); 
-      lastX = p.x; 
-      lastY = p.y; 
-      signatureBlank = false; 
-      canvas.classList.remove('input-error'); 
+    function draw(e) {
+      if (!drawing) return;
+      if (e.type === 'touchmove') e.preventDefault();
+      const p = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      lastX = p.x;
+      lastY = p.y;
+      signatureBlank = false;
+      canvas.classList.remove('input-error');
     }
 
     function endDraw(e) { drawing = false; }
