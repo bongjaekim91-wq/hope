@@ -61,14 +61,12 @@
     textarea { resize: vertical; line-height: 1.4; }
     input:readonly { background-color: #f1f3f4; font-weight: bold; color: #1a73e8; }
     
-    /* 🚨 필수 항목 미입력 시 빨간색 강조 스타일 */
     .input-error {
       border: 2px solid #d93025 !important;
       background-color: #fce8e6 !important;
       outline: none;
     }
 
-    /* 📅 날짜 스마트 커서 이동 커스텀 스타일 */
     .date-input-group { display: flex; align-items: center; gap: 4px; }
     .date-input-group input.date-y { flex: 1.5; text-align: center; }
     .date-input-group input.date-m, .date-input-group input.date-d { flex: 1; text-align: center; }
@@ -76,7 +74,19 @@
 
     .radio-row { display: flex; gap: 24px; margin-top: 8px; align-items: center; padding: 6px; border-radius: 6px; }
     .radio-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .signature-pad { width: 360px; max-width: 100%; height: 140px; border: 2px solid #333; border-radius: 8px; touch-action: none; background: #fff;}
+    
+    /* ✍️ 서명 영역 터치 동작 개선 */
+    .signature-pad { 
+      width: 360px; 
+      max-width: 100%; 
+      height: 140px; 
+      border: 2px solid #333; 
+      border-radius: 8px; 
+      touch-action: none; 
+      background: #fff;
+      cursor: crosshair;
+    }
+
     .button-row { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
     button { border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 700; cursor: pointer; }
     .btn-primary { background: #1a73e8; color: white; } .btn-secondary { background: #e9edf5; color: #222; }
@@ -87,7 +97,7 @@
     .conditional { display: none; } .flex-row { display: flex; gap: 10px; }
     @media (max-width: 720px) { .admin-grid, .landing-card-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(1, 1fr); } .col-3,.col-4,.col-6,.col-12 { grid-column: span 1; } }
     
-    /* 🖨️ A4 1페이지 출력 전용 스타일 (완벽 피팅) */
+    /* 🖨️ A4 1페이지 출력 전용 스타일 */
     #printArea { display: none; }
     @page { size: A4 portrait; margin: 0; }
     @media print {
@@ -294,7 +304,6 @@
         <div class="field col-4"><label for="name" class="required">성명</label><input type="text" id="name"></div>
         <div class="field col-4"><label for="subject" class="required">과목</label><input type="text" id="subject"></div>
         
-        <!-- 생년월일 스마트 날짜 입력 -->
         <div class="field col-4">
           <label class="required">생년월일</label>
           <div class="date-input-group" data-target="birth">
@@ -316,7 +325,6 @@
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex:1"></div></div>
         
-        <!-- 전입일 스마트 날짜 입력 -->
         <div class="field col-6">
           <label class="required" id="lblTransferDate">전입일</label>
           <div class="date-input-group" data-target="transferDate">
@@ -391,7 +399,7 @@
     </form>
   </div>
 
-  <!-- [4. 인쇄 전용 출력 영역 (A4 1페이지 완벽 피팅)] -->
+  <!-- [4. 인쇄 전용 출력 영역] -->
   <div id="printArea">
     <div class="p-header-wrap">
       <div style="width: 130px;"></div>
@@ -513,6 +521,7 @@
           applyInitialData(res);
           document.getElementById('landingArea').style.display = 'none';
           document.getElementById('inputFormArea').style.display = 'block';
+          setTimeout(resizeCanvas, 300); // 폼 영역이 노출된 후 canvas 크기 재설정
         }
       } else {
         document.getElementById('landingArea').style.display = 'block';
@@ -726,9 +735,16 @@
       document.getElementById('leave2027').addEventListener('change', ()=>document.getElementById('leave2027Wrap').style.display = getValue('leave2027')==='예'?'flex':'none');
       document.getElementById('leave2026').addEventListener('change', ()=>document.getElementById('leave2026Wrap').style.display = getValue('leave2026')==='예'?'flex':'none');
       window.addEventListener('resize', resizeCanvas);
+
+      // ✍️ 서명 그리기 이벤트 바인딩 (PC/모바일 공통)
       const evt = { start: startDraw, move: draw, end: endDraw };
-      canvas.addEventListener('mousedown', evt.start); canvas.addEventListener('mousemove', evt.move); window.addEventListener('mouseup', evt.end);
-      canvas.addEventListener('touchstart', evt.start, {passive:false}); canvas.addEventListener('touchmove', evt.move, {passive:false}); window.addEventListener('touchend', evt.end);
+      canvas.addEventListener('mousedown', evt.start); 
+      canvas.addEventListener('mousemove', evt.move); 
+      window.addEventListener('mouseup', evt.end);
+      
+      canvas.addEventListener('touchstart', evt.start, {passive:false}); 
+      canvas.addEventListener('touchmove', evt.move, {passive:false}); 
+      window.addEventListener('touchend', evt.end);
     }
 
     function calcTotalExp() { let m = parseInt(getValue('middleYears'))||0; let h = parseInt(getValue('highYears'))||0; document.getElementById('totalYears').value = (m+h===0 && !getValue('middleYears') && !getValue('highYears')) ? '' : (m+h)+'년'; }
@@ -912,18 +928,67 @@
       
       if(res.success) {
         btn.textContent = '제출완료';
-        const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b><br><a href="'+res.pdfUrl+'" target="_blank" style="color:#137333;">생성된 PDF 확인하기</a>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'});
+        const b = document.getElementById('resultBox'); 
+        b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; 
+        b.style.display = 'block'; 
+        b.scrollIntoView({behavior:'smooth'});
       } else {
-        btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + res.error);
+        btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
       }
     }
 
-    function resizeCanvas() { const r = canvas.getBoundingClientRect(), rto = window.devicePixelRatio || 1; const cur = signatureBlank ? null : canvas.toDataURL(); canvas.width = r.width * rto; canvas.height = r.height * rto; ctx.setTransform(rto,0,0,rto,0,0); ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#000'; if(cur){ const img = new Image(); img.onload = ()=>ctx.drawImage(img,0,0,r.width,r.height); img.src = cur; } }
-    function getPos(e) { const r = canvas.getBoundingClientRect(); return e.touches ? {x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top} : {x: e.clientX - r.left, y: e.clientY - r.top}; }
-    function startDraw(e) { e.preventDefault(); const p = getPos(e); drawing = true; lastX = p.x; lastY = p.y; }
-    function draw(e) { if(!drawing) return; e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; canvas.classList.remove('input-error'); }
+    function resizeCanvas() { 
+      const r = canvas.getBoundingClientRect(); 
+      if (r.width === 0 || r.height === 0) return;
+      
+      const rto = window.devicePixelRatio || 1; 
+      const cur = signatureBlank ? null : canvas.toDataURL(); 
+      canvas.width = r.width * rto; 
+      canvas.height = r.height * rto; 
+      ctx.scale(rto, rto); 
+      ctx.lineWidth = 2.5; 
+      ctx.lineCap = 'round'; 
+      ctx.strokeStyle = '#000'; 
+      
+      if (cur) { 
+        const img = new Image(); 
+        img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height); 
+        img.src = cur; 
+      } 
+    }
+
+    function getPos(e) { 
+      const r = canvas.getBoundingClientRect(); 
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+      }
+      return { x: e.clientX - r.left, y: e.clientY - r.top }; 
+    }
+
+    function startDraw(e) { 
+      if (e.type === 'touchstart') e.preventDefault(); 
+      const p = getPos(e); 
+      drawing = true; 
+      lastX = p.x; 
+      lastY = p.y; 
+    }
+
+    function draw(e) { 
+      if (!drawing) return; 
+      if (e.type === 'touchmove') e.preventDefault(); 
+      const p = getPos(e); 
+      ctx.beginPath(); 
+      ctx.moveTo(lastX, lastY); 
+      ctx.lineTo(p.x, p.y); 
+      ctx.stroke(); 
+      lastX = p.x; 
+      lastY = p.y; 
+      signatureBlank = false; 
+      canvas.classList.remove('input-error'); 
+    }
+
     function endDraw(e) { drawing = false; }
-    function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); signatureBlank = true; }
+    function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureBlank = true; }
   </script>
 </body>
 </html>
