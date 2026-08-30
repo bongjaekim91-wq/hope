@@ -60,28 +60,14 @@
     input[type="text"], input[type="date"], input[type="tel"], select, textarea { width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; }
     textarea { resize: vertical; line-height: 1.4; }
     input:readonly { background-color: #f1f3f4; font-weight: bold; color: #1a73e8; }
-    .input-error {
-      border: 2px solid #d93025 !important;
-      background-color: #fce8e6 !important;
-      outline: none;
-    }
+    .input-error { border: 2px solid #d93025 !important; background-color: #fce8e6 !important; outline: none; }
     .date-input-group { display: flex; align-items: center; gap: 4px; }
     .date-input-group input.date-y { flex: 1.5; text-align: center; }
     .date-input-group input.date-m, .date-input-group input.date-d { flex: 1; text-align: center; }
     .date-input-group span { font-weight: bold; color: #777; }
     .radio-row { display: flex; gap: 24px; margin-top: 8px; align-items: center; padding: 6px; border-radius: 6px; }
     .radio-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    /* ✍️ 서명 영역 터치 동작 개선 */
-    .signature-pad {
-      width: 360px;
-      max-width: 100%;
-      height: 140px;
-      border: 2px solid #333;
-      border-radius: 8px;
-      touch-action: none;
-      background: #fff;
-      cursor: crosshair;
-    }
+    .signature-pad { width: 360px; max-width: 100%; height: 140px; border: 2px solid #333; border-radius: 8px; touch-action: none; background: #fff; cursor: crosshair; }
     .button-row { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
     button { border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 700; cursor: pointer; }
     .btn-primary { background: #1a73e8; color: white; } .btn-secondary { background: #e9edf5; color: #222; }
@@ -96,117 +82,33 @@
     #printArea { display: none; }
     @page { size: A4 portrait; margin: 0; }
     @media print {
-      html, body {
-        width: 210mm;
-        height: 297mm;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        background: #fff;
-        font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
-        color: #000;
-      }
+      html, body { width: 210mm; height: 297mm; margin: 0 !important; padding: 0 !important; overflow: hidden !important; background: #fff; font-family: "Malgun Gothic", "맑은 고딕", sans-serif; color: #000; }
       .top-nav, #inputFormArea, #dashboardArea, #landingArea { display: none !important; }
-      #printArea {
-        display: flex !important;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 210mm;
-        height: 297mm;
-        padding: 12mm 15mm 12mm 15mm;
-        box-sizing: border-box;
-        page-break-after: avoid;
-        page-break-inside: avoid;
-      }
-      .p-header-wrap {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 2px solid #000;
-        padding-bottom: 8px;
-        margin-bottom: 8px;
-      }
-      .p-header-title-box {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-      }
-      .p-main-title {
-        margin: 0;
-        font-size: 22px;
-        font-weight: bold;
-        letter-spacing: -0.5px;
-        text-align: center;
-      }
+      #printArea { display: flex !important; flex-direction: column; justify-content: space-between; width: 210mm; height: 297mm; padding: 12mm 15mm 12mm 15mm; box-sizing: border-box; page-break-after: avoid; page-break-inside: avoid; }
+      .p-header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 8px; }
+      .p-header-title-box { flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; }
+      .p-main-title { margin: 0; font-size: 22px; font-weight: bold; letter-spacing: -0.5px; text-align: center; }
       .p-info-table { border-collapse: collapse; font-size: 11px; }
       .p-info-table td { border: 1px solid #000; padding: 4px 8px; text-align: center; }
       .p-info-table .bg { background: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
-      .tables-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin: 4px 0;
-      }
-      .p-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-        font-size: 11.5px;
-        letter-spacing: -0.3px;
-        word-break: break-all;
-      }
-      .p-table th, .p-table td {
-        border: 1px solid #000;
-        padding: 5px 3px;
-        text-align: center;
-        vertical-align: middle;
-      }
-      .p-table th {
-        background-color: #d9e2f3 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        font-weight: bold;
-      }
-      .c-row-duty {
-        height: 28px;
-      }
+      .tables-container { flex: 1; display: flex; flex-direction: column; justify-content: space-between; margin: 4px 0; }
+      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11.5px; letter-spacing: -0.3px; word-break: break-all; }
+      .p-table th, .p-table td { border: 1px solid #000; padding: 5px 3px; text-align: center; vertical-align: middle; }
+      .p-table th { background-color: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
+      .c-row-duty { height: 28px; }
       .text-left { text-align: left !important; padding-left: 8px !important; }
-      .text-red {
-        color: #d00 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        font-weight: bold;
-        font-size: 12px;
-        text-align: center;
-        margin: 6px 0;
-      }
-      .sign-area {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        font-size: 14px;
-        font-weight: bold;
-        margin-top: 6px;
-      }
+      .text-red { color: #d00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; font-size: 12px; text-align: center; margin: 6px 0; }
+      .sign-area { display: flex; justify-content: center; align-items: center; gap: 15px; font-size: 14px; font-weight: bold; margin-top: 6px; }
       .sign-box { border-bottom: 1px solid #000; width: 90px; text-align: center; font-weight: normal; }
       .principal { text-align: center; font-size: 20px; font-weight: bold; margin: 12px 0 8px 0; letter-spacing: 2px; }
-      .privacy-box {
-        border-top: 1px solid #000;
-        padding-top: 6px;
-      }
+      .privacy-box { border-top: 1px solid #000; padding-top: 6px; }
     }
   </style>
 </head>
 <body>
-
   <div class="top-nav" id="topNav">
     <button class="btn-admin-toggle" onclick="openLoginModal()">⚙️ 학교 관리자 설정</button>
   </div>
-
   <div class="modal-overlay" id="loginModal">
     <div class="modal-content">
       <h3>학교 관리자 접속</h3>
@@ -218,32 +120,22 @@
       </div>
     </div>
   </div>
-
-  <!-- [1. 랜딩 메인 안내 화면] -->
+  
   <div id="landingArea" style="text-align:center; padding: 35px 15px;">
     <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 800;">교원 업무분장 희망원 작성 시스템</h2>
     <p style="color: #444; font-size: 17px; margin-bottom: 30px; line-height: 1.6;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
     <div class="landing-card-grid">
       <div class="landing-card card-teacher">
         <h3 style="color: #137333;">업무희망원을 작성하시는 선생님</h3>
-        <p>
-          현재 접속하신 주소는 <b>시스템 대표 주소</b>입니다.<br><br>
-          희망원을 작성하시려면 학교 담당자로부터 안내받으신<br>
-          <b>[우리학교 전용 접속 링크]</b>로 접속하셔야 작성 양식이 표시됩니다.
-        </p>
+        <p>현재 접속하신 주소는 <b>시스템 대표 주소</b>입니다.<br><br>희망원을 작성하시려면 학교 담당자로부터 안내받으신<br><b>[우리학교 전용 접속 링크]</b>로 접속하셔야 작성 양식이 표시됩니다.</p>
       </div>
       <div class="landing-card card-admin">
         <h3 style="color: #1a73e8;">학교 관리자(담당자) 안내</h3>
-        <p>
-          우측상단 <b>[학교관리자 설정]</b> 버튼을 클릭하여 로그인 하세요.<br><br>
-          로그인 후 교원 명단 등록 및 우리학교 전용 단축 주소를<br>
-          복사하여 선생님들께 배부하실 수 있습니다.
-        </p>
+        <p>우측상단 <b>[학교관리자 설정]</b> 버튼을 클릭하여 로그인 하세요.<br><br>로그인 후 교원 명단 등록 및 우리학교 전용 단축 주소를<br>복사하여 선생님들께 배부하실 수 있습니다.</p>
       </div>
     </div>
   </div>
 
-  <!-- [2. 관리자 대시보드] -->
   <div id="dashboardArea">
     <h2>우리 학교 시스템 설정 및 제출 현황</h2>
     <div style="background:#e6f4ea; padding:15px; border-radius:8px; margin-bottom:20px; font-size:14px; border:1px solid #81c995;">
@@ -290,16 +182,24 @@
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
 
-  <!-- [3. 교사용 입력 폼] -->
   <div id="inputFormArea">
     <h1 id="uiTitle">업무분장 희망원</h1>
     <div class="subtitle" id="uiSchoolName">학교명</div>
     <div class="warning-text">업무분장 희망원은 학교 상황에 따라 본인이 원하는 대로 되지 않을 수 있음을 양해 바랍니다.</div>
     <form id="hopeForm" onsubmit="return false;">
       <div class="section"><div class="section-title">1. 기본 인적사항</div><div class="section-body"><div class="grid">
-        <div class="field col-4"><label for="name" class="required">성명</label><input type="text" id="name"></div>
-        <div class="field col-4"><label for="subject" class="required">과목</label><input type="text" id="subject"></div>
-        <div class="field col-4">
+        <!-- 💡 성별 추가로 인해 레이아웃(col-3) 크기 조절 -->
+        <div class="field col-3"><label for="name" class="required">성명</label><input type="text" id="name"></div>
+        <div class="field col-3">
+          <label for="gender" class="required">성별</label>
+          <select id="gender">
+            <option value="">선택</option>
+            <option value="남">남</option>
+            <option value="여">여</option>
+          </select>
+        </div>
+        <div class="field col-3"><label for="subject" class="required">과목</label><input type="text" id="subject"></div>
+        <div class="field col-3">
           <label class="required">생년월일</label>
           <div class="date-input-group" data-target="birth">
             <input type="text" class="date-y" maxlength="4" placeholder="YYYY" inputmode="numeric">
@@ -315,7 +215,6 @@
         <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
         <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone" placeholder="010-0000-0000" maxlength="13"></div>
       </div></div></div>
-
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex:1"></div></div>
         <div class="field col-6">
@@ -335,7 +234,6 @@
         <div class="field col-4"><label for="highYears" class="required">고등학교 교육경력</label><select id="highYears"></select></div>
         <div class="field col-4"><label>교육 총경력 (자동합산)</label><input type="text" id="totalYears" readonly placeholder="자동 계산됨"></div>
       </div></div></div>
-
       <div class="section"><div class="section-title">3. 세부 업무 및 담임 경력</div><div class="section-body"><div class="grid">
         <div class="field col-4"><label for="career2026" class="required" id="lblYear1">작년 업무</label><input type="text" id="career2026" placeholder="없으면 '없음' 입력"></div>
         <div class="field col-4"><label for="career2025" class="required" id="lblYear2">재작년 업무</label><input type="text" id="career2025" placeholder="없으면 '없음' 입력"></div>
@@ -345,7 +243,6 @@
         <div class="field col-4"><label for="highHomeroomCareer" class="required">고등학교 담임 경력</label><select id="highHomeroomCareer"></select></div>
         <div class="field col-4"><label>담임교사 총경력 (자동합산)</label><input type="text" id="totalHomeroomYears" readonly placeholder="자동 계산됨"></div>
       </div></div></div>
-
       <div class="section"><div class="section-title">4. 희망 업무 분장</div><div class="section-body"><div class="grid">
         <div class="field col-3"><label for="chiefHopeYn" class="required">부장교사 희망</label><select id="chiefHopeYn"></select></div>
         <div class="field col-3"><label for="chiefHope1" class="required">부장 1희망 부서</label><select id="chiefHope1"></select></div>
@@ -358,7 +255,6 @@
         <div class="field col-4"><label for="workDept2">업무부서 2희망 업무</label><select id="workDept2"></select></div>
         <div class="field col-4"><label for="workDept3">업무부서 3희망 업무</label><select id="workDept3"></select></div>
       </div></div></div>
-
       <div class="section"><div class="section-title">5. 기타사항</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label for="leave2027" id="lblLeave1">2027년 휴직 예정</label><select id="leave2027"></select></div>
         <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" placeholder="종류(예: 육아)"><input type="text" id="leave2027Period" placeholder="기간(예: 03~02)"></div></div>
@@ -366,7 +262,6 @@
         <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" placeholder="종류"><input type="text" id="leave2026Period" placeholder="기간"></div></div>
         <div class="field col-12"><label for="memo">업무분장 시 참고사항</label><textarea id="memo" rows="4" placeholder="개인 신상에 관한 설명 및 사유 기재"></textarea></div>
       </div></div></div>
-
       <div class="section"><div class="section-title">6. 개인정보 수집·이용 동의</div><div class="section-body">
         <div style="font-size:12px; color:#666; margin-bottom:8px;">수집항목: 희망원 내 기재 항목 전체 / 목적: 업무분장 기초자료 / 보유기간: 1년</div>
         <div class="radio-row" id="privacyAgreeRow">
@@ -374,12 +269,10 @@
           <label><input type="radio" name="privacyAgree" value="no"> 아니요</label>
         </div>
       </div></div>
-
       <div class="section"><div class="section-title">7. 서명</div><div class="section-body">
         <canvas id="signaturePad" class="signature-pad"></canvas>
         <div style="margin-top:10px;"><button type="button" class="btn-secondary" onclick="clearSignature()">서명 지우기</button></div>
       </div></div>
-
       <div class="button-row">
         <button type="button" class="btn-primary" id="submitBtn" onclick="submitForm()">제출하기</button>
         <button type="button" class="btn-secondary" id="saveBtn" onclick="saveData()">임시저장</button>
@@ -390,14 +283,11 @@
       <div class="msg-box success" id="resultBox"></div>
     </form>
   </div>
-
-  <!-- [4. 인쇄 전용 출력 영역] -->
+  
   <div id="printArea">
     <div class="p-header-wrap">
       <div style="width: 130px;"></div>
-      <div class="p-header-title-box">
-        <h1 id="p_title" class="p-main-title">업무분장 희망원</h1>
-      </div>
+      <div class="p-header-title-box"><h1 id="p_title" class="p-main-title">업무분장 희망원</h1></div>
       <table class="p-info-table">
         <tr><td class="bg">학교명</td><td id="p_school" style="width:100px;"></td></tr>
         <tr><td class="bg">기준일</td><td id="p_baseDate"></td></tr>
@@ -405,10 +295,19 @@
     </div>
     <div class="tables-container">
       <table class="p-table">
-        <colgroup><col width="12%"><col width="21%"><col width="12%"><col width="21%"><col width="12%"><col width="22%"></colgroup>
-        <tr><th>성명</th><td id="p_name"></td><th>과목</th><td id="p_subject"></td><th>생년월일</th><td id="p_birth"></td></tr>
-        <tr><th>주소</th><td colspan="5" class="text-left" id="p_address"></td></tr>
-        <tr><th>휴대전화</th><td colspan="2" id="p_phone"></td><th>비상연락처</th><td id="p_emRel"></td><td id="p_emPhone"></td></tr>
+        <!-- 💡 인쇄 영역 레이아웃에 성별(Gender) 칸 추가 및 비율 조정 -->
+        <colgroup><col width="11%"><col width="14%"><col width="11%"><col width="10%"><col width="11%"><col width="17%"><col width="12%"><col width="14%"></colgroup>
+        <tr>
+          <th>성명</th><td id="p_name"></td>
+          <th>성별</th><td id="p_gender"></td>
+          <th>과목</th><td id="p_subject"></td>
+          <th>생년월일</th><td id="p_birth"></td>
+        </tr>
+        <tr><th>주소</th><td colspan="7" class="text-left" id="p_address"></td></tr>
+        <tr>
+          <th>휴대전화</th><td colspan="3" id="p_phone"></td>
+          <th>비상연락처</th><td colspan="1" id="p_emRel"></td><td colspan="2" id="p_emPhone"></td>
+        </tr>
       </table>
       <table class="p-table">
         <colgroup><col width="16%"><col width="34%"><col width="18%"><col width="32%"></colgroup>
@@ -465,13 +364,12 @@
       </div>
     </div>
   </div>
-
+  
   <script>
     let sysConfig = {};
     const canvas = document.getElementById('signaturePad');
     const ctx = canvas.getContext('2d');
     let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
-
     async function apiCall(action, payload = {}) {
       try {
         const response = await fetch(GAS_API_URL, {
@@ -484,12 +382,10 @@
         return { error: '통신 오류가 발생했습니다: ' + err.message };
       }
     }
-
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param) || '';
     }
-
     window.onload = async () => {
       initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
@@ -502,131 +398,71 @@
           applyInitialData(res);
           document.getElementById('landingArea').style.display = 'none';
           document.getElementById('inputFormArea').style.display = 'block';
-          setTimeout(resizeCanvas, 300); // 폼 영역 노출 후 canvas 크기 재설정
+          setTimeout(resizeCanvas, 300);
         }
       } else {
         document.getElementById('landingArea').style.display = 'block';
         document.getElementById('inputFormArea').style.display = 'none';
       }
     };
-
     function autoHyphenPhone(str) {
       str = str.replace(/[^0-9]/g, '');
-      if (str.length < 4) {
-        return str;
-      } else if (str.length < 7) {
-        return str.replace(/(\d{3})(\d{1,3})/, '$1-$2');
-      } else if (str.length < 11) {
-        if (str.startsWith('02')) {
-          return str.length === 9 ? str.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3') : str.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-        }
+      if (str.length < 4) return str;
+      else if (str.length < 7) return str.replace(/(\d{3})(\d{1,3})/, '$1-$2');
+      else if (str.length < 11) {
+        if (str.startsWith('02')) return str.length === 9 ? str.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3') : str.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
         return str.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
-      } else {
-        return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-      }
+      } else return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     }
-
     function initDateInputs() {
       document.querySelectorAll('.date-input-group').forEach(group => {
-        const y = group.querySelector('.date-y');
-        const m = group.querySelector('.date-m');
-        const d = group.querySelector('.date-d');
-        const hidden = group.querySelector('input[type="hidden"]');
-        
+        const y = group.querySelector('.date-y'); const m = group.querySelector('.date-m'); const d = group.querySelector('.date-d'); const hidden = group.querySelector('input[type="hidden"]');
         function updateHidden() {
-          const yV = y.value.trim();
-          const mV = m.value.trim().padStart(m.value.trim() ? 2 : 0, '0');
-          const dV = d.value.trim().padStart(d.value.trim() ? 2 : 0, '0');
+          const yV = y.value.trim(); const mV = m.value.trim().padStart(m.value.trim() ? 2 : 0, '0'); const dV = d.value.trim().padStart(d.value.trim() ? 2 : 0, '0');
           hidden.value = (yV && mV && dV) ? `${yV}-${mV}-${dV}` : '';
         }
-
-        y.addEventListener('input', () => {
-          y.value = y.value.replace(/[^0-9]/g, '');
-          if (y.value.length === 4) { m.focus(); m.select(); }
-          updateHidden();
-        });
+        y.addEventListener('input', () => { y.value = y.value.replace(/[^0-9]/g, ''); if (y.value.length === 4) { m.focus(); m.select(); } updateHidden(); });
         m.addEventListener('input', () => {
-          m.value = m.value.replace(/[^0-9]/g, '');
-          let num = parseInt(m.value, 10);
-          if (m.value.length === 1 && num >= 2) {
-            m.value = '0' + m.value;
-            d.focus(); d.select();
-          } else if (m.value.length === 2) {
-            d.focus(); d.select();
-          }
+          m.value = m.value.replace(/[^0-9]/g, ''); let num = parseInt(m.value, 10);
+          if (m.value.length === 1 && num >= 2) { m.value = '0' + m.value; d.focus(); d.select(); } else if (m.value.length === 2) { d.focus(); d.select(); }
           updateHidden();
         });
-        d.addEventListener('input', () => {
-          d.value = d.value.replace(/[^0-9]/g, '');
-          updateHidden();
-        });
+        d.addEventListener('input', () => { d.value = d.value.replace(/[^0-9]/g, ''); updateHidden(); });
         m.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && m.value === '') y.focus(); });
         d.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && d.value === '') m.focus(); });
       });
     }
-
-    function openLoginModal() {
-      document.getElementById('loginModal').style.display = 'flex';
-      document.getElementById('l_id').focus();
-    }
-    function closeLoginModal() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
-
+    function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; document.getElementById('l_id').focus(); }
+    function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
     async function loginAdmin() {
-      const id = document.getElementById('l_id').value;
-      const pw = document.getElementById('l_pw').value;
+      const id = document.getElementById('l_id').value; const pw = document.getElementById('l_pw').value;
       if(!id || !pw) return alert('아이디와 비밀번호를 입력하세요.');
-      const btn = document.getElementById('modalLoginBtn');
-      btn.disabled = true; btn.textContent = '확인 중...';
+      const btn = document.getElementById('modalLoginBtn'); btn.disabled = true; btn.textContent = '확인 중...';
       const res = await apiCall('verifyAdmin', { id: id, pw: pw });
       btn.disabled = false; btn.textContent = '접속';
       if(res.success) {
-        closeLoginModal();
-        document.getElementById('inputFormArea').style.display = 'none';
-        document.getElementById('landingArea').style.display = 'none';
-        document.getElementById('topNav').style.display = 'none';
-        document.getElementById('dashboardArea').style.display = 'block';
-        loadAdminConfig(res.schoolName);
-      } else {
-        alert(res.message);
-      }
+        closeLoginModal(); document.getElementById('inputFormArea').style.display = 'none'; document.getElementById('landingArea').style.display = 'none'; document.getElementById('topNav').style.display = 'none'; document.getElementById('dashboardArea').style.display = 'block'; loadAdminConfig(res.schoolName);
+      } else { alert(res.message); }
     }
     function logoutAdmin() { location.reload(); }
-
     async function loadAdminConfig(schoolName) {
       const baseUrl = window.location.origin + window.location.pathname;
       const data = await apiCall('getAdminConfigData', { schoolName: schoolName, githubBaseUrl: baseUrl });
-      document.getElementById('d_school').value = data.schoolName;
-      document.getElementById('d_year').value = data.year;
-      document.getElementById('d_adminPw').value = data.adminPw;
-      document.getElementById('d_chiefs').value = data.chiefs;
-      document.getElementById('d_depts').value = data.depts;
-      document.getElementById('d_rosterText').value = data.rosterText;
+      document.getElementById('d_school').value = data.schoolName; document.getElementById('d_year').value = data.year; document.getElementById('d_adminPw').value = data.adminPw;
+      document.getElementById('d_chiefs').value = data.chiefs; document.getElementById('d_depts').value = data.depts; document.getElementById('d_rosterText').value = data.rosterText;
       document.getElementById('shareUrl').textContent = data.shareUrl;
       renderRosterTable(data.rosterList);
     }
-
     function handleRosterFileUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      const filename = file.name.toLowerCase();
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader(); const filename = file.name.toLowerCase();
       if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
         reader.onload = function(evt) {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, {type: 'array'});
-          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-          const json = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+          const data = new Uint8Array(evt.target.result); const workbook = XLSX.read(data, {type: 'array'});
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const json = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
           const names = [];
           json.forEach(row => {
-            if (row && row.length > 0) {
-              row.forEach(cell => {
-                if (cell && typeof cell === 'string' && cell.trim() && !['성명','이름','교사명','교사 성명'].includes(cell.trim())) {
-                  names.push(cell.trim());
-                }
-              });
-            }
+            if (row && row.length > 0) { row.forEach(cell => { if (cell && typeof cell === 'string' && cell.trim() && !['성명','이름','교사명','교사 성명'].includes(cell.trim())) { names.push(cell.trim()); } }); }
           });
           document.getElementById('d_rosterText').value = [...new Set(names)].join('\n');
           alert('엑셀 파일에서 ' + names.length + '명의 이름 추출 완료!');
@@ -634,180 +470,104 @@
         reader.readAsArrayBuffer(file);
       } else {
         reader.onload = function(evt) {
-          const text = evt.target.result;
-          const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-          document.getElementById('d_rosterText').value = lines.join('\n');
-          alert('파일에서 ' + lines.length + '명의 이름 불러오기 완료!');
+          const text = evt.target.result; const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+          document.getElementById('d_rosterText').value = lines.join('\n'); alert('파일에서 ' + lines.length + '명의 이름 불러오기 완료!');
         };
         reader.readAsText(file);
       }
     }
-
     function renderRosterTable(rosterList) {
-      const tbody = document.getElementById('rosterTbody');
-      tbody.innerHTML = '';
-      if(!rosterList || rosterList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>';
-        document.getElementById('rosterSummary').textContent = '총 0명 (제출 0명 / 미제출 0명)';
-        return;
-      }
+      const tbody = document.getElementById('rosterTbody'); tbody.innerHTML = '';
+      if(!rosterList || rosterList.length === 0) { tbody.innerHTML = '<tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>'; document.getElementById('rosterSummary').textContent = '총 0명 (제출 0명 / 미제출 0명)'; return; }
       let doneCount = 0;
       rosterList.forEach(item => {
-        const tr = document.createElement('tr');
-        const isDone = item.status === '제출완료';
-        if(isDone) doneCount++;
-        tr.innerHTML = `
-          <td><b>${item.name}</b></td>
-          <td><span class="${isDone ? 'badge-done' : 'badge-yet'}">${item.status}</span></td>
-          <td style="font-size:11px; color:#666;">${item.date || '-'}</td>
-        `;
-        tbody.appendChild(tr);
+        const tr = document.createElement('tr'); const isDone = item.status === '제출완료'; if(isDone) doneCount++;
+        tr.innerHTML = `<td><b>${item.name}</b></td><td><span class="${isDone ? 'badge-done' : 'badge-yet'}">${item.status}</span></td><td style="font-size:11px; color:#666;">${item.date || '-'}</td>`; tbody.appendChild(tr);
       });
-      const total = rosterList.length;
-      document.getElementById('rosterSummary').textContent = `총 ${total}명 (제출 ${doneCount}명 / 미제출 ${total - doneCount}명)`;
+      const total = rosterList.length; document.getElementById('rosterSummary').textContent = `총 ${total}명 (제출 ${doneCount}명 / 미제출 ${total - doneCount}명)`;
     }
-
     async function saveConfig() {
-      const data = {
-        schoolName: document.getElementById('d_school').value,
-        year: document.getElementById('d_year').value,
-        adminPw: document.getElementById('d_adminPw').value,
-        chiefs: document.getElementById('d_chiefs').value,
-        depts: document.getElementById('d_depts').value,
-        rosterText: document.getElementById('d_rosterText').value
-      };
-      const btn = document.getElementById('saveConfigBtn');
-      btn.disabled = true; btn.textContent = '저장 중...';
+      const data = { schoolName: document.getElementById('d_school').value, year: document.getElementById('d_year').value, adminPw: document.getElementById('d_adminPw').value, chiefs: document.getElementById('d_chiefs').value, depts: document.getElementById('d_depts').value, rosterText: document.getElementById('d_rosterText').value };
+      const btn = document.getElementById('saveConfigBtn'); btn.disabled = true; btn.textContent = '저장 중...';
       const baseUrl = window.location.origin + window.location.pathname;
       const res = await apiCall('saveAdminDashboardData', { config: data, githubBaseUrl: baseUrl });
-      btn.disabled = false; btn.textContent = '설정 및 명단 저장';
-      document.getElementById('shareUrl').textContent = res.shareUrl;
-      loadAdminConfig(data.schoolName);
-      const box = document.getElementById('configResultBox');
-      box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
+      btn.disabled = false; btn.textContent = '설정 및 명단 저장'; document.getElementById('shareUrl').textContent = res.shareUrl; loadAdminConfig(data.schoolName);
+      const box = document.getElementById('configResultBox'); box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
     }
-
     function copyUrl() {
       const text = document.getElementById('shareUrl').textContent;
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
-
     function initDropdowns() {
       fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears'); fillYears('middleHomeroomCareer'); fillYears('highHomeroomCareer');
-      fillSelect('chiefHopeYn', ['희망','비희망','무관']);
-      fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
+      fillSelect('chiefHopeYn', ['희망','비희망','무관']); fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
       fillSelect('leave2027', ['예','아니요']); fillSelect('leave2026', ['예','아니요']);
     }
     function fillSelect(id, arr) { const el=document.getElementById(id); el.innerHTML='<option value="">선택</option>'; arr.forEach(v=>{if(v)el.appendChild(new Option(v,v));}); }
     function fillYears(id) { const arr=[]; for(let i=0; i<=40; i++) arr.push(i+'년'); fillSelect(id, arr); }
-
     function bindEvents() {
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
-      ['phone', 'emergencyPhone'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) {
-          el.addEventListener('input', (e) => {
-            e.target.value = autoHyphenPhone(e.target.value);
-          });
-        }
-      });
+      ['phone', 'emergencyPhone'].forEach(id => { const el = document.getElementById(id); if(el) { el.addEventListener('input', (e) => { e.target.value = autoHyphenPhone(e.target.value); }); } });
       const form = document.getElementById('hopeForm');
       form.addEventListener('input', (e) => { e.target.classList.remove('input-error'); });
       form.addEventListener('change', (e) => { e.target.classList.remove('input-error'); });
-      
       document.getElementById('leave2027').addEventListener('change', ()=>document.getElementById('leave2027Wrap').style.display = getValue('leave2027')==='예'?'flex':'none');
       document.getElementById('leave2026').addEventListener('change', ()=>document.getElementById('leave2026Wrap').style.display = getValue('leave2026')==='예'?'flex':'none');
-      
-      // 모달 로그인 Enter키 이벤트
-      document.getElementById('l_pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); });
-      document.getElementById('l_id').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); });
-
-      // 개인정보 동의 라디오 선택 시 에러 클래스 제거
-      document.querySelectorAll('input[name="privacyAgree"]').forEach(r => {
-        r.addEventListener('change', () => document.getElementById('privacyAgreeRow').classList.remove('input-error'));
-      });
-
+      document.getElementById('l_pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); }); document.getElementById('l_id').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); });
+      document.querySelectorAll('input[name="privacyAgree"]').forEach(r => { r.addEventListener('change', () => document.getElementById('privacyAgreeRow').classList.remove('input-error')); });
       window.addEventListener('resize', resizeCanvas);
-
-      // ✍️ 서명 그리기 이벤트 바인딩 (PC/모바일 공통)
       const evt = { start: startDraw, move: draw, end: endDraw };
-      canvas.addEventListener('mousedown', evt.start);
-      canvas.addEventListener('mousemove', evt.move);
-      window.addEventListener('mouseup', evt.end);
-      canvas.addEventListener('touchstart', evt.start, {passive:false});
-      canvas.addEventListener('touchmove', evt.move, {passive:false});
-      window.addEventListener('touchend', evt.end);
+      canvas.addEventListener('mousedown', evt.start); canvas.addEventListener('mousemove', evt.move); window.addEventListener('mouseup', evt.end);
+      canvas.addEventListener('touchstart', evt.start, {passive:false}); canvas.addEventListener('touchmove', evt.move, {passive:false}); window.addEventListener('touchend', evt.end);
     }
-
     function calcTotalExp() { let m = parseInt(getValue('middleYears'))||0; let h = parseInt(getValue('highYears'))||0; document.getElementById('totalYears').value = (m+h===0 && !getValue('middleYears') && !getValue('highYears')) ? '' : (m+h)+'년'; }
     function calcTotalHomeroom() { let m = parseInt(getValue('middleHomeroomCareer'))||0; let h = parseInt(getValue('highHomeroomCareer'))||0; document.getElementById('totalHomeroomYears').value = (m+h===0 && !getValue('middleHomeroomCareer') && !getValue('highHomeroomCareer')) ? '' : (m+h)+'년'; }
-
     function applyInitialData(data) {
       sysConfig = data.config; const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('uiTitle').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('uiSchoolName').textContent = sc;
-      document.getElementById('lblTransferDate').textContent = sc + ' 전입일';
-      document.getElementById('lblPrevSchool').textContent = sc + ' 이전 근무학교';
+      document.getElementById('lblTransferDate').textContent = sc + ' 전입일'; document.getElementById('lblPrevSchool').textContent = sc + ' 이전 근무학교';
       document.getElementById('lblYear1').textContent = (yr-1) + '년 업무'; document.getElementById('lblYear2').textContent = (yr-2) + '년 업무'; document.getElementById('lblYear3').textContent = (yr-3) + '년 업무';
       document.getElementById('lblLeave1').textContent = yr + '년 휴직 예정'; document.getElementById('lblLeave2').textContent = (yr-1) + '년 휴직 경험';
       fillSelect('chiefHope1', data.options.chiefPositions); fillSelect('chiefHope2', data.options.chiefPositions); fillSelect('chiefHope3', data.options.chiefPositions);
       fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
     }
-
     async function fetchSavedData() {
-      const name = getValue('name');
-      const phone = getValue('phone');
-      if (!name) return alert('성명을 먼저 입력한 후 불러오기를 눌러주세요.');
+      const name = getValue('name'); const phone = getValue('phone'); if (!name) return alert('성명을 먼저 입력한 후 불러오기를 눌러주세요.');
       const btn = document.getElementById('loadBtn'); btn.disabled = true; btn.textContent = '불러오는 중...';
       const res = await apiCall('loadSavedData', { schoolName: sysConfig.SCHOOL_NAME, name: name, phone: phone });
       btn.disabled = false; btn.textContent = '불러오기';
       if(res.success) { loadData(res.data); alert('데이터를 성공적으로 불러왔습니다.'); } else { alert(res.message); }
     }
-
     function loadData(d) {
       Object.keys(d).forEach(k => {
         const el = document.getElementById(k);
         if(el) {
           el.value = d[k];
           const grp = el.closest('.date-input-group');
-          if (grp && d[k]) {
-            const parts = d[k].split('-');
-            if (parts.length === 3) {
-              grp.querySelector('.date-y').value = parts[0];
-              grp.querySelector('.date-m').value = parts[1];
-              grp.querySelector('.date-d').value = parts[2];
-            }
-          }
+          if (grp && d[k]) { const parts = d[k].split('-'); if (parts.length === 3) { grp.querySelector('.date-y').value = parts[0]; grp.querySelector('.date-m').value = parts[1]; grp.querySelector('.date-d').value = parts[2]; } }
           el.dispatchEvent(new Event('change'));
         }
       });
-      if(d.privacyAgree === 'yes') {
-        const yesRadio = document.querySelector('input[name="privacyAgree"][value="yes"]');
-        if(yesRadio) yesRadio.checked = true;
-      }
+      if(d.privacyAgree === 'yes') { const yesRadio = document.querySelector('input[name="privacyAgree"][value="yes"]'); if(yesRadio) yesRadio.checked = true; }
     }
-
     function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
-
     function collectData() {
-      const ids = ['name','subject','birth','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','transferDate','certificateMinorGrade','certificateMinor','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','totalHomeroomYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
+      // 💡 gender 추가
+      const ids = ['name','gender','subject','birth','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','transferDate','certificateMinorGrade','certificateMinor','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','totalHomeroomYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
       const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
     }
-
     function preparePrint() {
       const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
-      document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원';
-      document.getElementById('p_school').textContent = sc;
+      document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
       const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
-      document.getElementById('p_lblTr').textContent = sc + ' 전입일';
-      document.getElementById('p_lblPrev').textContent = sc + ' 이전 근무학교';
+      document.getElementById('p_lblTr').textContent = sc + ' 전입일'; document.getElementById('p_lblPrev').textContent = sc + ' 이전 근무학교';
       document.getElementById('p_lblY1').textContent = (yr-1) + '년'; document.getElementById('p_lblY2').textContent = (yr-2) + '년'; document.getElementById('p_lblY3').textContent = (yr-3) + '년';
-      document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무';
-      document.getElementById('p_lblL1').textContent = yr + '년 휴직 예정';
-      document.getElementById('p_lblL2').textContent = (yr-1) + '년 휴직 경험';
+      document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무'; document.getElementById('p_lblL1').textContent = yr + '년 휴직 예정'; document.getElementById('p_lblL2').textContent = (yr-1) + '년 휴직 경험';
       document.getElementById('p_principal').textContent = sc + '장 귀하';
-      document.getElementById('p_name').textContent = d.name; document.getElementById('p_subject').textContent = d.subject; document.getElementById('p_birth').textContent = d.birth;
+      // 💡 인쇄 시 성별 반영
+      document.getElementById('p_name').textContent = d.name; document.getElementById('p_gender').textContent = d.gender; document.getElementById('p_subject').textContent = d.subject; document.getElementById('p_birth').textContent = d.birth;
       document.getElementById('p_address').textContent = d.address; document.getElementById('p_phone').textContent = d.phone; document.getElementById('p_emRel').textContent = d.emergencyRelation; document.getElementById('p_emPhone').textContent = d.emergencyPhone;
       document.getElementById('p_certMaj').textContent = (d.certificateMajorGrade?`[${d.certificateMajorGrade}] `:'') + d.certificateMajor; document.getElementById('p_transfer').textContent = d.transferDate;
       document.getElementById('p_certMin').textContent = (d.certificateMinorGrade?`[${d.certificateMinorGrade}] `:'') + d.certificateMinor; document.getElementById('p_prevSch').textContent = d.previousSchool;
@@ -827,163 +587,63 @@
       document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
       window.print();
     }
-
     function printEmptyForm() {
-      const ids = ['p_name','p_subject','p_birth','p_address','p_phone','p_emRel','p_emPhone','p_certMaj','p_transfer','p_certMin','p_prevSch','p_totalYrs','p_midYrs','p_highYrs','p_c1','p_c2','p_c3','p_chiefYrs','p_totalHmrm','p_midHmrm','p_highHmrm','p_chiefHope','p_ch1','p_ch2','p_ch3','p_hm1','p_hm2','p_hm3','p_w1','p_w2','p_w3','p_l27','p_l26','p_signName','p_aYes','p_aNo'];
+      // 💡 p_gender 추가
+      const ids = ['p_name','p_gender','p_subject','p_birth','p_address','p_phone','p_emRel','p_emPhone','p_certMaj','p_transfer','p_certMin','p_prevSch','p_totalYrs','p_midYrs','p_highYrs','p_c1','p_c2','p_c3','p_chiefYrs','p_totalHmrm','p_midHmrm','p_highHmrm','p_chiefHope','p_ch1','p_ch2','p_ch3','p_hm1','p_hm2','p_hm3','p_w1','p_w2','p_w3','p_l27','p_l26','p_signName','p_aYes','p_aNo'];
       ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
       document.getElementById('p_memo').innerHTML = ''; document.getElementById('p_signImg').style.display = 'none';
       const yr = sysConfig.DOCUMENT_YEAR || ''; const sc = sysConfig.SCHOOL_NAME || '';
       document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
       const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
-      document.getElementById('p_lblTr').textContent = sc + ' 전입일';
-      document.getElementById('p_lblPrev').textContent = sc + ' 이전 근무학교';
+      document.getElementById('p_lblTr').textContent = sc + ' 전입일'; document.getElementById('p_lblPrev').textContent = sc + ' 이전 근무학교';
       document.getElementById('p_lblY1').textContent = (yr-1) + '년'; document.getElementById('p_lblY2').textContent = (yr-2) + '년'; document.getElementById('p_lblY3').textContent = (yr-3) + '년';
-      document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무';
-      document.getElementById('p_lblL1').textContent = yr + '년 휴직 예정';
-      document.getElementById('p_lblL2').textContent = (yr-1) + '년 휴직 경험';
+      document.getElementById('p_hopeTitle').textContent = yr + '년 희망 업무'; document.getElementById('p_lblL1').textContent = yr + '년 휴직 예정'; document.getElementById('p_lblL2').textContent = (yr-1) + '년 휴직 경험';
       document.getElementById('p_principal').textContent = sc + '장 귀하';
       document.getElementById('p_date').innerHTML = `${yr}년 &nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp; 일`;
       window.print();
     }
-
     async function saveData() {
-      const d = collectData();
-      if(!d.name) return alert('성명을 입력한 후 임시저장을 눌러주세요.');
+      const d = collectData(); if(!d.name) return alert('성명을 입력한 후 임시저장을 눌러주세요.');
       const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.textContent = '저장중...';
       const res = await apiCall('tempSave', { data: d, schoolName: sysConfig.SCHOOL_NAME });
       btn.disabled = false; btn.textContent = '임시저장';
-      if(res.success) {
-        alert('임시저장이 완료되었습니다. 나중에 접속해서 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.');
-      } else {
-        alert('저장 실패: ' + (res.error || '알 수 없는 오류'));
-      }
+      if(res.success) { alert('임시저장이 완료되었습니다. 나중에 접속해서 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.'); } else { alert('저장 실패: ' + (res.error || '알 수 없는 오류')); }
     }
-
     async function submitForm() {
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
       const invalidList = [];
       function validate(id) {
         const el = document.getElementById(id);
-        if (el && !el.value.trim()) {
-          el.classList.add('input-error');
-          invalidList.push(el);
-        }
+        if (el && !el.value.trim()) { el.classList.add('input-error'); invalidList.push(el); }
       }
-
-      ['name','subject','address','phone','emergencyRelation','emergencyPhone',
-       'certificateMajorGrade','certificateMajor','certificateMinorGrade','certificateMinor',
-       'previousSchool','middleYears','highYears','career2026','career2025','career2024',
-       'chiefCareerYears','middleHomeroomCareer','highHomeroomCareer',
-       'chiefHopeYn','chiefHope1','chiefHope2','chiefHope3',
-       'homeroomGrade1','homeroomGrade2','homeroomGrade3'].forEach(validate);
-
+      // 💡 유효성 검사 필수 항목에 'gender' 추가
+      ['name','gender','subject','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','certificateMinorGrade','certificateMinor','previousSchool','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3'].forEach(validate);
       ['birth', 'transferDate'].forEach(id => {
         const hidden = document.getElementById(id);
-        if (hidden && !hidden.value.trim()) {
-          const group = hidden.closest('.date-input-group');
-          if (group) {
-            const dateInputs = group.querySelectorAll('input[type="text"]');
-            dateInputs.forEach(inp => inp.classList.add('input-error'));
-            invalidList.push(dateInputs[0]);
-          }
-        }
+        if (hidden && !hidden.value.trim()) { const group = hidden.closest('.date-input-group'); if (group) { const dateInputs = group.querySelectorAll('input[type="text"]'); dateInputs.forEach(inp => inp.classList.add('input-error')); invalidList.push(dateInputs[0]); } }
       });
-
       const privacyAgree = document.querySelector('input[name="privacyAgree"]:checked');
       const privacyRow = document.getElementById('privacyAgreeRow');
-      if (!privacyAgree) {
-        privacyRow.classList.add('input-error');
-        invalidList.push(privacyRow);
-      } else if (privacyAgree.value === 'no') {
-        privacyRow.classList.add('input-error');
-        invalidList.push(privacyRow);
-        alert('개인정보 수집·이용에 동의하지 않으시면 제출할 수 없습니다.');
-        privacyRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-
-      if (signatureBlank) {
-        canvas.classList.add('input-error');
-        invalidList.push(canvas);
-      }
-
-      if (invalidList.length > 0) {
-        const firstInvalid = invalidList[0];
-        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (typeof firstInvalid.focus === 'function') {
-          firstInvalid.focus();
-        }
-        alert('입력되지 않은 필수 항목이 있습니다.\n빨간색으로 표시된 칸을 확인 후 입력해 주세요.');
-        return;
-      }
-
+      if (!privacyAgree) { privacyRow.classList.add('input-error'); invalidList.push(privacyRow); }
+      else if (privacyAgree.value === 'no') { privacyRow.classList.add('input-error'); invalidList.push(privacyRow); alert('개인정보 수집·이용에 동의하지 않으시면 제출할 수 없습니다.'); privacyRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+      if (signatureBlank) { canvas.classList.add('input-error'); invalidList.push(canvas); }
+      if (invalidList.length > 0) { const firstInvalid = invalidList[0]; firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (typeof firstInvalid.focus === 'function') { firstInvalid.focus(); } alert('입력되지 않은 필수 항목이 있습니다.\n빨간색으로 표시된 칸을 확인 후 입력해 주세요.'); return; }
+      
       const d = collectData();
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
       const res = await apiCall('submitForm', { data: d, schoolName: sysConfig.SCHOOL_NAME });
-      if(res.success) {
-        btn.textContent = '제출완료';
-        const b = document.getElementById('resultBox');
-        b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>';
-        b.style.display = 'block';
-        b.scrollIntoView({behavior:'smooth'});
-      } else {
-        btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
-      }
+      if(res.success) { btn.textContent = '제출완료'; const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'}); } else { btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message)); }
     }
-
-    // Bug Fix: resizeCanvas 시 scale 행렬 초기화 추가
     function resizeCanvas() {
-      const r = canvas.getBoundingClientRect();
-      if (r.width === 0 || r.height === 0) return;
-      const rto = window.devicePixelRatio || 1;
-      const cur = signatureBlank ? null : canvas.toDataURL();
-      
-      canvas.width = r.width * rto;
-      canvas.height = r.height * rto;
-      
-      ctx.setTransform(1, 0, 0, 1, 0, 0); // 행렬 초기화
-      ctx.scale(rto, rto);
-      ctx.lineWidth = 2.5;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#000';
-      
-      if (cur) {
-        const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height);
-        img.src = cur;
-      }
+      const r = canvas.getBoundingClientRect(); if (r.width === 0 || r.height === 0) return;
+      const rto = window.devicePixelRatio || 1; const cur = signatureBlank ? null : canvas.toDataURL();
+      canvas.width = r.width * rto; canvas.height = r.height * rto;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(rto, rto); ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
+      if (cur) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height); img.src = cur; }
     }
-
-    function getPos(e) {
-      const r = canvas.getBoundingClientRect();
-      if (e.touches && e.touches.length > 0) {
-        return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
-      }
-      return { x: e.clientX - r.left, y: e.clientY - r.top };
-    }
-
-    function startDraw(e) {
-      if (e.type === 'touchstart') e.preventDefault();
-      const p = getPos(e);
-      drawing = true;
-      lastX = p.x;
-      lastY = p.y;
-    }
-
-    function draw(e) {
-      if (!drawing) return;
-      if (e.type === 'touchmove') e.preventDefault();
-      const p = getPos(e);
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
-      lastX = p.x;
-      lastY = p.y;
-      signatureBlank = false;
-      canvas.classList.remove('input-error');
-    }
-
+    function getPos(e) { const r = canvas.getBoundingClientRect(); if (e.touches && e.touches.length > 0) { return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }; } return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+    function startDraw(e) { if (e.type === 'touchstart') e.preventDefault(); const p = getPos(e); drawing = true; lastX = p.x; lastY = p.y; }
+    function draw(e) { if (!drawing) return; if (e.type === 'touchmove') e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; canvas.classList.remove('input-error'); }
     function endDraw(e) { drawing = false; }
     function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureBlank = true; }
   </script>
