@@ -9,10 +9,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>업무분장 희망원 작성 시스템</title>
-  
-  <!-- 🌟 엑셀 다운로드를 위한 SheetJS 라이브러리 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; background: #f5f6fa; color: #222; }
@@ -25,6 +22,15 @@
     .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
     .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
     .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    
+    /* 🌟 추가된 제출 완료 팝업 모달 스타일 */
+    .success-modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.65); z-index: 2000; justify-content: center; align-items: center; }
+    .success-modal-content { background: #fff; padding: 35px 30px; border-radius: 12px; width: 420px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; line-height: 1.7; }
+    .success-modal-content .hl { color: #1a73e8; font-weight: 800; font-size: 20px; display: block; margin-bottom: 15px;}
+    .success-modal-content p { font-size: 15.5px; color: #222; margin: 15px 0; word-break: keep-all; font-weight: 500; }
+    .btn-close-success { background: #1a73e8; color: white; padding: 12px 35px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; }
+    .btn-close-success:hover { background: #1557b0; }
+
     .btn-close { background: #eee; color: #333; }
     #dashboardArea, #landingArea, #inputFormArea { display: none; max-width: 980px; margin: 0 auto; background: #fff; padding: 28px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
     #dashboardArea h2 { text-align: center; color: #1a73e8; margin-top:0; }
@@ -86,7 +92,7 @@
     @page { size: A4 portrait; margin: 0; }
     @media print {
       html, body { width: 210mm; height: 297mm; margin: 0 !important; padding: 0 !important; overflow: hidden !important; background: #fff; font-family: "Malgun Gothic", "맑은 고딕", sans-serif; color: #000; }
-      .top-nav, #inputFormArea, #dashboardArea, #landingArea { display: none !important; }
+      .top-nav, #inputFormArea, #dashboardArea, #landingArea, .success-modal-overlay { display: none !important; }
       #printArea { display: flex !important; flex-direction: column; justify-content: space-between; width: 210mm; height: 297mm; padding: 12mm 15mm 12mm 15mm; box-sizing: border-box; page-break-after: avoid; page-break-inside: avoid; }
       .p-header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 8px; }
       .p-header-title-box { flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; }
@@ -123,6 +129,21 @@
       </div>
     </div>
   </div>
+  
+  <!-- 🌟 추가된 제출 완료 팝업창 모달 -->
+  <div class="success-modal-overlay" id="successModal">
+    <div class="success-modal-content">
+      <span class="hl" id="sm_title">OOO선생님 감사합니다.</span>
+      <p>
+        선생님 덕분에 올해 <b id="sm_school">OO학교</b> 학생들은 많은 성장을 했습니다.<br><br>
+        업부분장은 학교 상황에 따라 희망대로 되지 않을 수 있습니다.<br><br>
+        제출 및 명단 기록이 완료되었습니다.<br>
+        <b id="sm_thanks" style="display:block; margin-top:10px; font-size:17px;">OOO선생님 감사합니다.</b>
+      </p>
+      <button class="btn-close-success" onclick="closeSuccessModal()">닫 기</button>
+    </div>
+  </div>
+
   <div id="landingArea" style="text-align:center; padding: 35px 15px;">
     <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 800;">교원 업무분장 희망원 작성 시스템</h2>
     <p style="color: #444; font-size: 17px; margin-bottom: 30px; line-height: 1.6;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
@@ -137,7 +158,7 @@
       </div>
     </div>
   </div>
-
+  
   <div id="dashboardArea">
     <h2>우리 학교 시스템 설정 및 제출 현황</h2>
     <div style="background:#e6f4ea; padding:15px; border-radius:8px; margin-bottom:20px; font-size:14px; border:1px solid #81c995;">
@@ -180,12 +201,11 @@
     <div class="button-row">
       <button class="btn-secondary" onclick="logoutAdmin()">화면 닫기</button>
       <button class="btn-primary" id="saveConfigBtn" onclick="saveConfig()">설정 및 명단 저장</button>
-      <!-- 🌟 추가된 엑셀 다운로드 버튼 -->
       <button class="btn-primary" style="background:#34a853;" onclick="downloadExcel(event)">결과 엑셀 다운로드</button>
     </div>
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
-
+  
   <div id="inputFormArea">
     <h1 id="uiTitle">업무분장 희망원</h1>
     <div class="subtitle" id="uiSchoolName">학교명</div>
@@ -272,7 +292,6 @@
         <canvas id="signaturePad" class="signature-pad"></canvas>
         <div style="margin-top:10px;"><button type="button" class="btn-secondary" onclick="clearSignature(true)">서명 지우기</button></div>
       </div></div>
-      
       <div class="button-row">
         <button type="button" class="btn-primary" id="submitBtn" onclick="submitForm()">제출하기</button>
         <button type="button" class="btn-secondary" id="saveBtn" onclick="saveData()">임시저장</button>
@@ -364,7 +383,6 @@
       </div>
     </div>
   </div>
-  
   <script>
     let sysConfig = {};
     const canvas = document.getElementById('signaturePad');
@@ -372,6 +390,11 @@
     let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
     const LS_KEY = 'hopeForm_autoSave';
     let autoSaveTimer = null;
+    
+    // 🌟 추가된 모달 닫기 함수
+    function closeSuccessModal() {
+      document.getElementById('successModal').style.display = 'none';
+    }
     
     async function apiCall(action, payload = {}) {
       try {
@@ -385,12 +408,10 @@
         return { error: '통신 오류가 발생했습니다: ' + err.message };
       }
     }
-    
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param) || '';
     }
-    
     window.onload = async () => {
       initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
@@ -413,7 +434,6 @@
         document.getElementById('inputFormArea').style.display = 'none';
       }
     };
-    
     function triggerAutoSave() {
       clearTimeout(autoSaveTimer);
       autoSaveTimer = setTimeout(() => {
@@ -423,7 +443,6 @@
         document.getElementById('autoSaveMsg').textContent = `마지막 임시 보관: ${now.getHours()}시 ${now.getMinutes().toString().padStart(2, '0')}분 (작성 중 브라우저에 자동 보관됩니다)`;
       }, 1000);
     }
-    
     function checkLocalAutoSave() {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) {
@@ -437,7 +456,6 @@
         }
       }
     }
-    
     function autoHyphenPhone(str) {
       str = str.replace(/[^0-9]/g, '');
       if (str.length < 4) return str;
@@ -447,7 +465,6 @@
         return str.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
       } else return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     }
-    
     function initDateInputs() {
       document.querySelectorAll('.date-input-group').forEach(group => {
         const y = group.querySelector('.date-y'); const m = group.querySelector('.date-m'); const d = group.querySelector('.date-d'); const hidden = group.querySelector('input[type="hidden"]');
@@ -466,10 +483,8 @@
         d.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && d.value === '') m.focus(); });
       });
     }
-    
     function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; document.getElementById('l_id').focus(); }
     function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
-    
     async function loginAdmin() {
       const id = document.getElementById('l_id').value; const pw = document.getElementById('l_pw').value;
       if(!id || !pw) return alert('아이디와 비밀번호를 입력하세요.');
@@ -480,9 +495,7 @@
         closeLoginModal(); document.getElementById('inputFormArea').style.display = 'none'; document.getElementById('landingArea').style.display = 'none'; document.getElementById('topNav').style.display = 'none'; document.getElementById('dashboardArea').style.display = 'block'; loadAdminConfig(res.schoolName);
       } else { alert(res.message); }
     }
-    
     function logoutAdmin() { location.reload(); }
-    
     async function loadAdminConfig(schoolName) {
       const baseUrl = window.location.origin + window.location.pathname;
       const data = await apiCall('getAdminConfigData', { schoolName: schoolName, githubBaseUrl: baseUrl });
@@ -491,7 +504,6 @@
       document.getElementById('shareUrl').textContent = data.shareUrl;
       renderRosterTable(data.rosterList);
     }
-    
     function handleRosterFileUpload(e) {
       const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader(); const filename = file.name.toLowerCase();
@@ -515,7 +527,6 @@
         reader.readAsText(file);
       }
     }
-    
     function renderRosterTable(rosterList) {
       const tbody = document.getElementById('rosterTbody'); tbody.innerHTML = '';
       if(!rosterList || rosterList.length === 0) { tbody.innerHTML = '<tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>'; document.getElementById('rosterSummary').textContent = '총 0명 (제출 0명 / 미제출 0명)'; return; }
@@ -526,7 +537,6 @@
       });
       const total = rosterList.length; document.getElementById('rosterSummary').textContent = `총 ${total}명 (제출 ${doneCount}명 / 미제출 ${total - doneCount}명)`;
     }
-    
     async function saveConfig() {
       const data = { schoolName: document.getElementById('d_school').value, year: document.getElementById('d_year').value, adminPw: document.getElementById('d_adminPw').value, chiefs: document.getElementById('d_chiefs').value, depts: document.getElementById('d_depts').value, rosterText: document.getElementById('d_rosterText').value };
       const btn = document.getElementById('saveConfigBtn'); btn.disabled = true; btn.textContent = '저장 중...';
@@ -535,21 +545,17 @@
       btn.disabled = false; btn.textContent = '설정 및 명단 저장'; document.getElementById('shareUrl').textContent = res.shareUrl; loadAdminConfig(data.schoolName);
       const box = document.getElementById('configResultBox'); box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
     }
-    
     function copyUrl() {
       const text = document.getElementById('shareUrl').textContent;
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
-    
     function initDropdowns() {
       fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears'); fillYears('middleHomeroomCareer'); fillYears('highHomeroomCareer');
       fillSelect('chiefHopeYn', ['희망','비희망','무관']); fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
       fillSelect('leave2027', ['예','아니요']); fillSelect('leave2026', ['예','아니요']);
     }
-    
     function fillSelect(id, arr) { const el=document.getElementById(id); el.innerHTML='<option value="">선택</option>'; arr.forEach(v=>{if(v)el.appendChild(new Option(v,v));}); }
     function fillYears(id) { const arr=[]; for(let i=0; i<=40; i++) arr.push(i+'년'); fillSelect(id, arr); }
-    
     function bindEvents() {
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
@@ -568,10 +574,8 @@
       canvas.addEventListener('mousedown', evt.start); canvas.addEventListener('mousemove', evt.move); window.addEventListener('mouseup', evt.end);
       canvas.addEventListener('touchstart', evt.start, {passive:false}); canvas.addEventListener('touchmove', evt.move, {passive:false}); window.addEventListener('touchend', evt.end);
     }
-    
     function calcTotalExp() { let m = parseInt(getValue('middleYears'))||0; let h = parseInt(getValue('highYears'))||0; document.getElementById('totalYears').value = (m+h===0 && !getValue('middleYears') && !getValue('highYears')) ? '' : (m+h)+'년'; }
     function calcTotalHomeroom() { let m = parseInt(getValue('middleHomeroomCareer'))||0; let h = parseInt(getValue('highHomeroomCareer'))||0; document.getElementById('totalHomeroomYears').value = (m+h===0 && !getValue('middleHomeroomCareer') && !getValue('highHomeroomCareer')) ? '' : (m+h)+'년'; }
-    
     function applyInitialData(data) {
       sysConfig = data.config; const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('uiTitle').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('uiSchoolName').textContent = sc;
@@ -581,7 +585,6 @@
       fillSelect('chiefHope1', data.options.chiefPositions); fillSelect('chiefHope2', data.options.chiefPositions); fillSelect('chiefHope3', data.options.chiefPositions);
       fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
     }
-    
     async function fetchSavedData() {
       const name = getValue('name'); const phone = getValue('phone'); if (!name) return alert('성명을 먼저 입력한 후 불러오기를 눌러주세요.');
       const btn = document.getElementById('loadBtn'); btn.disabled = true; btn.textContent = '불러오는 중...';
@@ -589,7 +592,6 @@
       btn.disabled = false; btn.textContent = '서버 불러오기';
       if(res.success) { loadData(res.data); alert('서버에서 데이터를 성공적으로 불러왔습니다.'); } else { alert(res.message); }
     }
-    
     function loadData(d) {
       Object.keys(d).forEach(k => {
         const el = document.getElementById(k);
@@ -610,20 +612,17 @@
           signatureBlank = false;
         };
         img.src = d.signature;
-      } else {
-        clearSignature(false);
-      }
+      } else { clearSignature(false); }
     }
-    
     function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
-    
     function collectData() {
       const ids = ['name','gender','subject','birth','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','transferDate','certificateMinorGrade','certificateMinor','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','totalHomeroomYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
       const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
     }
     
-    function preparePrint() {
+    // 🌟 분리된 인쇄 데이터 채우기 함수 (PDF 생성 시에도 재사용)
+    function fillPrintArea() {
       const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
       const bDate = new Date(yr, 2, 0); document.getElementById('p_baseDate').textContent = `${yr}. 2. ${bDate.getDate()}.`;
@@ -649,6 +648,10 @@
       const sImg = document.getElementById('p_signImg');
       if (d.signatureBlank) { sImg.style.display = 'none'; } else { sImg.style.display = 'block'; sImg.src = d.signature; }
       document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
+    }
+    
+    function preparePrint() {
+      fillPrintArea();
       window.print();
     }
     
@@ -695,12 +698,33 @@
       if (invalidList.length > 0) { const firstInvalid = invalidList[0]; firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (typeof firstInvalid.focus === 'function') { firstInvalid.focus(); } alert('입력되지 않은 필수 항목이 있습니다.\n빨간색으로 표시된 칸을 확인 후 입력해 주세요.'); return; }
       
       const d = collectData();
+      
+      // 🌟 [추가] PDF 저장을 위해 프린트 영역에 데이터를 채운 뒤 HTML 텍스트를 추출
+      fillPrintArea();
+      const printHtml = document.getElementById('printArea').innerHTML;
+      
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
-      const res = await apiCall('submitForm', { data: d, schoolName: sysConfig.SCHOOL_NAME });
+      
+      // 서버로 보낼 때 학교 설정 연도 및 생성된 HTML을 같이 보냅니다.
+      const res = await apiCall('submitForm', { 
+        data: d, 
+        schoolName: sysConfig.SCHOOL_NAME, 
+        documentYear: sysConfig.DOCUMENT_YEAR,
+        pdfHtml: printHtml
+      });
+      
       if(res.success) {
         localStorage.removeItem(LS_KEY);
         document.getElementById('autoSaveMsg').style.display = 'none';
         btn.textContent = '제출완료';
+        
+        // 🌟 [추가] 모달창에 이름과 학교명을 반영하고 화면에 띄웁니다.
+        document.getElementById('sm_title').textContent = res.teacherName + '선생님 감사합니다.';
+        document.getElementById('sm_school').textContent = res.schoolName;
+        document.getElementById('sm_thanks').textContent = res.teacherName + '선생님 감사합니다.';
+        document.getElementById('successModal').style.display = 'flex';
+        
+        // 기존 텍스트 박스도 띄움
         const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'});
       } else {
         btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
@@ -714,33 +738,25 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(rto, rto); ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
       if (cur) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height); img.src = cur; }
     }
-    
     function getPos(e) { const r = canvas.getBoundingClientRect(); if (e.touches && e.touches.length > 0) { return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }; } return { x: e.clientX - r.left, y: e.clientY - r.top }; }
     function startDraw(e) { if (e.type === 'touchstart') e.preventDefault(); const p = getPos(e); drawing = true; lastX = p.x; lastY = p.y; }
     function draw(e) { if (!drawing) return; if (e.type === 'touchmove') e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; canvas.classList.remove('input-error'); }
     function endDraw(e) { drawing = false; triggerAutoSave(); }
     function clearSignature(save = true) { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureBlank = true; if(save) triggerAutoSave(); }
-
-    // 🌟 엑셀 다운로드 (관리자용) 
+    
     async function downloadExcel(event) {
       const schoolName = document.getElementById('d_school').value;
       if(!schoolName) return alert('학교명이 설정되지 않았습니다.');
-      
       const btn = event.target;
       const originalText = btn.textContent;
       btn.textContent = '다운로드 중...';
       btn.disabled = true;
-
       const res = await apiCall('getExcelData', { schoolName: schoolName });
-      
       btn.textContent = originalText;
       btn.disabled = false;
-
       if(!res.success) return alert(res.message);
-      
       const data2D = res.data;
       const targetYear = res.targetYear;
-      
       const colWidths = [];
       for (let r = 0; r < data2D.length; r++) {
         for (let c = 0; c < data2D[r].length; c++) {
@@ -751,12 +767,9 @@
             visualLength += (str.charCodeAt(i) > 127) ? 1.7 : 1.1;
           }
           visualLength = Math.max(5, Math.min(visualLength + 2, 60));
-          if (!colWidths[c] || visualLength > colWidths[c].wch) {
-            colWidths[c] = { wch: Math.round(visualLength) };
-          }
+          if (!colWidths[c] || visualLength > colWidths[c].wch) { colWidths[c] = { wch: Math.round(visualLength) }; }
         }
       }
-
       const worksheet = XLSX.utils.aoa_to_sheet(data2D);
       worksheet['!cols'] = colWidths;
       const workbook = XLSX.utils.book_new();
