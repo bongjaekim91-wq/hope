@@ -387,10 +387,12 @@
     let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
     const LS_KEY = 'hopeForm_autoSave';
     let autoSaveTimer = null;
+    
     // 🌟 추가된 모달 닫기 함수
     function closeSuccessModal() {
       document.getElementById('successModal').style.display = 'none';
     }
+    
     async function apiCall(action, payload = {}) {
       try {
         const response = await fetch(GAS_API_URL, {
@@ -403,10 +405,12 @@
         return { error: '통신 오류가 발생했습니다: ' + err.message };
       }
     }
+    
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param) || '';
     }
+    
     window.onload = async () => {
       initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
@@ -429,19 +433,21 @@
         document.getElementById('inputFormArea').style.display = 'none';
       }
     };
+    
     function triggerAutoSave() {
       clearTimeout(autoSaveTimer);
       autoSaveTimer = setTimeout(() => {
         const data = collectData();
         localStorage.setItem(LS_KEY, JSON.stringify(data));
         const now = new Date();
-        document.getElementById('autoSaveMsg').textContent = `마지막 임시 보관: ${now.getHours()}시 ${now.getMinutes().toString().padStart(2, '0')}분 (작성 중 브라우저에 자동 보관됩니다)`;
+        document.getElementById('autoSaveMsg').textContent = `마지막 임시 보관: ${now.getHours()}시 ${now.getMinutes().toString().padStart(2, '0')}분 (현재 기기에 자동 저장됨)`;
       }, 1000);
     }
+    
     function checkLocalAutoSave() {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) {
-        if (confirm('이전에 브라우저에 임시 보관된 작성 데이터가 있습니다.\n이어서 작성하시겠습니까?')) {
+        if (confirm('이전에 이 기기(브라우저)에 작성 중이던 임시 데이터가 있습니다.\n이어서 작성하시겠습니까?')) {
           try {
             loadData(JSON.parse(saved));
             document.getElementById('autoSaveMsg').textContent = '임시 보관된 데이터를 불러왔습니다.';
@@ -451,6 +457,7 @@
         }
       }
     }
+    
     function autoHyphenPhone(str) {
       str = str.replace(/[^0-9]/g, '');
       if (str.length < 4) return str;
@@ -460,6 +467,7 @@
         return str.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
       } else return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     }
+    
     function initDateInputs() {
       document.querySelectorAll('.date-input-group').forEach(group => {
         const y = group.querySelector('.date-y'); const m = group.querySelector('.date-m'); const d = group.querySelector('.date-d'); const hidden = group.querySelector('input[type="hidden"]');
@@ -478,8 +486,10 @@
         d.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && d.value === '') m.focus(); });
       });
     }
+    
     function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; document.getElementById('l_id').focus(); }
     function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+    
     async function loginAdmin() {
       const id = document.getElementById('l_id').value; const pw = document.getElementById('l_pw').value;
       if(!id || !pw) return alert('아이디와 비밀번호를 입력하세요.');
@@ -490,7 +500,9 @@
         closeLoginModal(); document.getElementById('inputFormArea').style.display = 'none'; document.getElementById('landingArea').style.display = 'none'; document.getElementById('topNav').style.display = 'none'; document.getElementById('dashboardArea').style.display = 'block'; loadAdminConfig(res.schoolName);
       } else { alert(res.message); }
     }
+    
     function logoutAdmin() { location.reload(); }
+    
     async function loadAdminConfig(schoolName) {
       const baseUrl = window.location.origin + window.location.pathname;
       const data = await apiCall('getAdminConfigData', { schoolName: schoolName, githubBaseUrl: baseUrl });
@@ -499,6 +511,7 @@
       document.getElementById('shareUrl').textContent = data.shareUrl;
       renderRosterTable(data.rosterList);
     }
+    
     function handleRosterFileUpload(e) {
       const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader(); const filename = file.name.toLowerCase();
@@ -522,6 +535,7 @@
         reader.readAsText(file);
       }
     }
+    
     function renderRosterTable(rosterList) {
       const tbody = document.getElementById('rosterTbody'); tbody.innerHTML = '';
       if(!rosterList || rosterList.length === 0) { tbody.innerHTML = '<tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>'; document.getElementById('rosterSummary').textContent = '총 0명 (제출 0명 / 미제출 0명)'; return; }
@@ -532,6 +546,7 @@
       });
       const total = rosterList.length; document.getElementById('rosterSummary').textContent = `총 ${total}명 (제출 ${doneCount}명 / 미제출 ${total - doneCount}명)`;
     }
+    
     async function saveConfig() {
       const data = { schoolName: document.getElementById('d_school').value, year: document.getElementById('d_year').value, adminPw: document.getElementById('d_adminPw').value, chiefs: document.getElementById('d_chiefs').value, depts: document.getElementById('d_depts').value, rosterText: document.getElementById('d_rosterText').value };
       const btn = document.getElementById('saveConfigBtn'); btn.disabled = true; btn.textContent = '저장 중...';
@@ -540,17 +555,21 @@
       btn.disabled = false; btn.textContent = '설정 및 명단 저장'; document.getElementById('shareUrl').textContent = res.shareUrl; loadAdminConfig(data.schoolName);
       const box = document.getElementById('configResultBox'); box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
     }
+    
     function copyUrl() {
       const text = document.getElementById('shareUrl').textContent;
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
+    
     function initDropdowns() {
       fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears'); fillYears('middleHomeroomCareer'); fillYears('highHomeroomCareer');
       fillSelect('chiefHopeYn', ['희망','비희망','무관']); fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
       fillSelect('leave2027', ['예','아니요']); fillSelect('leave2026', ['예','아니요']);
     }
+    
     function fillSelect(id, arr) { const el=document.getElementById(id); el.innerHTML='<option value="">선택</option>'; arr.forEach(v=>{if(v)el.appendChild(new Option(v,v));}); }
     function fillYears(id) { const arr=[]; for(let i=0; i<=40; i++) arr.push(i+'년'); fillSelect(id, arr); }
+    
     function bindEvents() {
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
@@ -569,8 +588,10 @@
       canvas.addEventListener('mousedown', evt.start); canvas.addEventListener('mousemove', evt.move); window.addEventListener('mouseup', evt.end);
       canvas.addEventListener('touchstart', evt.start, {passive:false}); canvas.addEventListener('touchmove', evt.move, {passive:false}); window.addEventListener('touchend', evt.end);
     }
+    
     function calcTotalExp() { let m = parseInt(getValue('middleYears'))||0; let h = parseInt(getValue('highYears'))||0; document.getElementById('totalYears').value = (m+h===0 && !getValue('middleYears') && !getValue('highYears')) ? '' : (m+h)+'년'; }
     function calcTotalHomeroom() { let m = parseInt(getValue('middleHomeroomCareer'))||0; let h = parseInt(getValue('highHomeroomCareer'))||0; document.getElementById('totalHomeroomYears').value = (m+h===0 && !getValue('middleHomeroomCareer') && !getValue('highHomeroomCareer')) ? '' : (m+h)+'년'; }
+    
     function applyInitialData(data) {
       sysConfig = data.config; const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('uiTitle').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('uiSchoolName').textContent = sc;
@@ -580,13 +601,25 @@
       fillSelect('chiefHope1', data.options.chiefPositions); fillSelect('chiefHope2', data.options.chiefPositions); fillSelect('chiefHope3', data.options.chiefPositions);
       fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
     }
-    async function fetchSavedData() {
-      const name = getValue('name'); const phone = getValue('phone'); if (!name) return alert('성명을 먼저 입력한 후 불러오기를 눌러주세요.');
-      const btn = document.getElementById('loadBtn'); btn.disabled = true; btn.textContent = '불러오는 중...';
-      const res = await apiCall('loadSavedData', { schoolName: sysConfig.SCHOOL_NAME, name: name, phone: phone });
-      btn.disabled = false; btn.textContent = '서버 불러오기';
-      if(res.success) { loadData(res.data); alert('서버에서 데이터를 성공적으로 불러왔습니다.'); } else { alert(res.message); }
+    
+    // 🌟 불러오기 로직 변경 (서버 -> 브라우저 로컬 스토리지)
+    function fetchSavedData() {
+      const saved = localStorage.getItem(LS_KEY);
+      if (saved) {
+        if (confirm('현재 기기(브라우저)에 임시저장된 데이터가 있습니다.\n불러오시겠습니까? (기존 입력 내용은 덮어쓰기 됩니다)')) {
+          try {
+            loadData(JSON.parse(saved));
+            alert('임시저장된 데이터를 성공적으로 불러왔습니다.');
+            document.getElementById('autoSaveMsg').textContent = '데이터를 성공적으로 불러왔습니다.';
+          } catch(e) {
+            alert('데이터를 불러오는 중 오류가 발생했습니다.');
+          }
+        }
+      } else {
+        alert('이 기기(브라우저)에 임시저장된 데이터가 없습니다.\n(주의: 다른 기기나 다른 브라우저에서 저장한 내역은 불러올 수 없습니다)');
+      }
     }
+    
     function loadData(d) {
       Object.keys(d).forEach(k => {
         const el = document.getElementById(k);
@@ -609,13 +642,15 @@
         img.src = d.signature;
       } else { clearSignature(false); }
     }
+    
     function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+    
     function collectData() {
       const ids = ['name','gender','subject','birth','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','transferDate','certificateMinorGrade','certificateMinor','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','totalHomeroomYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
       const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
     }
-    // 🌟 분리된 인쇄 데이터 채우기 함수 (PDF 생성 시에도 재사용)
+    
     function fillPrintArea() {
       const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
@@ -643,10 +678,12 @@
       if (d.signatureBlank) { sImg.style.display = 'none'; } else { sImg.style.display = 'block'; sImg.src = d.signature; }
       document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
     }
+    
     function preparePrint() {
       fillPrintArea();
       window.print();
     }
+    
     function printEmptyForm() {
       const ids = ['p_name','p_gender','p_subject','p_birth','p_address','p_phone','p_emRel','p_emPhone','p_certMaj','p_transfer','p_certMin','p_prevSch','p_totalYrs','p_midYrs','p_highYrs','p_c1','p_c2','p_c3','p_chiefYrs','p_totalHmrm','p_midHmrm','p_highHmrm','p_chiefHope','p_ch1','p_ch2','p_ch3','p_hm1','p_hm2','p_hm3','p_w1','p_w2','p_w3','p_l27','p_l26','p_signName','p_aYes','p_aNo'];
       ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
@@ -661,13 +698,16 @@
       document.getElementById('p_date').innerHTML = `${yr}년 &nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp; 일`;
       window.print();
     }
-    async function saveData() {
-      const d = collectData(); if(!d.name) return alert('성명을 입력한 후 임시저장을 눌러주세요.');
-      const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.textContent = '저장중...';
-      const res = await apiCall('tempSave', { data: d, schoolName: sysConfig.SCHOOL_NAME });
-      btn.disabled = false; btn.textContent = '서버 임시저장';
-      if(res.success) { alert('서버에 임시저장이 완료되었습니다. 나중에 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.'); } else { alert('저장 실패: ' + (res.error || '알 수 없는 오류')); }
+    
+    // 🌟 임시저장 로직 변경 (서버 -> 브라우저 로컬 스토리지)
+    function saveData() {
+      const d = collectData(); 
+      localStorage.setItem(LS_KEY, JSON.stringify(d));
+      const now = new Date();
+      document.getElementById('autoSaveMsg').textContent = `마지막 임시 보관: ${now.getHours()}시 ${now.getMinutes().toString().padStart(2, '0')}분 (현재 기기에 저장됨)`;
+      alert('현재 사용 중인 기기(브라우저)에 임시저장 되었습니다.\n창을 닫아도 나중에 [불러오기]를 누르면 복구됩니다.');
     }
+    
     async function submitForm() {
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
       const invalidList = [];
@@ -686,33 +726,35 @@
       else if (privacyAgree.value === 'no') { privacyRow.classList.add('input-error'); invalidList.push(privacyRow); alert('개인정보 수집·이용에 동의하지 않으시면 제출할 수 없습니다.'); privacyRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
       if (signatureBlank) { canvas.classList.add('input-error'); invalidList.push(canvas); }
       if (invalidList.length > 0) { const firstInvalid = invalidList[0]; firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (typeof firstInvalid.focus === 'function') { firstInvalid.focus(); } alert('입력되지 않은 필수 항목이 있습니다.\n빨간색으로 표시된 칸을 확인 후 입력해 주세요.'); return; }
+      
       const d = collectData();
-      // 🌟 [추가] PDF 저장을 위해 프린트 영역에 데이터를 채운 뒤 HTML 텍스트를 추출
       fillPrintArea();
       const printHtml = document.getElementById('printArea').innerHTML;
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
-      // 서버로 보낼 때 학교 설정 연도 및 생성된 HTML을 같이 보냅니다.
+      
       const res = await apiCall('submitForm', {
         data: d,
         schoolName: sysConfig.SCHOOL_NAME,
         documentYear: sysConfig.DOCUMENT_YEAR,
         pdfHtml: printHtml
       });
+      
       if(res.success) {
+        // 성공적으로 서버 제출 시 기기에 저장된 임시데이터 삭제
         localStorage.removeItem(LS_KEY);
         document.getElementById('autoSaveMsg').style.display = 'none';
         btn.textContent = '제출완료';
-        // 🌟 [추가] 모달창에 이름과 학교명을 반영하고 화면에 띄웁니다.
+        
         document.getElementById('sm_title').textContent = res.teacherName + '선생님 감사합니다.';
         document.getElementById('sm_school').textContent = res.schoolName;
         document.getElementById('sm_thanks').textContent = res.teacherName + '선생님 감사합니다.';
         document.getElementById('successModal').style.display = 'flex';
-        // 기존 텍스트 박스도 띄움
         const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'});
       } else {
         btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
       }
     }
+    
     function resizeCanvas() {
       const r = canvas.getBoundingClientRect(); if (r.width === 0 || r.height === 0) return;
       const rto = window.devicePixelRatio || 1; const cur = signatureBlank ? null : canvas.toDataURL();
@@ -720,11 +762,13 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(rto, rto); ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
       if (cur) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height); img.src = cur; }
     }
+    
     function getPos(e) { const r = canvas.getBoundingClientRect(); if (e.touches && e.touches.length > 0) { return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }; } return { x: e.clientX - r.left, y: e.clientY - r.top }; }
     function startDraw(e) { if (e.type === 'touchstart') e.preventDefault(); const p = getPos(e); drawing = true; lastX = p.x; lastY = p.y; }
     function draw(e) { if (!drawing) return; if (e.type === 'touchmove') e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; canvas.classList.remove('input-error'); }
     function endDraw(e) { drawing = false; triggerAutoSave(); }
     function clearSignature(save = true) { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureBlank = true; if(save) triggerAutoSave(); }
+    
     async function downloadExcel(event) {
       const schoolName = document.getElementById('d_school').value;
       if(!schoolName) return alert('학교명이 설정되지 않았습니다.');
