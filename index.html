@@ -22,7 +22,6 @@
     .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
     .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
     .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-    
     /* 🌟 추가된 제출 완료 팝업 모달 스타일 */
     .success-modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.65); z-index: 2000; justify-content: center; align-items: center; }
     .success-modal-content { background: #fff; padding: 35px 30px; border-radius: 12px; width: 420px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; line-height: 1.7; }
@@ -30,7 +29,6 @@
     .success-modal-content p { font-size: 15.5px; color: #222; margin: 15px 0; word-break: keep-all; font-weight: 500; }
     .btn-close-success { background: #1a73e8; color: white; padding: 12px 35px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; }
     .btn-close-success:hover { background: #1557b0; }
-
     .btn-close { background: #eee; color: #333; }
     #dashboardArea, #landingArea, #inputFormArea { display: none; max-width: 980px; margin: 0 auto; background: #fff; padding: 28px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
     #dashboardArea h2 { text-align: center; color: #1a73e8; margin-top:0; }
@@ -86,7 +84,6 @@
     .success { background: #e6f4ea; border: 1px solid #81c995; color: #137333; }
     .conditional { display: none; } .flex-row { display: flex; gap: 10px; }
     @media (max-width: 720px) { .admin-grid, .landing-card-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(1, 1fr); } .col-3,.col-4,.col-6,.col-12 { grid-column: span 1; } }
-    
     /* 🖨️ A4 1페이지 출력 전용 스타일 */
     #printArea { display: none; }
     @page { size: A4 portrait; margin: 0; }
@@ -129,7 +126,6 @@
       </div>
     </div>
   </div>
-  
   <!-- 🌟 추가된 제출 완료 팝업창 모달 -->
   <div class="success-modal-overlay" id="successModal">
     <div class="success-modal-content">
@@ -143,7 +139,6 @@
       <button class="btn-close-success" onclick="closeSuccessModal()">닫 기</button>
     </div>
   </div>
-
   <div id="landingArea" style="text-align:center; padding: 35px 15px;">
     <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 800;">교원 업무분장 희망원 작성 시스템</h2>
     <p style="color: #444; font-size: 17px; margin-bottom: 30px; line-height: 1.6;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
@@ -158,7 +153,6 @@
       </div>
     </div>
   </div>
-  
   <div id="dashboardArea">
     <h2>우리 학교 시스템 설정 및 제출 현황</h2>
     <div style="background:#e6f4ea; padding:15px; border-radius:8px; margin-bottom:20px; font-size:14px; border:1px solid #81c995;">
@@ -205,7 +199,6 @@
     </div>
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
-  
   <div id="inputFormArea">
     <h1 id="uiTitle">업무분장 희망원</h1>
     <div class="subtitle" id="uiSchoolName">학교명</div>
@@ -229,13 +222,17 @@
             <input type="hidden" id="birth">
           </div>
         </div>
-        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address"></div>
-        <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="text" id="phone" placeholder="010-0000-0000" maxlength="13"></div>
+        <!-- 주소 입력 한글 적용 -->
+        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address" lang="ko" spellcheck="false" style="ime-mode: active;"></div>
+        <!-- 휴대전화 입력 변경 -->
+        <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000" maxlength="13"></div>
         <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
-        <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="text" id="emergencyPhone" placeholder="010-0000-0000" maxlength="13"></div>
+        <!-- 비상연락처 입력 변경 -->
+        <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone" placeholder="010-0000-0000" maxlength="13"></div>
       </div></div></div>
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
-        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex:1"></div></div>
+        <!-- 전공 입력 한글 적용 -->
+        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex: 1; ime-mode: active;" lang="ko" spellcheck="false"></div></div>
         <div class="field col-6">
           <label class="required" id="lblTransferDate">전입일</label>
           <div class="date-input-group" data-target="transferDate">
@@ -247,7 +244,8 @@
             <input type="hidden" id="transferDate">
           </div>
         </div>
-        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex:1"></div></div>
+        <!-- 부전공 입력 한글 적용 -->
+        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex: 1; ime-mode: active;" lang="ko" spellcheck="false"></div></div>
         <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" placeholder="없으면 '없음' 입력"></div>
         <div class="field col-4"><label for="middleYears" class="required">중학교 교육경력</label><select id="middleYears"></select></div>
         <div class="field col-4"><label for="highYears" class="required">고등학교 교육경력</label><select id="highYears"></select></div>
@@ -303,7 +301,6 @@
       <div class="msg-box success" id="resultBox"></div>
     </form>
   </div>
-  
   <div id="printArea">
     <div class="p-header-wrap">
       <div style="width: 130px;"></div>
@@ -390,12 +387,10 @@
     let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
     const LS_KEY = 'hopeForm_autoSave';
     let autoSaveTimer = null;
-    
     // 🌟 추가된 모달 닫기 함수
     function closeSuccessModal() {
       document.getElementById('successModal').style.display = 'none';
     }
-    
     async function apiCall(action, payload = {}) {
       try {
         const response = await fetch(GAS_API_URL, {
@@ -620,7 +615,6 @@
       const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
     }
-    
     // 🌟 분리된 인쇄 데이터 채우기 함수 (PDF 생성 시에도 재사용)
     function fillPrintArea() {
       const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
@@ -649,12 +643,10 @@
       if (d.signatureBlank) { sImg.style.display = 'none'; } else { sImg.style.display = 'block'; sImg.src = d.signature; }
       document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
     }
-    
     function preparePrint() {
       fillPrintArea();
       window.print();
     }
-    
     function printEmptyForm() {
       const ids = ['p_name','p_gender','p_subject','p_birth','p_address','p_phone','p_emRel','p_emPhone','p_certMaj','p_transfer','p_certMin','p_prevSch','p_totalYrs','p_midYrs','p_highYrs','p_c1','p_c2','p_c3','p_chiefYrs','p_totalHmrm','p_midHmrm','p_highHmrm','p_chiefHope','p_ch1','p_ch2','p_ch3','p_hm1','p_hm2','p_hm3','p_w1','p_w2','p_w3','p_l27','p_l26','p_signName','p_aYes','p_aNo'];
       ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
@@ -669,7 +661,6 @@
       document.getElementById('p_date').innerHTML = `${yr}년 &nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp; 일`;
       window.print();
     }
-    
     async function saveData() {
       const d = collectData(); if(!d.name) return alert('성명을 입력한 후 임시저장을 눌러주세요.');
       const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.textContent = '저장중...';
@@ -677,7 +668,6 @@
       btn.disabled = false; btn.textContent = '서버 임시저장';
       if(res.success) { alert('서버에 임시저장이 완료되었습니다. 나중에 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.'); } else { alert('저장 실패: ' + (res.error || '알 수 없는 오류')); }
     }
-    
     async function submitForm() {
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
       const invalidList = [];
@@ -696,41 +686,33 @@
       else if (privacyAgree.value === 'no') { privacyRow.classList.add('input-error'); invalidList.push(privacyRow); alert('개인정보 수집·이용에 동의하지 않으시면 제출할 수 없습니다.'); privacyRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
       if (signatureBlank) { canvas.classList.add('input-error'); invalidList.push(canvas); }
       if (invalidList.length > 0) { const firstInvalid = invalidList[0]; firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (typeof firstInvalid.focus === 'function') { firstInvalid.focus(); } alert('입력되지 않은 필수 항목이 있습니다.\n빨간색으로 표시된 칸을 확인 후 입력해 주세요.'); return; }
-      
       const d = collectData();
-      
       // 🌟 [추가] PDF 저장을 위해 프린트 영역에 데이터를 채운 뒤 HTML 텍스트를 추출
       fillPrintArea();
       const printHtml = document.getElementById('printArea').innerHTML;
-      
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
-      
       // 서버로 보낼 때 학교 설정 연도 및 생성된 HTML을 같이 보냅니다.
-      const res = await apiCall('submitForm', { 
-        data: d, 
-        schoolName: sysConfig.SCHOOL_NAME, 
+      const res = await apiCall('submitForm', {
+        data: d,
+        schoolName: sysConfig.SCHOOL_NAME,
         documentYear: sysConfig.DOCUMENT_YEAR,
         pdfHtml: printHtml
       });
-      
       if(res.success) {
         localStorage.removeItem(LS_KEY);
         document.getElementById('autoSaveMsg').style.display = 'none';
         btn.textContent = '제출완료';
-        
         // 🌟 [추가] 모달창에 이름과 학교명을 반영하고 화면에 띄웁니다.
         document.getElementById('sm_title').textContent = res.teacherName + '선생님 감사합니다.';
         document.getElementById('sm_school').textContent = res.schoolName;
         document.getElementById('sm_thanks').textContent = res.teacherName + '선생님 감사합니다.';
         document.getElementById('successModal').style.display = 'flex';
-        
         // 기존 텍스트 박스도 띄움
         const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'});
       } else {
         btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
       }
     }
-    
     function resizeCanvas() {
       const r = canvas.getBoundingClientRect(); if (r.width === 0 || r.height === 0) return;
       const rto = window.devicePixelRatio || 1; const cur = signatureBlank ? null : canvas.toDataURL();
@@ -743,7 +725,6 @@
     function draw(e) { if (!drawing) return; if (e.type === 'touchmove') e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; canvas.classList.remove('input-error'); }
     function endDraw(e) { drawing = false; triggerAutoSave(); }
     function clearSignature(save = true) { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureBlank = true; if(save) triggerAutoSave(); }
-    
     async function downloadExcel(event) {
       const schoolName = document.getElementById('d_school').value;
       if(!schoolName) return alert('학교명이 설정되지 않았습니다.');
