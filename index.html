@@ -2,14 +2,17 @@
 <html lang="ko">
 <head>
   <script>
-    // 🌟 본인의 구글 앱스 스크립트 웹 앱 URL입니다.
+    // 🌟 본인의 구글 앱스 스크립트 웹 앱 URL입니다. (새 배포 후 URL이 바뀌면 반드시 업데이트 하세요)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyk6eVjYxVBPc_2RdcFTVkYZ--1_ngYJh1Oz-iQVdd1ohMR4vFW15ccgS6gl__89h0z/exec";
   </script>
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>업무분장 희망원 작성 시스템</title>
+  
+  <!-- 🌟 엑셀 다운로드를 위한 SheetJS 라이브러리 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; background: #f5f6fa; color: #222; }
@@ -120,7 +123,6 @@
       </div>
     </div>
   </div>
-  
   <div id="landingArea" style="text-align:center; padding: 35px 15px;">
     <h2 style="color: #1a73e8; font-size: 30px; margin-bottom: 14px; font-weight: 800;">교원 업무분장 희망원 작성 시스템</h2>
     <p style="color: #444; font-size: 17px; margin-bottom: 30px; line-height: 1.6;">본 시스템은 각 학교별 전용 접속 링크를 통해 희망원을 제출하고 관리하는 온라인 프로그램입니다.</p>
@@ -178,6 +180,8 @@
     <div class="button-row">
       <button class="btn-secondary" onclick="logoutAdmin()">화면 닫기</button>
       <button class="btn-primary" id="saveConfigBtn" onclick="saveConfig()">설정 및 명단 저장</button>
+      <!-- 🌟 추가된 엑셀 다운로드 버튼 -->
+      <button class="btn-primary" style="background:#34a853;" onclick="downloadExcel(event)">결과 엑셀 다운로드</button>
     </div>
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
@@ -275,7 +279,6 @@
         <button type="button" class="btn-secondary" id="loadBtn" onclick="fetchSavedData()">서버 불러오기</button>
         <button type="button" class="btn-secondary" onclick="preparePrint()">작성 내용 인쇄</button>
         <button type="button" class="btn-outline" onclick="printEmptyForm()">빈양식출력</button>
-        <!-- 💡 자동저장 안내 메시지 추가 -->
         <div style="width:100%; text-align:center; font-size:12px; color:#1a73e8; margin-top:8px;" id="autoSaveMsg"></div>
       </div>
       <div class="msg-box success" id="resultBox"></div>
@@ -367,11 +370,9 @@
     const canvas = document.getElementById('signaturePad');
     const ctx = canvas.getContext('2d');
     let drawing = false, lastX = 0, lastY = 0, signatureBlank = true;
-    
-    // 💡 자동 저장 관리를 위한 변수 선언
     const LS_KEY = 'hopeForm_autoSave';
     let autoSaveTimer = null;
-
+    
     async function apiCall(action, payload = {}) {
       try {
         const response = await fetch(GAS_API_URL, {
@@ -384,10 +385,12 @@
         return { error: '통신 오류가 발생했습니다: ' + err.message };
       }
     }
+    
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param) || '';
     }
+    
     window.onload = async () => {
       initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
@@ -400,11 +403,9 @@
           applyInitialData(res);
           document.getElementById('landingArea').style.display = 'none';
           document.getElementById('inputFormArea').style.display = 'block';
-          
-          // 💡 폼 로드 후 자동저장된 데이터가 있는지 확인
           setTimeout(() => {
             resizeCanvas();
-            checkLocalAutoSave(); 
+            checkLocalAutoSave();
           }, 300);
         }
       } else {
@@ -412,8 +413,7 @@
         document.getElementById('inputFormArea').style.display = 'none';
       }
     };
-
-    // 💡 로컬 스토리지 자동 저장 실행 함수 (타이핑 중지 후 1초 뒤 저장)
+    
     function triggerAutoSave() {
       clearTimeout(autoSaveTimer);
       autoSaveTimer = setTimeout(() => {
@@ -423,8 +423,7 @@
         document.getElementById('autoSaveMsg').textContent = `마지막 임시 보관: ${now.getHours()}시 ${now.getMinutes().toString().padStart(2, '0')}분 (작성 중 브라우저에 자동 보관됩니다)`;
       }, 1000);
     }
-
-    // 💡 초기 로드 시 기존 자동저장 데이터가 있는지 묻는 함수
+    
     function checkLocalAutoSave() {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) {
@@ -434,11 +433,11 @@
             document.getElementById('autoSaveMsg').textContent = '임시 보관된 데이터를 불러왔습니다.';
           } catch(e) {}
         } else {
-          localStorage.removeItem(LS_KEY); // 아니요 선택 시 기존 보관 데이터 삭제
+          localStorage.removeItem(LS_KEY);
         }
       }
     }
-
+    
     function autoHyphenPhone(str) {
       str = str.replace(/[^0-9]/g, '');
       if (str.length < 4) return str;
@@ -448,6 +447,7 @@
         return str.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
       } else return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     }
+    
     function initDateInputs() {
       document.querySelectorAll('.date-input-group').forEach(group => {
         const y = group.querySelector('.date-y'); const m = group.querySelector('.date-m'); const d = group.querySelector('.date-d'); const hidden = group.querySelector('input[type="hidden"]');
@@ -466,8 +466,10 @@
         d.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && d.value === '') m.focus(); });
       });
     }
+    
     function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; document.getElementById('l_id').focus(); }
     function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+    
     async function loginAdmin() {
       const id = document.getElementById('l_id').value; const pw = document.getElementById('l_pw').value;
       if(!id || !pw) return alert('아이디와 비밀번호를 입력하세요.');
@@ -478,7 +480,9 @@
         closeLoginModal(); document.getElementById('inputFormArea').style.display = 'none'; document.getElementById('landingArea').style.display = 'none'; document.getElementById('topNav').style.display = 'none'; document.getElementById('dashboardArea').style.display = 'block'; loadAdminConfig(res.schoolName);
       } else { alert(res.message); }
     }
+    
     function logoutAdmin() { location.reload(); }
+    
     async function loadAdminConfig(schoolName) {
       const baseUrl = window.location.origin + window.location.pathname;
       const data = await apiCall('getAdminConfigData', { schoolName: schoolName, githubBaseUrl: baseUrl });
@@ -487,6 +491,7 @@
       document.getElementById('shareUrl').textContent = data.shareUrl;
       renderRosterTable(data.rosterList);
     }
+    
     function handleRosterFileUpload(e) {
       const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader(); const filename = file.name.toLowerCase();
@@ -510,6 +515,7 @@
         reader.readAsText(file);
       }
     }
+    
     function renderRosterTable(rosterList) {
       const tbody = document.getElementById('rosterTbody'); tbody.innerHTML = '';
       if(!rosterList || rosterList.length === 0) { tbody.innerHTML = '<tr><td colspan="3">명단을 등록하시면 현황이 표시됩니다.</td></tr>'; document.getElementById('rosterSummary').textContent = '총 0명 (제출 0명 / 미제출 0명)'; return; }
@@ -520,6 +526,7 @@
       });
       const total = rosterList.length; document.getElementById('rosterSummary').textContent = `총 ${total}명 (제출 ${doneCount}명 / 미제출 ${total - doneCount}명)`;
     }
+    
     async function saveConfig() {
       const data = { schoolName: document.getElementById('d_school').value, year: document.getElementById('d_year').value, adminPw: document.getElementById('d_adminPw').value, chiefs: document.getElementById('d_chiefs').value, depts: document.getElementById('d_depts').value, rosterText: document.getElementById('d_rosterText').value };
       const btn = document.getElementById('saveConfigBtn'); btn.disabled = true; btn.textContent = '저장 중...';
@@ -528,15 +535,18 @@
       btn.disabled = false; btn.textContent = '설정 및 명단 저장'; document.getElementById('shareUrl').textContent = res.shareUrl; loadAdminConfig(data.schoolName);
       const box = document.getElementById('configResultBox'); box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
     }
+    
     function copyUrl() {
       const text = document.getElementById('shareUrl').textContent;
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
+    
     function initDropdowns() {
       fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears'); fillYears('middleHomeroomCareer'); fillYears('highHomeroomCareer');
       fillSelect('chiefHopeYn', ['희망','비희망','무관']); fillSelect('homeroomGrade1', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade2', ['1학년','2학년','3학년','무관']); fillSelect('homeroomGrade3', ['1학년','2학년','3학년','무관']);
       fillSelect('leave2027', ['예','아니요']); fillSelect('leave2026', ['예','아니요']);
     }
+    
     function fillSelect(id, arr) { const el=document.getElementById(id); el.innerHTML='<option value="">선택</option>'; arr.forEach(v=>{if(v)el.appendChild(new Option(v,v));}); }
     function fillYears(id) { const arr=[]; for(let i=0; i<=40; i++) arr.push(i+'년'); fillSelect(id, arr); }
     
@@ -544,20 +554,15 @@
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
       ['phone', 'emergencyPhone'].forEach(id => { const el = document.getElementById(id); if(el) { el.addEventListener('input', (e) => { e.target.value = autoHyphenPhone(e.target.value); }); } });
-      
       const form = document.getElementById('hopeForm');
-      // 💡 폼 입력 시 자동저장 트리거 바인딩
       form.addEventListener('input', (e) => { e.target.classList.remove('input-error'); triggerAutoSave(); });
       form.addEventListener('change', (e) => { e.target.classList.remove('input-error'); triggerAutoSave(); });
-      
       document.getElementById('leave2027').addEventListener('change', ()=>document.getElementById('leave2027Wrap').style.display = getValue('leave2027')==='예'?'flex':'none');
       document.getElementById('leave2026').addEventListener('change', ()=>document.getElementById('leave2026Wrap').style.display = getValue('leave2026')==='예'?'flex':'none');
       document.getElementById('l_pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); }); document.getElementById('l_id').addEventListener('keydown', (e) => { if (e.key === 'Enter') loginAdmin(); });
-      
-      document.querySelectorAll('input[name="privacyAgree"]').forEach(r => { 
-        r.addEventListener('change', () => { document.getElementById('privacyAgreeRow').classList.remove('input-error'); triggerAutoSave(); }); 
+      document.querySelectorAll('input[name="privacyAgree"]').forEach(r => {
+        r.addEventListener('change', () => { document.getElementById('privacyAgreeRow').classList.remove('input-error'); triggerAutoSave(); });
       });
-      
       window.addEventListener('resize', resizeCanvas);
       const evt = { start: startDraw, move: draw, end: endDraw };
       canvas.addEventListener('mousedown', evt.start); canvas.addEventListener('mousemove', evt.move); window.addEventListener('mouseup', evt.end);
@@ -566,6 +571,7 @@
     
     function calcTotalExp() { let m = parseInt(getValue('middleYears'))||0; let h = parseInt(getValue('highYears'))||0; document.getElementById('totalYears').value = (m+h===0 && !getValue('middleYears') && !getValue('highYears')) ? '' : (m+h)+'년'; }
     function calcTotalHomeroom() { let m = parseInt(getValue('middleHomeroomCareer'))||0; let h = parseInt(getValue('highHomeroomCareer'))||0; document.getElementById('totalHomeroomYears').value = (m+h===0 && !getValue('middleHomeroomCareer') && !getValue('highHomeroomCareer')) ? '' : (m+h)+'년'; }
+    
     function applyInitialData(data) {
       sysConfig = data.config; const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('uiTitle').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('uiSchoolName').textContent = sc;
@@ -575,6 +581,7 @@
       fillSelect('chiefHope1', data.options.chiefPositions); fillSelect('chiefHope2', data.options.chiefPositions); fillSelect('chiefHope3', data.options.chiefPositions);
       fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
     }
+    
     async function fetchSavedData() {
       const name = getValue('name'); const phone = getValue('phone'); if (!name) return alert('성명을 먼저 입력한 후 불러오기를 눌러주세요.');
       const btn = document.getElementById('loadBtn'); btn.disabled = true; btn.textContent = '불러오는 중...';
@@ -583,7 +590,6 @@
       if(res.success) { loadData(res.data); alert('서버에서 데이터를 성공적으로 불러왔습니다.'); } else { alert(res.message); }
     }
     
-    // 💡 폼 데이터 복구 시 서명(Canvas) 데이터도 복원되도록 수정
     function loadData(d) {
       Object.keys(d).forEach(k => {
         const el = document.getElementById(k);
@@ -596,8 +602,6 @@
       });
       if(d.privacyAgree === 'yes') { const yesRadio = document.querySelector('input[name="privacyAgree"][value="yes"]'); if(yesRadio) yesRadio.checked = true; }
       else if(d.privacyAgree === 'no') { const noRadio = document.querySelector('input[name="privacyAgree"][value="no"]'); if(noRadio) noRadio.checked = true; }
-
-      // 저장된 서명이 있을 경우 캔버스에 그리기
       if (d.signature && !d.signatureBlank) {
         const img = new Image();
         img.onload = () => {
@@ -610,12 +614,15 @@
         clearSignature(false);
       }
     }
+    
     function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+    
     function collectData() {
       const ids = ['name','gender','subject','birth','address','phone','emergencyRelation','emergencyPhone','certificateMajorGrade','certificateMajor','transferDate','certificateMinorGrade','certificateMinor','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','totalHomeroomYears','middleHomeroomCareer','highHomeroomCareer','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
       const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/png'); d.signatureBlank = signatureBlank; return d;
     }
+    
     function preparePrint() {
       const d = collectData(); const yr = sysConfig.DOCUMENT_YEAR; const sc = sysConfig.SCHOOL_NAME;
       document.getElementById('p_title').textContent = yr + '학년도 업무분장 희망원'; document.getElementById('p_school').textContent = sc;
@@ -644,6 +651,7 @@
       document.getElementById('p_aYes').textContent = d.privacyAgree === 'yes' ? '○' : ''; document.getElementById('p_aNo').textContent = d.privacyAgree === 'no' ? '○' : '';
       window.print();
     }
+    
     function printEmptyForm() {
       const ids = ['p_name','p_gender','p_subject','p_birth','p_address','p_phone','p_emRel','p_emPhone','p_certMaj','p_transfer','p_certMin','p_prevSch','p_totalYrs','p_midYrs','p_highYrs','p_c1','p_c2','p_c3','p_chiefYrs','p_totalHmrm','p_midHmrm','p_highHmrm','p_chiefHope','p_ch1','p_ch2','p_ch3','p_hm1','p_hm2','p_hm3','p_w1','p_w2','p_w3','p_l27','p_l26','p_signName','p_aYes','p_aNo'];
       ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
@@ -658,6 +666,7 @@
       document.getElementById('p_date').innerHTML = `${yr}년 &nbsp;&nbsp;&nbsp;&nbsp; 월 &nbsp;&nbsp;&nbsp;&nbsp; 일`;
       window.print();
     }
+    
     async function saveData() {
       const d = collectData(); if(!d.name) return alert('성명을 입력한 후 임시저장을 눌러주세요.');
       const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.textContent = '저장중...';
@@ -665,6 +674,7 @@
       btn.disabled = false; btn.textContent = '서버 임시저장';
       if(res.success) { alert('서버에 임시저장이 완료되었습니다. 나중에 성명을 입력한 뒤 [불러오기]를 누르면 이어서 작성할 수 있습니다.'); } else { alert('저장 실패: ' + (res.error || '알 수 없는 오류')); }
     }
+    
     async function submitForm() {
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
       const invalidList = [];
@@ -687,17 +697,16 @@
       const d = collectData();
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '처리중...';
       const res = await apiCall('submitForm', { data: d, schoolName: sysConfig.SCHOOL_NAME });
-      if(res.success) { 
-        // 💡 제출 성공 시 자동저장 내용 파기
-        localStorage.removeItem(LS_KEY); 
+      if(res.success) {
+        localStorage.removeItem(LS_KEY);
         document.getElementById('autoSaveMsg').style.display = 'none';
-
-        btn.textContent = '제출완료'; 
-        const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'}); 
-      } else { 
-        btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message)); 
+        btn.textContent = '제출완료';
+        const b = document.getElementById('resultBox'); b.innerHTML = '<b>제출 및 명단 기록이 완료되었습니다.</b>'; b.style.display = 'block'; b.scrollIntoView({behavior:'smooth'});
+      } else {
+        btn.disabled = false; btn.textContent = '제출하기'; alert('오류: ' + (res.error || res.message));
       }
     }
+    
     function resizeCanvas() {
       const r = canvas.getBoundingClientRect(); if (r.width === 0 || r.height === 0) return;
       const rto = window.devicePixelRatio || 1; const cur = signatureBlank ? null : canvas.toDataURL();
@@ -705,18 +714,54 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(rto, rto); ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
       if (cur) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, r.width, r.height); img.src = cur; }
     }
+    
     function getPos(e) { const r = canvas.getBoundingClientRect(); if (e.touches && e.touches.length > 0) { return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }; } return { x: e.clientX - r.left, y: e.clientY - r.top }; }
     function startDraw(e) { if (e.type === 'touchstart') e.preventDefault(); const p = getPos(e); drawing = true; lastX = p.x; lastY = p.y; }
     function draw(e) { if (!drawing) return; if (e.type === 'touchmove') e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; signatureBlank = false; canvas.classList.remove('input-error'); }
-    
-    // 💡 서명 종료 시에도 자동 저장 발동
     function endDraw(e) { drawing = false; triggerAutoSave(); }
-    
-    // 💡 서명을 지울 때 자동 저장 옵션 추가
-    function clearSignature(save = true) { 
-      ctx.clearRect(0, 0, canvas.width, canvas.height); 
-      signatureBlank = true; 
-      if(save) triggerAutoSave(); 
+    function clearSignature(save = true) { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureBlank = true; if(save) triggerAutoSave(); }
+
+    // 🌟 엑셀 다운로드 (관리자용) 
+    async function downloadExcel(event) {
+      const schoolName = document.getElementById('d_school').value;
+      if(!schoolName) return alert('학교명이 설정되지 않았습니다.');
+      
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '다운로드 중...';
+      btn.disabled = true;
+
+      const res = await apiCall('getExcelData', { schoolName: schoolName });
+      
+      btn.textContent = originalText;
+      btn.disabled = false;
+
+      if(!res.success) return alert(res.message);
+      
+      const data2D = res.data;
+      const targetYear = res.targetYear;
+      
+      const colWidths = [];
+      for (let r = 0; r < data2D.length; r++) {
+        for (let c = 0; c < data2D[r].length; c++) {
+          const cellValue = data2D[r][c];
+          const str = cellValue == null ? "" : cellValue.toString();
+          let visualLength = 0;
+          for (let i = 0; i < str.length; i++) {
+            visualLength += (str.charCodeAt(i) > 127) ? 1.7 : 1.1;
+          }
+          visualLength = Math.max(5, Math.min(visualLength + 2, 60));
+          if (!colWidths[c] || visualLength > colWidths[c].wch) {
+            colWidths[c] = { wch: Math.round(visualLength) };
+          }
+        }
+      }
+
+      const worksheet = XLSX.utils.aoa_to_sheet(data2D);
+      worksheet['!cols'] = colWidths;
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, targetYear + "학년도 결과");
+      XLSX.writeFile(workbook, `${schoolName}_${targetYear}학년도_희망원_결과.xlsx`);
     }
   </script>
 </body>
