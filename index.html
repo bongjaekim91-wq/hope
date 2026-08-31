@@ -63,7 +63,12 @@
     .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-12 { grid-column: span 12; }
     label { font-size: 13px; font-weight: 600; }
     .required::after { content: " *"; color: #d93025; }
-    input[type="text"], input[type="date"], input[type="tel"], select, textarea { width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; }
+    
+    /* 🌟 모든 텍스트 필드에 한글 자판 기본 적용 (ime-mode) */
+    input[type="text"], input[type="date"], input[type="tel"], select, textarea { 
+      width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; 
+      ime-mode: active; 
+    }
     textarea { resize: vertical; line-height: 1.4; }
     input:readonly { background-color: #f1f3f4; font-weight: bold; color: #1a73e8; }
     .input-error { border: 2px solid #d93025 !important; background-color: #fce8e6 !important; outline: none; }
@@ -216,9 +221,9 @@
           </div>
         </div>
         <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address" lang="ko" spellcheck="false" style="ime-mode: active;"></div>
-        <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000" maxlength="13"></div>
+        <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000"></div>
         <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
-        <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone" placeholder="010-0000-0000" maxlength="13"></div>
+        <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone" placeholder="010-0000-0000"></div>
       </div></div></div>
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex: 1; ime-mode: active;" lang="ko" spellcheck="false"></div></div>
@@ -263,7 +268,7 @@
       <div class="section"><div class="section-title">5. 기타사항</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label for="leave2027" id="lblLeave1">2027년 휴직 예정</label><select id="leave2027"></select></div>
         <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" placeholder="종류(예: 육아)"><input type="text" id="leave2027Period" placeholder="기간(예: 03~02)"></div></div>
-        <div class="field col-6"><label for="leave2026" id="lblLeave2">2026년 휴직 경력</label><select id="leave2026"></select></div>
+        <div class="field col-6"><label for="leave2026" id="lblLeave2">2026년 휴직 경험</label><select id="leave2026"></select></div>
         <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" placeholder="종류"><input type="text" id="leave2026Period" placeholder="기간"></div></div>
         <div class="field col-12"><label for="memo">업무분장 시 참고사항</label><textarea id="memo" rows="4" placeholder="개인 신상에 관한 설명 및 사유 기재"></textarea></div>
       </div></div></div>
@@ -279,7 +284,7 @@
         <div style="margin-top:10px;"><button type="button" class="btn-secondary" onclick="clearSignature(true)">서명 지우기</button></div>
       </div></div>
       
-      <!-- 🌟 수정된 임시저장 / 불러오기 버튼 영역 -->
+      <!-- 🌟 임시저장 / 불러오기 버튼 영역 -->
       <div class="button-row">
         <button type="button" class="btn-primary" id="submitBtn" onclick="submitForm()">최종 제출하기</button>
         
@@ -428,6 +433,12 @@
     }
     
     window.onload = async () => {
+      // 🌟 모바일 키보드 최적화: 모든 텍스트 필드와 텍스트에어리어에 lang="ko" 와 spellcheck="false" 자동 부여
+      document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+        el.setAttribute('lang', 'ko');
+        el.setAttribute('spellcheck', 'false');
+      });
+      
       initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
       if(schoolParam) {
@@ -446,16 +457,6 @@
         document.getElementById('inputFormArea').style.display = 'none';
       }
     };
-    
-    function autoHyphenPhone(str) {
-      str = str.replace(/[^0-9]/g, '');
-      if (str.length < 4) return str;
-      else if (str.length < 7) return str.replace(/(\d{3})(\d{1,3})/, '$1-$2');
-      else if (str.length < 11) {
-        if (str.startsWith('02')) return str.length === 9 ? str.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3') : str.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-        return str.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
-      } else return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-    }
     
     function initDateInputs() {
       document.querySelectorAll('.date-input-group').forEach(group => {
@@ -562,7 +563,17 @@
     function bindEvents() {
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
-      ['phone', 'emergencyPhone'].forEach(id => { const el = document.getElementById(id); if(el) { el.addEventListener('input', (e) => { e.target.value = autoHyphenPhone(e.target.value); }); } });
+      
+      // 🌟 전화번호 입력 시 사용자 직접 입력(숫자, - 기호만 허용)으로 변경
+      ['phone', 'emergencyPhone'].forEach(id => { 
+        const el = document.getElementById(id); 
+        if(el) { 
+          el.addEventListener('input', (e) => { 
+            e.target.value = e.target.value.replace(/[^0-9-]/g, ''); 
+          }); 
+        } 
+      });
+      
       const form = document.getElementById('hopeForm');
       form.addEventListener('input', (e) => { e.target.classList.remove('input-error'); });
       form.addEventListener('change', (e) => { e.target.classList.remove('input-error'); });
@@ -591,7 +602,6 @@
       fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
     }
     
-    // 🌟 새로운 파일 임시저장 (다운로드 방식)
     function saveDataToLocalFile() {
       const d = collectData();
       if (!d.name) {
@@ -600,18 +610,20 @@
         return;
       }
       
+      const schoolName = sysConfig.SCHOOL_NAME || "학교명";
+      const fileName = `${schoolName}_${d.name}_희망원.json`;
+      
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d));
       const downloadAnchorNode = document.createElement('a');
       downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", `임시저장_${d.name}_업무분장 희망원.json`);
+      downloadAnchorNode.setAttribute("download", fileName);
       document.body.appendChild(downloadAnchorNode); 
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
       
-      alert(`[임시저장_${d.name}_업무분장 희망원.json] 파일이 기기의 '다운로드 폴더'에 저장되었습니다.\n\n나중에 이어서 작성하실 때 [저장된 파일 불러오기]를 눌러 이 파일을 선택하시면 됩니다.`);
+      alert(`[${fileName}] 파일이 기기의 '다운로드 폴더'에 저장되었습니다.\n\n나중에 이어서 작성하실 때 [저장된 파일 불러오기]를 눌러 이 파일을 선택하시면 됩니다.`);
     }
 
-    // 🌟 새로운 파일 불러오기 방식
     function handleLocalFileLoad(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -625,7 +637,7 @@
         } catch(err) {
           alert('잘못된 파일입니다. 올바른 임시저장(.json) 파일을 선택해주세요.');
         }
-        event.target.value = ''; // 파일 선택 초기화 (같은 파일 다시 선택 가능하도록)
+        event.target.value = ''; 
       };
       reader.readAsText(file);
     }
@@ -818,7 +830,7 @@
       worksheet['!cols'] = colWidths;
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, targetYear + "학년도 결과");
-      XLSX.writeFile(workbook, `${schoolName}_${targetYear}학년도_업무분장 희망원_결과.xlsx`);
+      XLSX.writeFile(workbook, `${schoolName}_${targetYear}학년도_희망원_결과.xlsx`);
     }
   </script>
 </body>
