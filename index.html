@@ -64,7 +64,6 @@
     label { font-size: 13px; font-weight: 600; }
     .required::after { content: " *"; color: #d93025; }
     
-    /* 🌟 텍스트 필드 기본 디자인 유지 (ime-mode 구형 브라우저 보완) */
     input[type="text"], input[type="date"], input[type="tel"], select, textarea { 
       width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; 
       ime-mode: active; 
@@ -97,11 +96,9 @@
       .top-nav, #inputFormArea, #dashboardArea, #landingArea, .success-modal-overlay { display: none !important; }
       #printArea { display: flex !important; flex-direction: column; justify-content: space-between; width: 210mm; height: 297mm; padding: 12mm 15mm 12mm 15mm; box-sizing: border-box; page-break-after: avoid; page-break-inside: avoid; }
       .tables-container { flex: 1; display: flex; flex-direction: column; justify-content: space-between; margin: 4px 0; }
-      
       .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11.5px; letter-spacing: -0.3px; word-break: break-all; }
       .p-table th, .p-table td { border: 1px solid #000; padding: 5px 3px; text-align: center; vertical-align: middle; }
       .p-table th, .bg { background-color: #d9e2f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
-      
       .c-row-duty { height: 28px; }
       .text-left { text-align: left !important; padding-left: 8px !important; }
       .text-red { color: #d00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; font-size: 12px; text-align: center; margin: 6px 0; }
@@ -206,12 +203,13 @@
     <!-- 🌟 브라우저 폼 자동완성 방지 속성 추가 -->
     <form id="hopeForm" onsubmit="return false;" autocomplete="off">
       <div class="section"><div class="section-title">1. 기본 인적사항</div><div class="section-body"><div class="grid">
-        <div class="field col-3"><label for="name" class="required">성명</label><input type="text" id="name"></div>
+        <!-- 🌟 각 입력칸 원본 HTML에 직접 한글 전용 속성 및 더미 name 하드코딩 -->
+        <div class="field col-3"><label for="name" class="required">성명</label><input type="text" id="name" name="kr_n" lang="ko" spellcheck="false" autocomplete="off"></div>
         <div class="field col-3">
           <label for="gender" class="required">성별</label>
           <select id="gender"><option value="">선택</option><option value="남">남</option><option value="여">여</option></select>
         </div>
-        <div class="field col-3"><label for="subject" class="required">과목</label><input type="text" id="subject"></div>
+        <div class="field col-3"><label for="subject" class="required">과목</label><input type="text" id="subject" name="kr_s" lang="ko" spellcheck="false" autocomplete="off"></div>
         <div class="field col-3">
           <label class="required">생년월일</label>
           <div class="date-input-group" data-target="birth">
@@ -223,14 +221,13 @@
             <input type="hidden" id="birth">
           </div>
         </div>
-        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address"></div>
-        <!-- 🌟 전화번호 최대 길이 제한 적용 -->
+        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address" name="kr_a" lang="ko" spellcheck="false" autocomplete="off"></div>
         <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000" maxlength="13"></div>
-        <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
+        <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" name="kr_er" placeholder="예: 배우자" lang="ko" spellcheck="false" autocomplete="off"></div>
         <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone" placeholder="010-0000-0000" maxlength="13"></div>
       </div></div></div>
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
-        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex: 1;"></div></div>
+        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" name="kr_cm" placeholder="과목 입력" style="flex: 1;" lang="ko" spellcheck="false" autocomplete="off"></div></div>
         <div class="field col-6">
           <label class="required" id="lblTransferDate">전입일</label>
           <div class="date-input-group" data-target="transferDate">
@@ -242,16 +239,16 @@
             <input type="hidden" id="transferDate">
           </div>
         </div>
-        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex: 1;"></div></div>
-        <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" placeholder="없으면 '없음' 입력"></div>
+        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" name="kr_cmi" placeholder="과목 입력 (없으면 '없음')" style="flex: 1;" lang="ko" spellcheck="false" autocomplete="off"></div></div>
+        <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" name="kr_ps" placeholder="없으면 '없음' 입력" lang="ko" spellcheck="false" autocomplete="off"></div>
         <div class="field col-4"><label for="middleYears" class="required">중학교 교육경력</label><select id="middleYears"></select></div>
         <div class="field col-4"><label for="highYears" class="required">고등학교 교육경력</label><select id="highYears"></select></div>
         <div class="field col-4"><label>교육 총경력 (자동합산)</label><input type="text" id="totalYears" readonly placeholder="자동 계산됨"></div>
       </div></div></div>
       <div class="section"><div class="section-title">3. 세부 업무 및 담임 경력</div><div class="section-body"><div class="grid">
-        <div class="field col-4"><label for="career2026" class="required" id="lblYear1">작년 업무</label><input type="text" id="career2026" placeholder="없으면 '없음' 입력"></div>
-        <div class="field col-4"><label for="career2025" class="required" id="lblYear2">재작년 업무</label><input type="text" id="career2025" placeholder="없으면 '없음' 입력"></div>
-        <div class="field col-4"><label for="career2024" class="required" id="lblYear3">3년전 업무</label><input type="text" id="career2024" placeholder="없으면 '없음' 입력"></div>
+        <div class="field col-4"><label for="career2026" class="required" id="lblYear1">작년 업무</label><input type="text" id="career2026" name="kr_c26" placeholder="없으면 '없음' 입력" lang="ko" spellcheck="false" autocomplete="off"></div>
+        <div class="field col-4"><label for="career2025" class="required" id="lblYear2">재작년 업무</label><input type="text" id="career2025" name="kr_c25" placeholder="없으면 '없음' 입력" lang="ko" spellcheck="false" autocomplete="off"></div>
+        <div class="field col-4"><label for="career2024" class="required" id="lblYear3">3년전 업무</label><input type="text" id="career2024" name="kr_c24" placeholder="없으면 '없음' 입력" lang="ko" spellcheck="false" autocomplete="off"></div>
         <div class="field col-12"><label for="chiefCareerYears" class="required">부장교사 총경력</label><select id="chiefCareerYears"></select></div>
         <div class="field col-4"><label for="middleHomeroomCareer" class="required">중학교 담임 경력</label><select id="middleHomeroomCareer"></select></div>
         <div class="field col-4"><label for="highHomeroomCareer" class="required">고등학교 담임 경력</label><select id="highHomeroomCareer"></select></div>
@@ -271,10 +268,10 @@
       </div></div></div>
       <div class="section"><div class="section-title">5. 기타사항</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label for="leave2027" id="lblLeave1">2027년 휴직 예정</label><select id="leave2027"></select></div>
-        <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" placeholder="종류(예: 육아)"><input type="text" id="leave2027Period" placeholder="기간(예: 03~02)"></div></div>
+        <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" name="kr_l27t" placeholder="종류(예: 육아)" lang="ko" spellcheck="false" autocomplete="off"><input type="text" id="leave2027Period" name="kr_l27p" placeholder="기간(예: 03~02)" lang="ko" spellcheck="false" autocomplete="off"></div></div>
         <div class="field col-6"><label for="leave2026" id="lblLeave2">2026년 휴직 경험</label><select id="leave2026"></select></div>
-        <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" placeholder="종류"><input type="text" id="leave2026Period" placeholder="기간"></div></div>
-        <div class="field col-12"><label for="memo">업무분장 시 참고사항</label><textarea id="memo" rows="4" placeholder="개인 신상에 관한 설명 및 사유 기재"></textarea></div>
+        <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" name="kr_l26t" placeholder="종류" lang="ko" spellcheck="false" autocomplete="off"><input type="text" id="leave2026Period" name="kr_l26p" placeholder="기간" lang="ko" spellcheck="false" autocomplete="off"></div></div>
+        <div class="field col-12"><label for="memo">업무분장 시 참고사항</label><textarea id="memo" name="kr_memo" rows="4" placeholder="개인 신상에 관한 설명 및 사유 기재" lang="ko" spellcheck="false" autocomplete="off"></textarea></div>
       </div></div></div>
       <div class="section"><div class="section-title">6. 개인정보 수집·이용 동의</div><div class="section-body">
         <div style="font-size:12px; color:#666; margin-bottom:8px;">수집항목: 희망원 내 기재 항목 전체 / 목적: 업무분장 기초자료 / 보유기간: 1년</div>
@@ -431,34 +428,31 @@
       return urlParams.get(param) || '';
     }
     
-    // 🌟 숫자만 뽑아서 전화번호 하이픈(-) 포맷으로 자동 변환해주는 똑똑한 함수
+    // 🌟 사용자가 직접 하이픈(-)을 쳐도 씹히지 않고, 안 쳐도 자동으로 채워주는 스마트 포맷 함수
     function autoHyphenPhone(str) {
-      str = str.replace(/[^0-9]/g, ''); // 사용자가 입력한 값에서 숫자만 추출
+      let raw = str.replace(/[^0-9-]/g, ''); // 숫자와 하이픈만 남김
+      let digits = raw.replace(/-/g, ''); // 순수 숫자만 추출
+      let res = '';
       
-      if (str.length < 4) return str;
-      else if (str.length < 7) {
-        if (str.startsWith('02')) return str.replace(/(\d{2})(\d{1,4})/, '$1-$2'); // 서울(02) 방어 로직
-        return str.replace(/(\d{3})(\d{1,3})/, '$1-$2');
+      if (digits.length < 4) res = digits;
+      else if (digits.length < 7) {
+        if (digits.startsWith('02')) res = digits.replace(/(\d{2})(\d{1,4})/, '$1-$2');
+        else res = digits.replace(/(\d{3})(\d{1,3})/, '$1-$2');
       }
-      else if (str.length < 11) {
-        if (str.startsWith('02')) return str.length === 9 ? str.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3') : str.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-        return str.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
+      else if (digits.length < 11) {
+        if (digits.startsWith('02')) res = digits.length === 9 ? digits.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3') : digits.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+        else res = digits.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
       } 
-      else return str.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+      else res = digits.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+      
+      // 사용자가 직접 맨 끝에 '-'를 입력한 경우, 그 입력을 무시하지 않고 살려줍니다.
+      if (raw.endsWith('-') && !res.endsWith('-') && res.split('-').length < 3) {
+        res += '-';
+      }
+      return res;
     }
     
     window.onload = async () => {
-      // 🌟 영문 자판 강제 전환 버그 완벽 차단 로직
-      document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-        el.setAttribute('lang', 'ko');
-        el.setAttribute('spellcheck', 'false');
-        el.setAttribute('autocomplete', 'nope');
-        el.setAttribute('inputmode', 'text');
-        if (!el.getAttribute('name')) {
-          el.setAttribute('name', 'korean_dummy_' + Math.random().toString(36).substring(7));
-        }
-      });
-      
       initDropdowns(); initDateInputs(); bindEvents();
       const schoolParam = getQueryParam('school');
       if(schoolParam) {
@@ -584,7 +578,7 @@
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
       
-      // 🌟 스마트 전화번호 자동 변환 이벤트 연결
+      // 🌟 스마트 전화번호 포맷팅 이벤트 연결
       ['phone', 'emergencyPhone'].forEach(id => { 
         const el = document.getElementById(id); 
         if(el) { 
