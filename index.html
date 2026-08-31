@@ -64,7 +64,7 @@
     label { font-size: 13px; font-weight: 600; }
     .required::after { content: " *"; color: #d93025; }
     
-    /* 🌟 모든 텍스트 필드에 한글 자판 기본 적용 (ime-mode) */
+    /* 🌟 텍스트 필드 기본 디자인 유지 (ime-mode 구형 브라우저 보완) */
     input[type="text"], input[type="date"], input[type="tel"], select, textarea { 
       width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid #ccd3df; border-radius: 6px; font-size: 13px; 
       ime-mode: active; 
@@ -197,11 +197,14 @@
     </div>
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
+  
   <div id="inputFormArea">
     <h1 id="uiTitle">업무분장 희망원</h1>
     <div class="subtitle" id="uiSchoolName">학교명</div>
     <div class="warning-text">업무분장 희망원은 학교 상황에 따라 본인이 원하는 대로 되지 않을 수 있음을 양해 바랍니다.</div>
-    <form id="hopeForm" onsubmit="return false;">
+    
+    <!-- 🌟 브라우저 폼 자동완성 방지 속성 추가 -->
+    <form id="hopeForm" onsubmit="return false;" autocomplete="off">
       <div class="section"><div class="section-title">1. 기본 인적사항</div><div class="section-body"><div class="grid">
         <div class="field col-3"><label for="name" class="required">성명</label><input type="text" id="name"></div>
         <div class="field col-3">
@@ -220,13 +223,13 @@
             <input type="hidden" id="birth">
           </div>
         </div>
-        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address" lang="ko" spellcheck="false" style="ime-mode: active;"></div>
+        <div class="field col-12"><label for="address" class="required">주소</label><input type="text" id="address"></div>
         <div class="field col-4"><label for="phone" class="required">휴대전화</label><input type="tel" id="phone" placeholder="010-0000-0000"></div>
         <div class="field col-4"><label for="emergencyRelation" class="required">비상연락처 관계</label><input type="text" id="emergencyRelation" placeholder="예: 배우자"></div>
         <div class="field col-4"><label for="emergencyPhone" class="required">비상연락처 번호</label><input type="tel" id="emergencyPhone" placeholder="010-0000-0000"></div>
       </div></div></div>
       <div class="section"><div class="section-title">2. 자격 및 교육경력</div><div class="section-body"><div class="grid">
-        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex: 1; ime-mode: active;" lang="ko" spellcheck="false"></div></div>
+        <div class="field col-6"><label class="required">교원자격(전공)</label><div class="flex-row"><select id="certificateMajorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option></select><input type="text" id="certificateMajor" placeholder="과목 입력" style="flex: 1;"></div></div>
         <div class="field col-6">
           <label class="required" id="lblTransferDate">전입일</label>
           <div class="date-input-group" data-target="transferDate">
@@ -238,7 +241,7 @@
             <input type="hidden" id="transferDate">
           </div>
         </div>
-        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex: 1; ime-mode: active;" lang="ko" spellcheck="false"></div></div>
+        <div class="field col-6"><label class="required">교원자격(부전공)</label><div class="flex-row"><select id="certificateMinorGrade" style="flex:0.4"><option value="">급수</option><option value="1정">1정</option><option value="2정">2정</option><option value="해당없음">해당없음</option></select><input type="text" id="certificateMinor" placeholder="과목 입력 (없으면 '없음')" style="flex: 1;"></div></div>
         <div class="field col-6"><label for="previousSchool" class="required" id="lblPrevSchool">이전 근무학교</label><input type="text" id="previousSchool" placeholder="없으면 '없음' 입력"></div>
         <div class="field col-4"><label for="middleYears" class="required">중학교 교육경력</label><select id="middleYears"></select></div>
         <div class="field col-4"><label for="highYears" class="required">고등학교 교육경력</label><select id="highYears"></select></div>
@@ -284,16 +287,11 @@
         <div style="margin-top:10px;"><button type="button" class="btn-secondary" onclick="clearSignature(true)">서명 지우기</button></div>
       </div></div>
       
-      <!-- 🌟 임시저장 / 불러오기 버튼 영역 -->
       <div class="button-row">
         <button type="button" class="btn-primary" id="submitBtn" onclick="submitForm()">최종 제출하기</button>
-        
-        <!-- 숨겨진 파일 선택기 -->
         <input type="file" id="localFileInput" accept=".json" style="display:none" onchange="handleLocalFileLoad(event)">
-        
         <button type="button" class="btn-secondary" style="background:#fce8e6; color:#c5221f; border:1px solid #f28b82;" onclick="saveDataToLocalFile()">💾 기기에 파일로 임시저장</button>
         <button type="button" class="btn-secondary" style="background:#e6f4ea; color:#137333; border:1px solid #81c995;" onclick="document.getElementById('localFileInput').click()">📂 저장된 파일 불러오기</button>
-        
         <button type="button" class="btn-secondary" onclick="preparePrint()">작성 내용 인쇄</button>
         <button type="button" class="btn-outline" onclick="printEmptyForm()">빈양식출력(전입교사용)</button>
       </div>
@@ -433,10 +431,17 @@
     }
     
     window.onload = async () => {
-      // 🌟 모바일 키보드 최적화: 모든 텍스트 필드와 텍스트에어리어에 lang="ko" 와 spellcheck="false" 자동 부여
+      // 🌟 영문 자판 강제 전환 버그 완벽 차단 로직
       document.querySelectorAll('input[type="text"], textarea').forEach(el => {
         el.setAttribute('lang', 'ko');
         el.setAttribute('spellcheck', 'false');
+        // 브라우저의 자동완성 오지랖을 강제로 끄는 트릭값 할당
+        el.setAttribute('autocomplete', 'nope');
+        el.setAttribute('inputmode', 'text');
+        // 크롬이 id(address)를 보고 영문 폼으로 착각하지 못하도록 가짜 name 속성 자동 주입
+        if (!el.getAttribute('name')) {
+          el.setAttribute('name', 'korean_dummy_' + Math.random().toString(36).substring(7));
+        }
       });
       
       initDropdowns(); initDateInputs(); bindEvents();
@@ -564,7 +569,7 @@
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       ['middleHomeroomCareer', 'highHomeroomCareer'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalHomeroom));
       
-      // 🌟 전화번호 입력 시 사용자 직접 입력(숫자, - 기호만 허용)으로 변경
+      // 🌟 전화번호 입력 시 사용자 직접 입력(숫자, - 기호만 허용)
       ['phone', 'emergencyPhone'].forEach(id => { 
         const el = document.getElementById(id); 
         if(el) { 
