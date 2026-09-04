@@ -87,7 +87,7 @@
     .conditional { display: none; } .flex-row { display: flex; gap: 10px; }
     @media (max-width: 720px) { .admin-grid, .landing-card-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(1, 1fr); } .col-3,.col-4,.col-6,.col-12 { grid-column: span 1; } }
     
-    /* 🖨️ 인쇄 전용 스타일 (2페이지 넘침 방지를 위해 간격 및 높이 축소) */
+    /* 🖨️ 인쇄 전용 스타일 */
     #printArea, #printAreaEmpty { display: none; }
     @page { size: A4 portrait; margin: 0; }
     @media print {
@@ -97,23 +97,31 @@
       .print-mode-filled #printArea { display: block !important; padding: 15mm; box-sizing: border-box; width: 100%; overflow: hidden; }
       .print-mode-empty #printAreaEmpty { display: block !important; padding: 15mm; box-sizing: border-box; width: 100%; overflow: hidden; }
       
-      .p-main-title { font-size: 26px !important; white-space: nowrap !important; letter-spacing: -1px; margin: 0; }
-      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12.5px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; margin-bottom: 8px !important; }
-      .p-table th, .p-table td { border: 1px solid #000; padding: 5px 3px !important; text-align: center; vertical-align: middle; }
+      .p-main-title { font-size: 28px !important; white-space: nowrap !important; letter-spacing: -1px; margin: 0; }
+      
+      /* 기본 테이블 간격 및 여백 */
+      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; }
       .p-table th, .bg { background-color: #d9e2f3 !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
-      /* 제출용(항목삭제됨) 폼 꽉차게 조정 - 오버플로우 방지를 위해 높이 축소 */
-      .print-mode-filled .c-row-duty { height: 28px !important; }
-      .print-mode-filled #p_memo { height: 75px !important; padding: 8px !important; }
-      
-      /* 빈양식(전체항목) 폼 꽉차게 조정 - 오버플로우 방지를 위해 높이 축소 */
-      .print-mode-empty .c-row-duty { height: 22px !important; }
-      .print-mode-empty #pe_memo { height: 50px !important; padding: 8px !important; }
+      /* 제출용(항목삭제됨) 폼 꽉차게 조정 */
+      .print-mode-filled .p-table { margin-bottom: 18px !important; }
+      .print-mode-filled .p-table th, .print-mode-filled .p-table td { border: 1px solid #000; padding: 9px 4px !important; text-align: center; vertical-align: middle; }
+      .print-mode-filled .c-row-duty { height: 45px !important; }
+      .print-mode-filled #p_memo { height: 160px !important; padding: 10px !important; }
+      .print-mode-filled .text-red { color: #d00 !important; font-weight: bold; font-size: 14.5px; text-align: center; margin: 15px 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .print-mode-filled .principal { text-align: center; font-size: 26px; font-weight: bold; margin: 30px 0 15px 0 !important; letter-spacing: 2px; }
+      .print-mode-filled .privacy-box { border-top: 2px solid #000; padding-top: 10px; margin-top: 15px; }
+
+      /* 빈양식(전체항목) 폼 꽉차게 조정 (기존보다 항목이 많아 여백을 조금 덜 줌) */
+      .print-mode-empty .p-table { margin-bottom: 8px !important; }
+      .print-mode-empty .p-table th, .print-mode-empty .p-table td { border: 1px solid #000; padding: 5px 3px !important; text-align: center; vertical-align: middle; }
+      .print-mode-empty .c-row-duty { height: 25px !important; }
+      .print-mode-empty #pe_memo { height: 60px !important; padding: 8px !important; }
+      .print-mode-empty .text-red { color: #d00 !important; font-weight: bold; font-size: 13px; text-align: center; margin: 10px 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .print-mode-empty .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0 10px 0 !important; letter-spacing: 2px; }
+      .print-mode-empty .privacy-box { border-top: 2px solid #000; padding-top: 8px; margin-top: 10px; }
       
       .text-left { text-align: left !important; padding-left: 8px !important; }
-      .text-red { color: #d00 !important; font-weight: bold; font-size: 13px; text-align: center; margin: 8px 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 15px 0 5px 0 !important; letter-spacing: 2px; }
-      .privacy-box { border-top: 2px solid #000; padding-top: 5px; margin-top: 10px; }
     }
   </style>
 </head>
