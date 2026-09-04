@@ -270,7 +270,7 @@
       <div class="section"><div class="section-title">5. 기타사항</div><div class="section-body"><div class="grid">
         <div class="field col-6"><label for="leave2027" id="lblLeave1">2027년 휴직 예정</label><select id="leave2027"></select></div>
         <div class="field col-6 conditional" id="leave2027Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2027Type" name="kr_l27t" placeholder="종류(예: 육아)" lang="ko" spellcheck="false" autocomplete="off"><input type="text" id="leave2027Period" name="kr_l27p" placeholder="기간(예: 03~02)" lang="ko" spellcheck="false" autocomplete="off"></div></div>
-        <div class="field col-6"><label for="leave2026" id="lblLeave2">2026년 휴직 경력</label><select id="leave2026"></select></div>
+        <div class="field col-6"><label for="leave2026" id="lblLeave2">2026년 휴직 경험</label><select id="leave2026"></select></div>
         <div class="field col-6 conditional" id="leave2026Wrap"><label>휴직 상세</label><div class="flex-row"><input type="text" id="leave2026Type" name="kr_l26t" placeholder="종류" lang="ko" spellcheck="false" autocomplete="off"><input type="text" id="leave2026Period" name="kr_l26p" placeholder="기간" lang="ko" spellcheck="false" autocomplete="off"></div></div>
         <div class="field col-12"><label for="memo">업무분장 시 참고사항</label><textarea id="memo" name="kr_memo" rows="4" placeholder="개인 신상에 관한 설명 및 사유 기재" lang="ko" spellcheck="false" autocomplete="off"></textarea></div>
       </div></div></div>
@@ -493,6 +493,7 @@
   <script>
     let sysConfig = {};
     let globalChiefPositions = [];
+    let globalDepartments = [];
     
     const canvas = document.getElementById('signaturePad');
     const ctx = canvas.getContext('2d');
@@ -770,11 +771,30 @@
       if (options3.includes(val3)) document.getElementById('chiefHope3').value = val3;
     }
 
+    function updateWorkDeptDropdowns() {
+      const val1 = document.getElementById('workDept1').value;
+      const val2 = document.getElementById('workDept2').value;
+      const val3 = document.getElementById('workDept3').value;
+      
+      const options2 = globalDepartments.filter(opt => opt !== val1);
+      fillSelect('workDept2', options2);
+      if (options2.includes(val2)) document.getElementById('workDept2').value = val2;
+      
+      const currentVal2 = document.getElementById('workDept2').value;
+      const options3 = globalDepartments.filter(opt => opt !== val1 && opt !== currentVal2);
+      fillSelect('workDept3', options3);
+      if (options3.includes(val3)) document.getElementById('workDept3').value = val3;
+    }
+
     function bindEvents() {
       ['middleYears', 'highYears'].forEach(id => document.getElementById(id).addEventListener('change', calcTotalExp));
       
       ['chiefHope1', 'chiefHope2'].forEach(id => {
         document.getElementById(id).addEventListener('change', updateChiefDropdowns);
+      });
+
+      ['workDept1', 'workDept2'].forEach(id => {
+        document.getElementById(id).addEventListener('change', updateWorkDeptDropdowns);
       });
 
       const phoneEl = document.getElementById('phone');
@@ -803,11 +823,13 @@
       document.getElementById('lblLeave1').textContent = yr + '년 휴직 예정'; document.getElementById('lblLeave2').textContent = (yr-1) + '년 휴직 경험';
       
       globalChiefPositions = data.options.chiefPositions;
+      globalDepartments = data.options.departments;
+      
       const allDepts = ['없음', ...new Set([...data.options.chiefPositions, ...data.options.departments])];
       fillSelect('career2026', allDepts); fillSelect('career2025', allDepts); fillSelect('career2024', allDepts);
 
       fillSelect('chiefHope1', globalChiefPositions); fillSelect('chiefHope2', globalChiefPositions); fillSelect('chiefHope3', globalChiefPositions);
-      fillSelect('workDept1', data.options.departments); fillSelect('workDept2', data.options.departments); fillSelect('workDept3', data.options.departments);
+      fillSelect('workDept1', globalDepartments); fillSelect('workDept2', globalDepartments); fillSelect('workDept3', globalDepartments);
     }
     function saveDataToLocalFile() {
       const d = collectData();
