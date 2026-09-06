@@ -90,40 +90,34 @@
     /* 🖨️ 인쇄 전용 스타일 (오버플로우 완벽 방지, 줄바꿈 방지) */
     #printArea, #printAreaEmpty { display: none; }
     
-    /* 인쇄 여백 대칭 맞춤 (상하좌우 15mm 동일하게 꽉 차게 설정) */
-    @page { size: A4 portrait; margin: 15mm; }
+    /* 머리말/바닥글(페이지번호 등) 제거를 위해 페이지 마진 0 설정 */
+    @page { size: A4 portrait; margin: 0; }
     
     @media print {
-      html, body { width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; background: #fff; font-family: "Malgun Gothic", "맑은 고딕", sans-serif; color: #000; }
+      html, body { width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; background: #fff; font-family: "Malgun Gothic", "맑은 고딕", sans-serif; color: #000; overflow: hidden; }
       .top-nav, #inputFormArea, #dashboardArea, #landingArea, .success-modal-overlay { display: none !important; }
       
-      .print-mode-filled #printArea { display: block !important; box-sizing: border-box; width: 100%; overflow: hidden; height: 100%; }
+      /* 페이지 전체 꽉 차게 높이 및 내부 패딩 15mm (좌우상하 여백) 설정 */
+      .print-mode-filled #printArea, .print-mode-empty #printAreaEmpty { 
+        display: flex !important; flex-direction: column; justify-content: space-between; 
+        box-sizing: border-box; width: 100%; height: 100vh; padding: 15mm; overflow: hidden; page-break-after: avoid; 
+      }
       
-      /* 빈 양식일 경우 세로 높이를 꽉 차게 분배 */
-      .print-mode-empty #printAreaEmpty { display: flex !important; flex-direction: column; justify-content: space-between; box-sizing: border-box; width: 100%; height: 100%; overflow: hidden; }
-      .print-mode-empty .tables-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 5px; }
+      .tables-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 5px; }
       
       .p-main-title { font-size: 26px !important; white-space: nowrap !important; letter-spacing: -1px; margin: 0; }
       
-      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12.5px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; }
+      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; margin-bottom: 0 !important; }
       .p-table th, .bg { background-color: #d9e2f3 !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
-      .print-mode-filled .p-table { margin-bottom: 10px !important; }
-      .print-mode-filled .p-table th, .print-mode-filled .p-table td { border: 1px solid #000; padding: 6px 3px !important; text-align: center; vertical-align: middle; }
-      .print-mode-filled .c-row-duty { height: 35px !important; }
-      .print-mode-filled #p_memo { height: 100px !important; padding: 8px !important; }
-      .print-mode-filled .text-red { color: #d00 !important; font-weight: bold; font-size: 13.5px; text-align: center; margin: 10px 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .print-mode-filled .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 15px 0 10px 0 !important; letter-spacing: 2px; }
-      .print-mode-filled .privacy-box { border-top: 2px solid #000; padding-top: 8px; margin-top: 10px; }
-
-      /* 빈 양식 전용 (칸 높이 확대 및 꽉 차게 조정) */
-      .print-mode-empty .p-table { margin-bottom: 0 !important; }
-      .print-mode-empty .p-table th, .print-mode-empty .p-table td { border: 1px solid #000; padding: 7px 3px !important; height: 36px !important; text-align: center; vertical-align: middle; }
-      .print-mode-empty .c-row-duty { height: 45px !important; }
-      .print-mode-empty #pe_memo { height: 100px !important; padding: 6px !important; }
-      .print-mode-empty .text-red { color: #d00 !important; font-weight: bold; font-size: 13.5px; text-align: center; margin: 10px 0 5px 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .print-mode-empty .principal { text-align: center; font-size: 22px; font-weight: bold; margin: 10px 0 5px 0 !important; letter-spacing: 2px; }
-      .print-mode-empty .privacy-box { border-top: 2px solid #000; padding-top: 5px; margin-top: 5px; }
+      /* 공통 셀 설정: 높이를 늘려 상하 간격이 꽉 차도록 유도 */
+      .p-table th, .p-table td { border: 1px solid #000; padding: 4px 3px !important; height: 35px !important; text-align: center; vertical-align: middle; }
+      .c-row-duty { height: 42px !important; }
+      #p_memo, #pe_memo { padding: 8px !important; text-align: left !important; vertical-align: top !important; }
+      
+      .text-red { color: #d00 !important; font-weight: bold; font-size: 13.5px; text-align: center; margin: 8px 0 3px 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 8px 0 3px 0 !important; letter-spacing: 2px; }
+      .privacy-box { border-top: 2px solid #000; padding-top: 5px; margin-top: 5px; }
       
       .text-left { text-align: left !important; padding-left: 8px !important; }
       .nowrap { white-space: nowrap !important; }
