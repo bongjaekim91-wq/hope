@@ -107,11 +107,14 @@
       
       .p-main-title { font-size: 26px !important; white-space: nowrap !important; letter-spacing: -1px; margin: 0; }
       
-      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; margin-bottom: 0 !important; }
-      .p-table th, .bg { background-color: #d9e2f3 !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; margin-bottom: 0 !important; background-color:#fff; }
+      
+      /* 인쇄 시에도 옅은 파란색과 흰색이 뚜렷하게 구분되도록 강제 설정 */
+      .p-table th, .bg { background-color: #d9e2f3 !important; font-weight: bold; border: 1px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .p-table td { background-color: #ffffff !important; border: 1px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
       /* 공통 셀 설정: 높이를 늘려 상하 간격이 꽉 차도록 유도 */
-      .p-table th, .p-table td { border: 1px solid #000; padding: 4px 3px !important; height: 35px !important; text-align: center; vertical-align: middle; }
+      .p-table th, .p-table td { padding: 4px 3px !important; height: 35px !important; text-align: center; vertical-align: middle; }
       .c-row-duty { height: 42px !important; }
       #p_memo, #pe_memo { padding: 8px !important; text-align: left !important; vertical-align: top !important; }
       
@@ -391,7 +394,7 @@
       <div style="font-weight:bold; font-size:11.5px; margin-bottom:3px;">□ 개인정보 수집·이용 동의</div>
       <table class="p-table" style="margin-bottom:0; border:1px solid #000;">
         <tr><th>항목</th><th>수집목적</th><th>보유기간</th></tr>
-        <tr><td>성명, 과목, 휴대전화 등 기재 항목 전체</td><td>업무분장 기초자료</td><td>1년</td></tr>
+        <tr><td style="background-color:#fff !important;">성명, 과목, 휴대전화 등 기재 항목 전체</td><td style="background-color:#fff !important;">업무분장 기초자료</td><td style="background-color:#fff !important;">1년</td></tr>
       </table>
       <div style="text-align:center; font-weight:bold; font-size:12px; margin-top:5px;">
         개인정보 수집·이용 동의 &nbsp;&nbsp;&nbsp;&nbsp; [<span id="p_aYes" style="display:inline-block;width:15px;text-align:center;"></span>] 예 &nbsp;&nbsp;&nbsp;&nbsp; [<span id="p_aNo" style="display:inline-block;width:15px;text-align:center;"></span>] 아니요
@@ -489,7 +492,7 @@
       <div style="font-weight:bold; font-size:11.5px; margin-bottom:3px;">□ 개인정보 수집·이용 동의</div>
       <table class="p-table" style="margin-bottom:0; border:1px solid #000;">
         <tr><th>항목</th><th>수집목적</th><th>보유기간</th></tr>
-        <tr><td>성명, 과목, 주소, 연락처 등 기재 항목 전체</td><td>업무분장 기초자료</td><td>1년</td></tr>
+        <tr><td style="background-color:#fff !important;">성명, 과목, 주소, 연락처 등 기재 항목 전체</td><td style="background-color:#fff !important;">업무분장 기초자료</td><td style="background-color:#fff !important;">1년</td></tr>
       </table>
       <div style="text-align:center; font-weight:bold; font-size:12px; margin-top:5px;">
         개인정보 수집·이용 동의 &nbsp;&nbsp;&nbsp;&nbsp; [<span id="pe_aYes" style="display:inline-block;width:15px;text-align:center;"></span>] 예 &nbsp;&nbsp;&nbsp;&nbsp; [<span id="pe_aNo" style="display:inline-block;width:15px;text-align:center;"></span>] 아니요
@@ -890,7 +893,7 @@
       const currentVal2 = document.getElementById('workDept2').value;
       const options3 = globalDepartments.filter(opt => opt !== val1 && opt !== currentVal2);
       fillSelect('workDept3', options3);
-      if (options3.includes(val3)) document.getElementById('workDept3').value = val3;
+      if (options3.includes(val3)) documentgetElementById('workDept3').value = val3;
     }
 
     function bindEvents() {
@@ -1037,7 +1040,6 @@
       window.print();
     }
     
-    // 🌟 빈 양식 출력 시 적용학년도를 기준으로 각종 연도 및 3.1.자 기준일 반영 
     function printEmptyForm() {
       document.body.classList.add('print-mode-empty');
       document.body.classList.remove('print-mode-filled');
@@ -1046,21 +1048,17 @@
       ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
       document.getElementById('pe_memo').innerHTML = ''; document.getElementById('pe_signImg').style.display = 'none';
       
-      // 관리자 화면의 적용 학년도 및 학교명 가져오기
       const yrStr = document.getElementById('d_year').value || sysConfig.DOCUMENT_YEAR;
       const yr = parseInt(yrStr) || new Date().getFullYear();
       const sc = document.getElementById('d_school').value || sysConfig.SCHOOL_NAME || '';
       
       document.getElementById('pe_title').textContent = yr + '학년도 업무분장 희망원'; 
       document.getElementById('pe_school').textContent = sc;
-      
-      // 기준일을 무조건 해당년도 3월 1일로 설정
       document.getElementById('pe_baseDate').textContent = `${yr}. 3. 1.`;
       
       document.getElementById('pe_lblTr').innerHTML = sc + '<br>전입일'; 
       document.getElementById('pe_lblPrev').innerHTML = sc + '<br>이전 근무학교';
       
-      // 연도별 세부업무 (-1, -2 표시를 실제 연도로 변환)
       document.getElementById('pe_lblY1').textContent = (yr-1) + '년'; 
       document.getElementById('pe_lblY2').textContent = (yr-2) + '년'; 
       document.getElementById('pe_lblY3').textContent = (yr-3) + '년';
@@ -1096,20 +1094,42 @@
       
       const d = collectData();
       
-      // PDF 저장을 위해 print-mode-filled 클래스 부여 및 렌더링
       document.body.classList.add('print-mode-filled');
       document.body.classList.remove('print-mode-empty');
       fillPrintArea();
       
       const printDiv = document.getElementById('printArea').cloneNode(true);
+      
+      // 🌟 구글 서버 측 PDF 변환기에서도 색상이 빠지지 않도록 강제 적용 (매우 중요)
       printDiv.querySelectorAll('th, .bg').forEach(el => {
         el.setAttribute('bgcolor', '#d9e2f3');
         el.style.backgroundColor = '#d9e2f3';
       });
-      printDiv.querySelectorAll('.text-red').forEach(el => {
-        el.style.color = '#d00';
+      printDiv.querySelectorAll('td').forEach(el => {
+        // th가 아니며, bg 클래스도 없는 일반 td에 흰색 배경 강제 적용
+        if (!el.hasAttribute('bgcolor') && el.tagName.toLowerCase() !== 'th' && !el.classList.contains('bg')) {
+          el.setAttribute('bgcolor', '#ffffff');
+          el.style.backgroundColor = '#ffffff';
+        }
       });
-      const printHtml = '<div class="print-mode-filled" style="padding:0;">' + printDiv.innerHTML + '</div>';
+      
+      // 서버 전송용 PDF에 맞게 전체 CSS 묶어서 재구성
+      const pdfStyles = `
+        <style>
+          body { font-family: "Malgun Gothic", "맑은 고딕", sans-serif; font-size: 13px; color: #000; margin: 0; padding: 0; }
+          .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 10px; background-color: #ffffff; }
+          .p-table th, .bg { background-color: #d9e2f3 !important; font-weight: bold; border: 1px solid #000; padding: 6px 3px; text-align: center; vertical-align: middle; }
+          .p-table td { border: 1px solid #000; padding: 6px 3px; text-align: center; vertical-align: middle; background-color: #ffffff; }
+          .text-left { text-align: left !important; padding-left: 8px !important; }
+          .text-red { color: #d00; font-weight: bold; font-size: 14px; text-align: center; margin: 10px 0; }
+          .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 15px 0 10px 0; letter-spacing: 2px; }
+          .privacy-box { border-top: 2px solid #000; padding-top: 8px; margin-top: 10px; }
+          .nowrap { white-space: nowrap; }
+          .p-main-title { font-size: 26px; font-weight: bold; text-align: center; margin: 0; }
+        </style>
+      `;
+      
+      const printHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8">' + pdfStyles + '</head><body style="padding:20px;">' + printDiv.innerHTML + '</body></html>';
       
       const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = '제출중...';
       const res = await apiCall('submitForm', {
@@ -1118,6 +1138,7 @@
         documentYear: sysConfig.DOCUMENT_YEAR,
         pdfHtml: printHtml
       });
+      
       if(res.success) {
         btn.textContent = '제출완료';
         document.getElementById('sm_title').textContent = res.teacherName + '선생님 감사합니다.';
@@ -1128,6 +1149,7 @@
         btn.disabled = false; btn.textContent = '최종 제출하기'; alert('오류: ' + (res.error || res.message));
       }
     }
+    
     function resizeCanvas() {
       const r = canvas.getBoundingClientRect(); if (r.width === 0 || r.height === 0) return;
       const rto = Math.min(window.devicePixelRatio || 1, 2);
