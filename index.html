@@ -207,8 +207,8 @@
       <button class="btn-secondary" onclick="logoutAdmin()">화면 닫기</button>
       <button class="btn-primary" id="saveConfigBtn" onclick="saveConfig()">설정 및 명단 저장</button>
       <button class="btn-primary" style="background:#fbbc04; color:#000;" onclick="openSummaryWindow(event)">📊 업무별 현황(화면)</button>
-      <button class="btn-primary" style="background:#ff9800; color:#fff;" onclick="downloadSummaryExcel(event)">📝 업무별 현황(엑셀)</button>
-      <button class="btn-primary" style="background:#34a853;" onclick="downloadExcel(event)">결과 원본 다운로드</button>
+      <button class="btn-primary" style="background:#34a853;" onclick="downloadExcel(event)">전체취합다운로드</button>
+      <button class="btn-primary" style="background:#8e24aa; color:#fff;" onclick="printEmptyForm()">빈양식출력(전입교사용)</button>
     </div>
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
@@ -298,7 +298,6 @@
         <button type="button" class="btn-secondary" style="background:#fce8e6; color:#c5221f; border:1px solid #f28b82;" onclick="saveDataToLocalFile()">💾 기기에 파일로 임시저장</button>
         <button type="button" class="btn-secondary" style="background:#e6f4ea; color:#137333; border:1px solid #81c995;" onclick="document.getElementById('localFileInput').click()">📂 저장된 파일 불러오기</button>
         <button type="button" class="btn-secondary" onclick="preparePrint()">작성 내용 인쇄</button>
-        <button type="button" class="btn-outline" onclick="printEmptyForm()">빈양식출력(전입교사용)</button>
       </div>
       <div class="msg-box success" id="resultBox"></div>
     </form>
@@ -647,7 +646,7 @@
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
     
-    // 🌟 화면용 종합 현황
+    // 🌟 화면용 종합 현황 (엑셀 다운로드 버튼 포함)
     async function openSummaryWindow(event) {
       const schoolName = document.getElementById('d_school').value;
       if (!schoolName) return alert("학교명 정보가 없습니다.");
@@ -741,6 +740,7 @@
             <h2>🏢 ${schoolName} 업무분장 희망자 종합 현황</h2>
             <div class="btn-print">
               <button onclick="window.print()">🖨️ 현황 가로 방향으로 인쇄하기</button>
+              <button onclick="window.opener.downloadSummaryExcelFromChild(this)" style="background:#ff9800; margin-left:10px;">📝 업무별 현황 엑셀 다운로드</button>
             </div>
             <h3>📌 부장교사 희망</h3>
             <div class="grid-container">${chiefHtml}</div>
@@ -755,13 +755,12 @@
       printWindow.document.close();
     }
     
-    // 🌟 엑셀(병합) 다운로드 기능 추가
-    async function downloadSummaryExcel(event) {
+    // 🌟 자식(새 창)에서 호출되는 업무별 현황 엑셀 다운로드 함수
+    async function downloadSummaryExcelFromChild(btn) {
       const schoolName = document.getElementById('d_school').value;
       const targetYear = document.getElementById('d_year').value;
       if (!schoolName) return alert('학교명이 설정되지 않았습니다.');
       
-      const btn = event.target;
       const originalText = btn.textContent;
       btn.textContent = '엑셀 생성 중...';
       btn.disabled = true;
@@ -786,7 +785,6 @@
         options.forEach(opt => {
           let h1 = [], h2 = [], h3 = [];
           submittedData.forEach(row => {
-            // 이름 뒤에 과목 추가
             let subj = row['과목'] || row['자격(전공)'];
             let nameWithSubj = `${row['성명']}(${subj})`;
             if (row[h1Key] === opt) h1.push(nameWithSubj);
@@ -804,7 +802,6 @@
         ...getGroupedData(depts, '업무1희망', '업무2희망', '업무3희망')
       ];
       
-      // 가장 인원수가 많은 칸에 맞춰 열 갯수를 동적으로 설정 (최소 3칸 확보)
       let max1 = 3, max2 = 3, max3 = 3;
       allGroups.forEach(g => {
         if (g.h1.length > max1) max1 = g.h1.length;
@@ -814,12 +811,10 @@
       
       let aoa = [];
       
-      // 첫 번째 행: 제목 (병합될 예정)
       let titleRow = new Array(1 + max1 + max2 + max3).fill("");
       titleRow[0] = targetYear + "년 업무분장희망원 현황";
       aoa.push(titleRow);
       
-      // 두 번째 행: 헤더 (병합될 예정)
       let headerRow = new Array(1 + max1 + max2 + max3).fill("");
       headerRow[0] = "업무";
       headerRow[1] = "1희망";
@@ -827,7 +822,6 @@
       headerRow[1 + max1 + max2] = "3희망";
       aoa.push(headerRow);
       
-      // 데이터 행 채우기
       allGroups.forEach(g => {
         let row = new Array(1 + max1 + max2 + max3).fill("");
         row[0] = g.opt;
@@ -839,18 +833,16 @@
       
       const worksheet = XLSX.utils.aoa_to_sheet(aoa);
       
-      // 병합 정보 설정 (!merges)
       worksheet['!merges'] = [
-        { s: { r: 0, c: 0 }, e: { r: 0, c: max1 + max2 + max3 } }, // 1행 전체 병합
-        { s: { r: 1, c: 1 }, e: { r: 1, c: max1 } },               // 1희망 병합
-        { s: { r: 1, c: 1 + max1 }, e: { r: 1, c: max1 + max2 } }, // 2희망 병합
-        { s: { r: 1, c: 1 + max1 + max2 }, e: { r: 1, c: max1 + max2 + max3 } }, // 3희망 병합
+        { s: { r: 0, c: 0 }, e: { r: 0, c: max1 + max2 + max3 } }, 
+        { s: { r: 1, c: 1 }, e: { r: 1, c: max1 } },               
+        { s: { r: 1, c: 1 + max1 }, e: { r: 1, c: max1 + max2 } }, 
+        { s: { r: 1, c: 1 + max1 + max2 }, e: { r: 1, c: max1 + max2 + max3 } }, 
       ];
       
-      // 열 너비 조절
-      let cols = [{ wch: 18 }]; // 첫번째 열(업무명) 너비
+      let cols = [{ wch: 18 }]; 
       for(let i = 0; i < max1 + max2 + max3; i++) {
-        cols.push({ wch: 14 }); // 선생님 성명 열 너비
+        cols.push({ wch: 14 }); 
       }
       worksheet['!cols'] = cols;
       
@@ -1004,7 +996,6 @@
     }
     function getValue(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
     function collectData() {
-      // 폼 간소화로 삭제된 항목(address, emergencyRelation, emergencyPhone, certificateMinorGrade, certificateMinor, middleHomeroomCareer, highHomeroomCareer, totalHomeroomYears)을 수집 목록에서 제외
       const ids = ['name','gender','subject','birth','phone','certificateMajorGrade','certificateMajor','transferDate','previousSchool','totalYears','middleYears','highYears','career2026','career2025','career2024','chiefCareerYears','chiefHopeYn','chiefHope1','chiefHope2','chiefHope3','homeroomGrade1','homeroomGrade2','homeroomGrade3','workDept1','workDept2','workDept3','leave2027','leave2027Type','leave2027Period','leave2026','leave2026Type','leave2026Period','memo'];
       const d = {}; ids.forEach(id => d[id] = getValue(id)); d.privacyAgree = document.querySelector('input[name="privacyAgree"]:checked')?.value || '';
       d.signature = signatureBlank ? '' : canvas.toDataURL('image/jpeg', 0.6);
@@ -1045,7 +1036,6 @@
       window.print();
     }
     
-    // 빈 양식(전입교사용)은 기존의 전체 항목을 유지하는 pe_ 레이아웃을 사용합니다.
     function printEmptyForm() {
       document.body.classList.add('print-mode-empty');
       document.body.classList.remove('print-mode-filled');
@@ -1137,6 +1127,8 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       signatureBlank = true;
     }
+    
+    // 🌟 전체취합다운로드 (기존 '결과 원본 다운로드') - 빈 데이터 열 삭제 적용
     async function downloadExcel(event) {
       const schoolName = document.getElementById('d_school').value;
       if(!schoolName) return alert('학교명이 설정되지 않았습니다.');
@@ -1148,8 +1140,16 @@
       btn.textContent = originalText;
       btn.disabled = false;
       if(!res.success) return alert(res.message);
-      const data2D = res.data;
+      
+      let data2D = res.data;
       const targetYear = res.targetYear;
+      
+      // 삭제된 빈 항목 열들의 인덱스: 주소(5), 부전공급수(10), 부전공(11), 담임총경력(20), 중학담임경력(21), 고교담임경력(22)
+      const excludeIndices = [5, 10, 11, 20, 21, 22];
+      
+      // 선택된 열만 남기기
+      data2D = data2D.map(row => row.filter((_, idx) => !excludeIndices.includes(idx)));
+      
       const colWidths = [];
       for (let r = 0; r < data2D.length; r++) {
         for (let c = 0; c < data2D[r].length; c++) {
@@ -1167,7 +1167,7 @@
       worksheet['!cols'] = colWidths;
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, targetYear + "학년도 결과");
-      XLSX.writeFile(workbook, `${schoolName}_${targetYear}학년도_희망원_결과.xlsx`);
+      XLSX.writeFile(workbook, `${schoolName}_${targetYear}학년도_희망원_전체취합결과.xlsx`);
     }
   </script>
 </body>
