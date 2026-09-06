@@ -94,17 +94,14 @@
       html, body { width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; background: #fff; font-family: "Malgun Gothic", "맑은 고딕", sans-serif; color: #000; }
       .top-nav, #inputFormArea, #dashboardArea, #landingArea, .success-modal-overlay { display: none !important; }
       
-      /* 여백을 12mm로 줄여 1페이지 안에 쏙 들어가게 세팅 */
       .print-mode-filled #printArea { display: block !important; padding: 12mm; box-sizing: border-box; width: 100%; overflow: hidden; height: 100vh; }
       .print-mode-empty #printAreaEmpty { display: block !important; padding: 12mm; box-sizing: border-box; width: 100%; overflow: hidden; height: 100vh; }
       
       .p-main-title { font-size: 26px !important; white-space: nowrap !important; letter-spacing: -1px; margin: 0; }
       
-      /* 기본 테이블 간격 및 여백 */
       .p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12.5px; letter-spacing: -0.5px; word-break: break-all; border: 2px solid #000; }
       .p-table th, .bg { background-color: #d9e2f3 !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
-      /* 제출용(항목삭제됨) 폼 꽉차게 조정 - 오버플로우 방지 */
       .print-mode-filled .p-table { margin-bottom: 10px !important; }
       .print-mode-filled .p-table th, .print-mode-filled .p-table td { border: 1px solid #000; padding: 6px 3px !important; text-align: center; vertical-align: middle; }
       .print-mode-filled .c-row-duty { height: 35px !important; }
@@ -113,7 +110,6 @@
       .print-mode-filled .principal { text-align: center; font-size: 24px; font-weight: bold; margin: 15px 0 10px 0 !important; letter-spacing: 2px; }
       .print-mode-filled .privacy-box { border-top: 2px solid #000; padding-top: 8px; margin-top: 10px; }
 
-      /* 빈양식(전체항목) 폼 꽉차게 조정 - 오버플로우 방지 */
       .print-mode-empty .p-table { margin-bottom: 6px !important; }
       .print-mode-empty .p-table th, .print-mode-empty .p-table td { border: 1px solid #000; padding: 4px 2px !important; text-align: center; vertical-align: middle; }
       .print-mode-empty .c-row-duty { height: 22px !important; }
@@ -210,8 +206,9 @@
     <div class="button-row">
       <button class="btn-secondary" onclick="logoutAdmin()">화면 닫기</button>
       <button class="btn-primary" id="saveConfigBtn" onclick="saveConfig()">설정 및 명단 저장</button>
-      <button class="btn-primary" style="background:#fbbc04; color:#000;" onclick="openSummaryWindow(event)">📊 업무별 희망자 현황</button>
-      <button class="btn-primary" style="background:#34a853;" onclick="downloadExcel(event)">결과 엑셀 다운로드</button>
+      <button class="btn-primary" style="background:#fbbc04; color:#000;" onclick="openSummaryWindow(event)">📊 업무별 현황(화면)</button>
+      <button class="btn-primary" style="background:#ff9800; color:#fff;" onclick="downloadSummaryExcel(event)">📝 업무별 현황(엑셀)</button>
+      <button class="btn-primary" style="background:#34a853;" onclick="downloadExcel(event)">결과 원본 다운로드</button>
     </div>
     <div class="msg-box success" id="configResultBox">설정이 저장되었습니다.</div>
   </div>
@@ -649,6 +646,8 @@
       const text = document.getElementById('shareUrl').textContent;
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
+    
+    // 🌟 화면용 종합 현황
     async function openSummaryWindow(event) {
       const schoolName = document.getElementById('d_school').value;
       if (!schoolName) return alert("학교명 정보가 없습니다.");
@@ -755,6 +754,111 @@
       `);
       printWindow.document.close();
     }
+    
+    // 🌟 엑셀(병합) 다운로드 기능 추가
+    async function downloadSummaryExcel(event) {
+      const schoolName = document.getElementById('d_school').value;
+      const targetYear = document.getElementById('d_year').value;
+      if (!schoolName) return alert('학교명이 설정되지 않았습니다.');
+      
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '엑셀 생성 중...';
+      btn.disabled = true;
+      
+      const res = await apiCall('getSubmittedData', { schoolName: schoolName });
+      btn.textContent = originalText;
+      btn.disabled = false;
+      
+      if (!res.success) return alert("데이터 로드 실패: " + res.message);
+      
+      const submittedData = res.data;
+      if (!submittedData || submittedData.length === 0) {
+        return alert("아직 제출된 희망원 데이터가 없습니다.");
+      }
+      
+      const chiefs = document.getElementById('d_chiefs').value.split('\n').map(s => s.trim()).filter(Boolean);
+      const depts = document.getElementById('d_depts').value.split('\n').map(s => s.trim()).filter(Boolean);
+      const homerooms = ['1학년', '2학년', '3학년', '교육과정상 안됨'];
+      
+      function getGroupedData(options, h1Key, h2Key, h3Key) {
+        let result = [];
+        options.forEach(opt => {
+          let h1 = [], h2 = [], h3 = [];
+          submittedData.forEach(row => {
+            // 이름 뒤에 과목 추가
+            let subj = row['과목'] || row['자격(전공)'];
+            let nameWithSubj = `${row['성명']}(${subj})`;
+            if (row[h1Key] === opt) h1.push(nameWithSubj);
+            if (row[h2Key] === opt) h2.push(nameWithSubj);
+            if (row[h3Key] === opt) h3.push(nameWithSubj);
+          });
+          result.push({ opt, h1, h2, h3 });
+        });
+        return result;
+      }
+      
+      const allGroups = [
+        ...getGroupedData(chiefs, '부장1희망', '부장2희망', '부장3희망'),
+        ...getGroupedData(homerooms, '담임1희망', '담임2희망', '담임3희망'),
+        ...getGroupedData(depts, '업무1희망', '업무2희망', '업무3희망')
+      ];
+      
+      // 가장 인원수가 많은 칸에 맞춰 열 갯수를 동적으로 설정 (최소 3칸 확보)
+      let max1 = 3, max2 = 3, max3 = 3;
+      allGroups.forEach(g => {
+        if (g.h1.length > max1) max1 = g.h1.length;
+        if (g.h2.length > max2) max2 = g.h2.length;
+        if (g.h3.length > max3) max3 = g.h3.length;
+      });
+      
+      let aoa = [];
+      
+      // 첫 번째 행: 제목 (병합될 예정)
+      let titleRow = new Array(1 + max1 + max2 + max3).fill("");
+      titleRow[0] = targetYear + "년 업무분장희망원 현황";
+      aoa.push(titleRow);
+      
+      // 두 번째 행: 헤더 (병합될 예정)
+      let headerRow = new Array(1 + max1 + max2 + max3).fill("");
+      headerRow[0] = "업무";
+      headerRow[1] = "1희망";
+      headerRow[1 + max1] = "2희망";
+      headerRow[1 + max1 + max2] = "3희망";
+      aoa.push(headerRow);
+      
+      // 데이터 행 채우기
+      allGroups.forEach(g => {
+        let row = new Array(1 + max1 + max2 + max3).fill("");
+        row[0] = g.opt;
+        for (let i = 0; i < g.h1.length; i++) row[1 + i] = g.h1[i];
+        for (let i = 0; i < g.h2.length; i++) row[1 + max1 + i] = g.h2[i];
+        for (let i = 0; i < g.h3.length; i++) row[1 + max1 + max2 + i] = g.h3[i];
+        aoa.push(row);
+      });
+      
+      const worksheet = XLSX.utils.aoa_to_sheet(aoa);
+      
+      // 병합 정보 설정 (!merges)
+      worksheet['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: max1 + max2 + max3 } }, // 1행 전체 병합
+        { s: { r: 1, c: 1 }, e: { r: 1, c: max1 } },               // 1희망 병합
+        { s: { r: 1, c: 1 + max1 }, e: { r: 1, c: max1 + max2 } }, // 2희망 병합
+        { s: { r: 1, c: 1 + max1 + max2 }, e: { r: 1, c: max1 + max2 + max3 } }, // 3희망 병합
+      ];
+      
+      // 열 너비 조절
+      let cols = [{ wch: 18 }]; // 첫번째 열(업무명) 너비
+      for(let i = 0; i < max1 + max2 + max3; i++) {
+        cols.push({ wch: 14 }); // 선생님 성명 열 너비
+      }
+      worksheet['!cols'] = cols;
+      
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, targetYear + "년 현황");
+      XLSX.writeFile(workbook, `${schoolName}_${targetYear}년_업무별현황.xlsx`);
+    }
+    
     function initDropdowns() {
       fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears');
       fillSelect('chiefHopeYn', ['희망','비희망','무관']); 
