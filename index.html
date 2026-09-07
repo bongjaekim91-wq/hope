@@ -650,7 +650,7 @@
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
     
-    // 🌟 1. 화면용 종합 현황 (2페이지 맞춤 인쇄 버튼 포함)
+       // 🌟 1. 화면용 종합 현황 (2페이지 맞춤 인쇄 버튼 포함) - 담임 필터링 적용
     async function openSummaryWindow(event) {
       const schoolName = document.getElementById('d_school').value;
       if (!schoolName) return alert("학교명 정보가 없습니다.");
@@ -704,12 +704,18 @@
         }
         return html || '<div style="font-size:13px; color:#777;">해당 항목이 없습니다.</div>';
       }
+      
       const chiefs = document.getElementById('d_chiefs').value.split('\n').map(s => s.trim()).filter(Boolean);
-      const depts = document.getElementById('d_depts').value.split('\n').map(s => s.trim()).filter(Boolean);
+      // 🌟 업무부서 목록에서 1,2,3학년 담임은 강제로 제외합니다.
+      const depts = document.getElementById('d_depts').value.split('\n').map(s => s.trim()).filter(Boolean)
+                    .filter(d => !['1학년담임', '2학년담임', '3학년담임'].includes(d));
+      
       const homerooms = ['1학년', '2학년', '3학년', '교육과정상 안됨'];
+      
       const chiefData = groupDataLocally(chiefs, '부장1희망', '부장2희망', '부장3희망');
       const hmrmData = groupDataLocally(homerooms, '담임1희망', '담임2희망', '담임3희망');
       const deptData = groupDataLocally(depts, '업무1희망', '업무2희망', '업무3희망');
+      
       const chiefHtml = generateHtmlLocally(chiefData);
       const hmrmHtml = generateHtmlLocally(hmrmData);
       const deptHtml = generateHtmlLocally(deptData);
@@ -787,7 +793,7 @@
       printWindow.document.close();
     }
     
-       // 🌟 2. 업무별 종합 현황 엑셀 다운로드 (셀 하나에 이름 1개씩 + 서식 적용)
+         // 🌟 2. 업무별 종합 현황 엑셀 다운로드 (셀 하나에 이름 1개씩 + 서식 적용) - 담임 필터링 적용
     async function downloadSummaryExcelFromChild(btn) {
       const schoolName = document.getElementById('d_school').value;
       const targetYear = document.getElementById('d_year').value;
@@ -807,7 +813,10 @@
       if (!submittedData || submittedData.length === 0) return alert("아직 제출된 데이터가 없습니다.");
       
       const chiefs = document.getElementById('d_chiefs').value.split('\n').map(s => s.trim()).filter(Boolean);
-      const depts = document.getElementById('d_depts').value.split('\n').map(s => s.trim()).filter(Boolean);
+      // 🌟 업무부서 목록에서 1,2,3학년 담임은 강제로 제외합니다.
+      const depts = document.getElementById('d_depts').value.split('\n').map(s => s.trim()).filter(Boolean)
+                    .filter(d => !['1학년담임', '2학년담임', '3학년담임'].includes(d));
+                    
       const homerooms = ['1학년', '2학년', '3학년', '교육과정상 안됨'];
       
       function getGroupedData(options, h1Key, h2Key, h3Key) {
