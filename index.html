@@ -650,7 +650,7 @@
       navigator.clipboard.writeText(text).then(() => alert('단축 주소가 복사되었습니다. 선생님들께 배부하세요!')).catch(() => alert('복사에 실패했습니다. 직접 드래그해서 복사해주세요.'));
     }
     
-    // 🌟 화면용 종합 현황 (엑셀 다운로드 버튼 포함)
+    // 🌟 1. 화면용 종합 현황 (2페이지 맞춤 인쇄 버튼 포함)
     async function openSummaryWindow(event) {
       const schoolName = document.getElementById('d_school').value;
       if (!schoolName) return alert("학교명 정보가 없습니다.");
@@ -683,20 +683,20 @@
         let html = '';
         for (const [role, data] of Object.entries(groupedData)) {
           html += `
-            <div style="background: #fff; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid;">
-              <div style="background: #f1f3f4; padding: 8px; text-align: center; font-weight: bold; border-bottom: 1px solid #ccc; font-size: 14px;">${role}</div>
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+            <div class="card">
+              <div class="card-header">${role}</div>
+              <table class="card-table">
                 <tr>
-                  <td style="width: 25%; background: #fce8e6; color: #c5221f; font-weight: bold; text-align: center; border-bottom: 1px solid #eee; padding: 6px;">1희망</td>
-                  <td style="padding: 6px; border-bottom: 1px solid #eee; line-height:1.4;">${data.h1.length > 0 ? data.h1.join(', ') : '<span style="color:#ccc;">-</span>'}</td>
+                  <td class="td-label" style="background:#fce8e6; color:#c5221f;">1희망</td>
+                  <td>${data.h1.length > 0 ? data.h1.join(', ') : '<span style="color:#ccc;">-</span>'}</td>
                 </tr>
                 <tr>
-                  <td style="width: 25%; background: #e8f0fe; color: #1a73e8; font-weight: bold; text-align: center; border-bottom: 1px solid #eee; padding: 6px;">2희망</td>
-                  <td style="padding: 6px; border-bottom: 1px solid #eee; line-height:1.4;">${data.h2.length > 0 ? data.h2.join(', ') : '<span style="color:#ccc;">-</span>'}</td>
+                  <td class="td-label" style="background:#e8f0fe; color:#1a73e8;">2희망</td>
+                  <td>${data.h2.length > 0 ? data.h2.join(', ') : '<span style="color:#ccc;">-</span>'}</td>
                 </tr>
                 <tr>
-                  <td style="width: 25%; background: #e6f4ea; color: #137333; font-weight: bold; text-align: center; padding: 6px;">3희망</td>
-                  <td style="padding: 6px; line-height:1.4;">${data.h3.length > 0 ? data.h3.join(', ') : '<span style="color:#ccc;">-</span>'}</td>
+                  <td class="td-label" style="background:#e6f4ea; color:#137333;">3희망</td>
+                  <td style="border-bottom:none;">${data.h3.length > 0 ? data.h3.join(', ') : '<span style="color:#ccc;">-</span>'}</td>
                 </tr>
               </table>
             </div>
@@ -722,36 +722,64 @@
           <title>${schoolName} - 업무분장 희망자 종합 현황</title>
           <style>
             body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; color: #333; padding: 30px; background: #f8f9fa; margin: 0; }
-            .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-            h2 { text-align: center; margin-bottom: 30px; font-size: 24px; color: #1a73e8; font-weight: 800; }
-            h3 { font-size: 17px; margin: 25px 0 15px 0; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; color: #222; }
-            .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-            .btn-print { text-align:center; margin: 30px 0 10px 0; }
-            .btn-print button { padding: 12px 25px; font-size: 16px; cursor: pointer; background: #1a73e8; color: white; border: none; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-            .btn-print button:hover { background: #1557b0; }
+            .container { max-width: 1050px; margin: 0 auto; background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+            h2 { text-align: center; margin-bottom: 25px; font-size: 26px; color: #1a73e8; font-weight: 800; }
+            h3 { font-size: 18px; margin: 0 0 15px 0; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; color: #222; }
+            .section { margin-bottom: 35px; }
+            .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+            .card { border: 1px solid #ccc; border-radius: 8px; overflow: hidden; page-break-inside: avoid; background:#fff; }
+            .card-header { background: #f1f3f4; padding: 8px; text-align: center; font-weight: bold; border-bottom: 1px solid #ccc; font-size: 14.5px; }
+            .card-table { width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left; }
+            .card-table td { padding: 8px; border-bottom: 1px solid #eee; line-height: 1.5; }
+            .td-label { width: 25%; font-weight: bold; text-align: center; border-right: 1px solid #eee; }
+            .btn-print { text-align:center; margin-bottom: 35px; }
+            .btn-print button { padding: 13px 25px; font-size: 16px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin: 0 5px; }
+            .btn-blue { background: #1a73e8; color: white; } .btn-blue:hover { background: #1557b0; }
+            .btn-orange { background: #ff9800; color: white; } .btn-orange:hover { background: #e68a00; }
+            
+            /* 🖨️ 2페이지 맞춤 인쇄 전용 스타일 */
             @media print {
-              @page { size: A4 landscape; margin: 15mm; }
-              body { padding: 0; background: #fff; }
-              .container { box-shadow: none; padding: 0; max-width: none; }
+              @page { size: A4 landscape; margin: 12mm 10mm; }
+              body { padding: 0; background: #fff; zoom: 0.95; }
+              .container { box-shadow: none; padding: 0; max-width: none; border-radius: 0; }
               .btn-print { display: none; }
               .grid-container { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-              .grid-container > div { page-break-inside: avoid; }
+              .card { border-radius: 0; border: 1.5px solid #000; }
+              .card-header { border-bottom: 1.5px solid #000; font-size: 13px; padding: 6px; }
+              .card-table { font-size: 12px; }
+              .card-table td { border-bottom: 1px solid #000; padding: 6px; }
+              .td-label { border-right: 1px solid #000; }
+              .section { margin-bottom: 25px; }
+              /* 부장, 담임 다음 업무부서 출력 시 강제로 다음 페이지로 넘김 */
+              .page-break { page-break-before: always; }
             }
           </style>
         </head>
         <body>
           <div class="container">
-            <h2>🏢 ${schoolName} 업무분장 희망자 종합 현황</h2>
+            <h2>🏢 ${schoolName} 업무분장 희망 종합 현황</h2>
             <div class="btn-print">
-              <button onclick="window.print()">🖨️ 현황 가로 방향으로 인쇄하기</button>
-              <button onclick="window.opener.downloadSummaryExcelFromChild(this)" style="background:#ff9800; margin-left:10px;">📝 업무별 현황 엑셀 다운로드</button>
+              <button class="btn-blue" onclick="window.print()">🖨️ 현황 2페이지 맞춤 인쇄 (가로)</button>
+              <button class="btn-orange" onclick="window.opener.downloadSummaryExcelFromChild(this)">📝 보기 편한 엑셀 다운로드</button>
             </div>
-            <h3>📌 부장교사 희망</h3>
-            <div class="grid-container">${chiefHtml}</div>
-            <h3>📌 담임교사 희망</h3>
-            <div class="grid-container">${hmrmHtml}</div>
-            <h3>📌 업무부서 희망 (비담임)</h3>
-            <div class="grid-container">${deptHtml}</div>
+            
+            <div class="section">
+              <h3>📌 1. 부장교사 희망</h3>
+              <div class="grid-container">${chiefHtml}</div>
+            </div>
+            
+            <div class="section">
+              <h3>📌 2. 담임교사 희망</h3>
+              <div class="grid-container">${hmrmHtml}</div>
+            </div>
+            
+            <!-- 인쇄 시 1페이지(부장/담임)와 2페이지(업무부서)를 정확히 분리 -->
+            <div class="page-break"></div>
+            
+            <div class="section">
+              <h3>📌 3. 업무부서 희망 (비담임)</h3>
+              <div class="grid-container">${deptHtml}</div>
+            </div>
           </div>
         </body>
         </html>
@@ -759,7 +787,7 @@
       printWindow.document.close();
     }
     
-    // 🌟 자식(새 창)에서 호출되는 업무별 현황 엑셀 다운로드 함수
+    // 🌟 2. 업무별 종합 현황 엑셀 다운로드 (색상 및 표 서식 완벽 적용)
     async function downloadSummaryExcelFromChild(btn) {
       const schoolName = document.getElementById('d_school').value;
       const targetYear = document.getElementById('d_year').value;
@@ -776,9 +804,7 @@
       if (!res.success) return alert("데이터 로드 실패: " + res.message);
       
       const submittedData = res.data;
-      if (!submittedData || submittedData.length === 0) {
-        return alert("아직 제출된 희망원 데이터가 없습니다.");
-      }
+      if (!submittedData || submittedData.length === 0) return alert("아직 제출된 데이터가 없습니다.");
       
       const chiefs = document.getElementById('d_chiefs').value.split('\n').map(s => s.trim()).filter(Boolean);
       const depts = document.getElementById('d_depts').value.split('\n').map(s => s.trim()).filter(Boolean);
@@ -800,59 +826,70 @@
         return result;
       }
       
-      const allGroups = [
-        ...getGroupedData(chiefs, '부장1희망', '부장2희망', '부장3희망'),
-        ...getGroupedData(homerooms, '담임1희망', '담임2희망', '담임3희망'),
-        ...getGroupedData(depts, '업무1희망', '업무2희망', '업무3희망')
-      ];
-      
-      let max1 = 3, max2 = 3, max3 = 3;
-      allGroups.forEach(g => {
-        if (g.h1.length > max1) max1 = g.h1.length;
-        if (g.h2.length > max2) max2 = g.h2.length;
-        if (g.h3.length > max3) max3 = g.h3.length;
-      });
-      
-      let aoa = [];
-      
-      let titleRow = new Array(1 + max1 + max2 + max3).fill("");
-      titleRow[0] = targetYear + "년 업무분장희망원 현황";
-      aoa.push(titleRow);
-      
-      let headerRow = new Array(1 + max1 + max2 + max3).fill("");
-      headerRow[0] = "업무";
-      headerRow[1] = "1희망";
-      headerRow[1 + max1] = "2희망";
-      headerRow[1 + max1 + max2] = "3희망";
-      aoa.push(headerRow);
-      
-      allGroups.forEach(g => {
-        let row = new Array(1 + max1 + max2 + max3).fill("");
-        row[0] = g.opt;
-        for (let i = 0; i < g.h1.length; i++) row[1 + i] = g.h1[i];
-        for (let i = 0; i < g.h2.length; i++) row[1 + max1 + i] = g.h2[i];
-        for (let i = 0; i < g.h3.length; i++) row[1 + max1 + max2 + i] = g.h3[i];
-        aoa.push(row);
-      });
-      
-      const worksheet = XLSX.utils.aoa_to_sheet(aoa);
-      
-      worksheet['!merges'] = [
-        { s: { r: 0, c: 0 }, e: { r: 0, c: max1 + max2 + max3 } }, 
-        { s: { r: 1, c: 1 }, e: { r: 1, c: max1 } },               
-        { s: { r: 1, c: 1 + max1 }, e: { r: 1, c: max1 + max2 } }, 
-        { s: { r: 1, c: 1 + max1 + max2 }, e: { r: 1, c: max1 + max2 + max3 } }, 
-      ];
-      
-      let cols = [{ wch: 18 }]; 
-      for(let i = 0; i < max1 + max2 + max3; i++) {
-        cols.push({ wch: 14 }); 
+      // 엑셀에서 스타일(배경색, 테두리 등)을 유지하기 위해 HTML Table 방식(.xls) 활용
+      let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <style>
+            table { border-collapse: collapse; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-size: 11pt; }
+            th, td { border: 1pt solid #000000; padding: 8px; text-align: center; vertical-align: middle; mso-number-format:"\\@"; }
+            .title { font-size: 18pt; font-weight: bold; text-align: center; border: none; height: 60px; vertical-align: middle; }
+            .date-row { text-align: right; border: none; font-size: 10pt; color: #555; }
+            .header-row th { background-color: #d9e2f3; font-weight: bold; height: 35px; }
+            .cat-cell { background-color: #f1f3f4; font-weight: bold; font-size: 12pt; }
+            .dept-cell { background-color: #ffffff; font-weight: bold; }
+            .h1-th { background-color: #fce8e6; color: #c5221f; font-weight: bold; }
+            .h2-th { background-color: #e8f0fe; color: #1a73e8; font-weight: bold; }
+            .h3-th { background-color: #e6f4ea; color: #137333; font-weight: bold; }
+            .names { text-align: left; background-color: #ffffff; line-height: 1.5; }
+          </style>
+        </head>
+        <body>
+          <table>
+            <tr><td colspan="5" class="title">${schoolName} ${targetYear}학년도 업무분장 희망 종합 현황</td></tr>
+            <tr><td colspan="5" class="date-row">출력일시: ${new Date().toLocaleString()}</td></tr>
+            <tr class="header-row">
+              <th width="140">분류</th>
+              <th width="180">세부 업무명</th>
+              <th class="h1-th" width="300">1희망</th>
+              <th class="h2-th" width="300">2희망</th>
+              <th class="h3-th" width="300">3희망</th>
+            </tr>
+      `;
+
+      function renderSectionToHtml(catName, dataGroup) {
+         dataGroup.forEach((g, index) => {
+           let h1Names = g.h1.join(', ');
+           let h2Names = g.h2.join(', ');
+           let h3Names = g.h3.join(', ');
+           
+           html += `<tr>`;
+           if (index === 0) {
+             html += `<td rowspan="${dataGroup.length}" class="cat-cell">${catName}</td>`;
+           }
+           html += `<td class="dept-cell">${g.opt}</td>`;
+           html += `<td class="names">${h1Names}</td>`;
+           html += `<td class="names">${h2Names}</td>`;
+           html += `<td class="names">${h3Names}</td>`;
+           html += `</tr>`;
+         });
       }
-      worksheet['!cols'] = cols;
-      
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, targetYear + "년 현황");
-      XLSX.writeFile(workbook, `${schoolName}_${targetYear}년_업무별현황.xlsx`);
+
+      renderSectionToHtml('1. 부장교사 희망', getGroupedData(chiefs, '부장1희망', '부장2희망', '부장3희망'));
+      renderSectionToHtml('2. 담임교사 희망', getGroupedData(homerooms, '담임1희망', '담임2희망', '담임3희망'));
+      renderSectionToHtml('3. 업무부서 희망', getGroupedData(depts, '업무1희망', '업무2희망', '업무3희망'));
+
+      html += `</table></body></html>`;
+
+      // 인코딩 문제 방지를 위해 BOM(\ufeff) 추가하여 Blob 생성
+      const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${schoolName}_${targetYear}학년도_업무별종합현황.xls`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
     
     function initDropdowns() {
@@ -893,7 +930,7 @@
       const currentVal2 = document.getElementById('workDept2').value;
       const options3 = globalDepartments.filter(opt => opt !== val1 && opt !== currentVal2);
       fillSelect('workDept3', options3);
-      if (options3.includes(val3)) documentgetElementById('workDept3').value = val3;
+      if (options3.includes(val3)) document.getElementById('workDept3').value = val3;
     }
 
     function bindEvents() {
