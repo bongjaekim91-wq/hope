@@ -787,7 +787,7 @@
       printWindow.document.close();
     }
     
-    // 🌟 2. 업무별 종합 현황 엑셀 다운로드 (색상 및 표 서식 완벽 적용)
+       // 🌟 2. 업무별 종합 현황 엑셀 다운로드 (셀 하나에 이름 1개씩 + 서식 적용)
     async function downloadSummaryExcelFromChild(btn) {
       const schoolName = document.getElementById('d_school').value;
       const targetYear = document.getElementById('d_year').value;
@@ -826,7 +826,18 @@
         return result;
       }
       
-      // 엑셀에서 스타일(배경색, 테두리 등)을 유지하기 위해 HTML Table 방식(.xls) 활용
+      const chiefData = getGroupedData(chiefs, '부장1희망', '부장2희망', '부장3희망');
+      const hmrmData = getGroupedData(homerooms, '담임1희망', '담임2희망', '담임3희망');
+      const deptData = getGroupedData(depts, '업무1희망', '업무2희망', '업무3희망');
+
+      // 이름이 가장 많이 몰린 부서의 인원수를 파악하여 엑셀 가로 칸(열) 개수 설정
+      let maxCols = 0;
+      const allData = [...chiefData, ...hmrmData, ...deptData];
+      allData.forEach(g => {
+         maxCols = Math.max(maxCols, g.h1.length, g.h2.length, g.h3.length);
+      });
+      if (maxCols === 0) maxCols = 1; // 최소 1칸은 유지
+      
       let html = `
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
         <head>
@@ -842,21 +853,72 @@
             .h1-th { background-color: #fce8e6; color: #c5221f; font-weight: bold; }
             .h2-th { background-color: #e8f0fe; color: #1a73e8; font-weight: bold; }
             .h3-th { background-color: #e6f4ea; color: #137333; font-weight: bold; }
-            .names { text-align: left; background-color: #ffffff; line-height: 1.5; }
+            .names { text-align: center; background-color: #ffffff; }
           </style>
         </head>
         <body>
           <table>
-            <tr><td colspan="5" class="title">${schoolName} ${targetYear}학년도 업무분장 희망 종합 현황</td></tr>
-            <tr><td colspan="5" class="date-row">출력일시: ${new Date().toLocaleString()}</td></tr>
+            <tr><td colspan="${3 + maxCols}" class="title">${schoolName} ${targetYear}학년도 업무분장 희망 종합 현황</td></tr>
+            <tr><td colspan="${3 + maxCols}" class="date-row">출력일시: ${new Date().toLocaleString()}</td></tr>
             <tr class="header-row">
               <th width="140">분류</th>
               <th width="180">세부 업무명</th>
-              <th class="h1-th" width="300">1희망</th>
-              <th class="h2-th" width="300">2희망</th>
-              <th class="h3-th" width="300">3희망</th>
-            </tr>
+              <th width="100">지망</th>
       `;
+      
+      // 사람 수만큼 우측에 희망자1, 희망자2... 헤더 추가
+      for (let i = 1; i <= maxCols; i++) {
+         html += `<th width="120">희망자${i}</th>`;
+      }
+      html += `</tr>`;
+
+      function renderSectionToHtml(catName, dataGroup) {
+         dataGroup.forEach((g, index) => {
+           // 1희망 줄
+           html += `<tr>`;
+           if (index === 0) {
+             html += `<td rowspan="${dataGroup.length * 3}" class="cat-cell">${catName}</td>`;
+           }
+           html += `<td rowspan="3" class="dept-cell">${g.opt}</td>`;
+           html += `<td class="h1-th">1희망</td>`;
+           for (let i = 0; i < maxCols; i++) {
+             html += `<td class="names">${g.h1[i] || ''}</td>`;
+           }
+           html += `</tr>`;
+
+           // 2희망 줄
+           html += `<tr>`;
+           html += `<td class="h2-th">2희망</td>`;
+           for (let i = 0; i < maxCols; i++) {
+             html += `<td class="names">${g.h2[i] || ''}</td>`;
+           }
+           html += `</tr>`;
+
+           // 3희망 줄
+           html += `<tr>`;
+           html += `<td class="h3-th">3희망</td>`;
+           for (let i = 0; i < maxCols; i++) {
+             html += `<td class="names">${g.h3[i] || ''}</td>`;
+           }
+           html += `</tr>`;
+         });
+      }
+
+      renderSectionToHtml('1. 부장교사 희망', chiefData);
+      renderSectionToHtml('2. 담임교사 희망', hmrmData);
+      renderSectionToHtml('3. 업무부서 희망', deptData);
+
+      html += `</table></body></html>`;
+
+      // 인코딩 문제 방지를 위해 BOM(\ufeff) 추가하여 Blob 생성
+      const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${schoolName}_${targetYear}학년도_업무별종합현황.xls`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
       function renderSectionToHtml(catName, dataGroup) {
          dataGroup.forEach((g, index) => {
