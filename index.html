@@ -5,9 +5,7 @@
   // 🌟 주소창(URL)에서 전달받은 구글 앱스 스크립트(GAS) 주소를 추출합니다.
   const urlParams = new URLSearchParams(window.location.search);
   const gasUrlFromQuery = urlParams.get('gasUrl');
-
   let GAS_API_URL = "";
-
   if (gasUrlFromQuery) {
     // 전달받은 주소가 있으면 그 주소를 사용 (다른 학교가 복사해서 쓸 때)
     GAS_API_URL = gasUrlFromQuery;
@@ -597,7 +595,14 @@
       const data = await apiCall('getAdminConfigData', { schoolName: schoolName, githubBaseUrl: baseUrl });
       document.getElementById('d_school').value = data.schoolName; document.getElementById('d_year').value = data.year; document.getElementById('d_adminPw').value = data.adminPw;
       document.getElementById('d_chiefs').value = data.chiefs; document.getElementById('d_depts').value = data.depts; document.getElementById('d_rosterText').value = data.rosterText;
-      document.getElementById('shareUrl').textContent = data.shareUrl;
+      
+      // 🌟 [수정된 부분] 받아온 주소 뒤에 gasUrl을 강제로 덧붙입니다.
+      let finalUrl = data.shareUrl;
+      if (finalUrl && GAS_API_URL && !finalUrl.includes('gasUrl=')) {
+          finalUrl += "&gasUrl=" + GAS_API_URL;
+      }
+      document.getElementById('shareUrl').textContent = finalUrl;
+
       renderRosterTable(data.rosterList);
     }
     function handleRosterFileUpload(e) {
@@ -638,7 +643,16 @@
       const btn = document.getElementById('saveConfigBtn'); btn.disabled = true; btn.textContent = '저장 중...';
       const baseUrl = window.location.origin + window.location.pathname;
       const res = await apiCall('saveAdminDashboardData', { config: data, githubBaseUrl: baseUrl });
-      btn.disabled = false; btn.textContent = '설정 및 명단 저장'; document.getElementById('shareUrl').textContent = res.shareUrl; loadAdminConfig(data.schoolName);
+      btn.disabled = false; btn.textContent = '설정 및 명단 저장'; 
+      
+      // 🌟 [수정된 부분] 설정을 저장할 때도 갱신된 주소 뒤에 gasUrl을 강제로 덧붙입니다.
+      let finalUrl = res.shareUrl;
+      if (finalUrl && GAS_API_URL && !finalUrl.includes('gasUrl=')) {
+          finalUrl += "&gasUrl=" + GAS_API_URL;
+      }
+      document.getElementById('shareUrl').textContent = finalUrl; 
+      
+      loadAdminConfig(data.schoolName);
       const box = document.getElementById('configResultBox'); box.style.display = 'block'; setTimeout(() => box.style.display = 'none', 3000);
     }
     function copyUrl() {
@@ -896,7 +910,6 @@
       link.click();
       document.body.removeChild(link);
     }
-
     function initDropdowns() {
       fillYears('middleYears'); fillYears('highYears'); fillYears('chiefCareerYears');
       fillSelect('chiefHopeYn', ['희망','비희망','무관']);
